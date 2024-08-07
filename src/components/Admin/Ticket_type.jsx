@@ -110,7 +110,7 @@ const Form = () => {
         throw new Error(result.message || "Something went wrong");
       }
       setSubmissionStatus({ success: true, message: result.message });
-      toast.success("Ticket Type added");
+      toast.success("Asset Type added");
       location.reload();
     } catch (error) {
       setSubmissionStatus({
@@ -187,7 +187,7 @@ const Form = () => {
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", "Ticket_type.csv");
+    link.setAttribute("download", "Asset_type.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -245,7 +245,7 @@ const Form = () => {
       const imgWidth = 210;
       const imgHeight = canvas.height * imgWidth / canvas.width;
       pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-      pdf.save('Ticket_type.pdf');
+      pdf.save('Asset_type.pdf');
   
       // Remove the cloned table from the document
       document.body.removeChild(tableClone);
@@ -263,7 +263,7 @@ const Form = () => {
             <form onSubmit={handleSubmit} className="space-y-4 text-label">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
                 <div className="font-mont font-semibold text-2xl mb-4">
-                  Ticket Type Details:
+                  Asset Type Details:
                 </div>
               </div>
 
@@ -276,7 +276,7 @@ const Form = () => {
                   <input
                     type="text"
                     name="type"
-                    placeholder="Enter Ticket Type Name"
+                    placeholder="Enter Asset Type Name"
                     value={formData.name}
                     onChange={handleChange}
                     required
@@ -322,11 +322,11 @@ const Form = () => {
 
         {/* Table displaying fetched user data */}
         <div className="ticket-table mt-8">
-          <h2 className="text-2xl font-bold text-prime mb-4"><span>Ticket Type Data </span><span className="items-end"><button
+          <h2 className="text-2xl font-bold text-prime mb-4"><span>Asset Type Data </span><span className="items-end"><button
           onClick={() => setShowForm(!showForm)}
           className="bg-prime font-mont font-semibold text-sm text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
         >
-          {showForm ? "Close" : "+ Add Ticket Type"}
+          {showForm ? "Close" : "+ Add Asset Type"}
         </button></span></h2>
         <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
             Rows per page:
