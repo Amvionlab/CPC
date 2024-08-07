@@ -1,7 +1,7 @@
 <?php
 include 'config.php';
 // Function to fetch users from database
-    $sql = "SELECT * FROM ticket_type";
+    $sql = "SELECT * FROM asset_type";
     $result = $conn->query($sql);
 
     $users = array();

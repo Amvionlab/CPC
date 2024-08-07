@@ -29,14 +29,11 @@ const Login = ({ onLogin }) => {
           mobile: result.mobile,
           photo: result.photo,
           accessId: result.accessid,
-          ticket: result.ticket,
-          dashboard: result.dashboard,
-          analytics: result.analytics,
+          approval: result.approval,
+          transfer: result.transfer,
           usertype: result.name,
-          singleticket: result.singleticket,
-          creation: result.creation,
-          assign: result.assign,
-          ticketaction: result.ticketaction
+          asset: result.asset,
+          creation: result.creation
         });
         onLogin();
         navigate("/dashboard");
@@ -95,7 +92,7 @@ const Login = ({ onLogin }) => {
                       type="checkbox"
                       name="remember"
                       id="remember"
-                      checked
+                      defaultChecked={true}
                       className='mt-4 text-second text-sm'
                     />
                     <span className="text-login text-sm">&nbsp;&nbsp;Remember Me</span>

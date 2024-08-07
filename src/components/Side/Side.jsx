@@ -15,17 +15,9 @@ const navItems = [
   { path: "/analytics", icon: faChartSimple, label: "Analytics", key: "analytics" },
   { path: "/admin/access", icon: faChartSimple, label: "Access", key: "creation" },
   { path: "/admin/user", icon: faChartSimple, label: "User", key: "creation" },
-  { path: "/admin/customer", icon: faChartSimple, label: "Customer", key: "creation" },
-  { path: "/admin/department", icon: faChartSimple, label: "Department", key: "creation" },
-  { path: "/admin/domain", icon: faChartSimple, label: "Domain", key: "creation" },
-  { path: "/admin/subdomain", icon: faChartSimple, label: "Sub Domain", key: "creation" },
   { path: "/admin/location", icon: faChartSimple, label: "Branch", key: "creation" },
-  { path: "/admin/sla", icon: faChartSimple, label: "SLA", key: "creation" },
-  { path: "/admin/ticket_noc", icon: faChartSimple, label: "Ticket NOC", key: "creation" },
-  { path: "/admin/ticket_status", icon: faChartSimple, label: "Ticket Status", key: "creation" },
-  { path: "/admin/ticket_type", icon: faChartSimple, label: "Ticket Type", key: "creation" },
-  { path: "/admin/ticket_service", icon: faChartSimple, label: "Ticket Service", key: "creation" },
-];
+  { path: "/admin/ticket_type", icon: faChartSimple, label: "Asset Type", key: "creation" },
+  ];
 
 const NavItem = ({ path, icon, label, isActive, onClick }) => {
   const navigate = useNavigate();
