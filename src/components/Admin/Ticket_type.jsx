@@ -16,6 +16,7 @@ const Form = () => {
    
 
   });
+  const [columnData, setColumnData] = useState([]);
   const { user } = useContext(UserContext);
   console.log('DashBoard context value:', user);
   const [ticketsPerPage, setTicketsPerPage] = useState(10); // default to 10 rows per page
@@ -161,6 +162,24 @@ const Form = () => {
     });
     setFilteredUsers(filtered);
   }, [filters, users]);
+  const handleTemplateClick = async (type) => {
+    try {
+      const response = await fetch(`${baseURL}/backend/template.php?type=${type}`);
+      const data = await response.json();
+  
+      if (response.ok) {
+        // Handle the response, e.g., set it to state to display it in the JSX
+        console.log("Column data:", data);
+        // Set the column data to a state variable to display it
+        setColumnData(data);
+      } else {
+        throw new Error(data.message || "Failed to fetch columns");
+      }
+    } catch (error) {
+      console.error("Error fetching column data:", error);
+    }
+  };
+  
 
   const exportCSV = () => {
     // Get table headers
@@ -344,9 +363,9 @@ const Form = () => {
         <table className=" min-w-full bg-second rounded-lg overflow-hidden filter-table">
   <thead className="bg-prime text-white">
     <tr>
-      {["Id", "type"].map((header, index) => (
-        <td key={index} className="w-1/6 py-2 px-4">
-          <div className="flex items-center justify-center">
+      {["Id", "type", "Tag", "Group", "Action"].map((header, index) => (
+        <td key={index} className="w-1/4 py-2 px-4">
+          <div className="flex items-center justify-left">
           <div className="header flex">
             <span>{header}</span>
             <FaFilter
@@ -388,6 +407,17 @@ const Form = () => {
       <tr key={user.id} className="hover:bg-gray-100">
         <td className="border-t py-4 px-4">{(i++)+(offset)}</td>
         <td className="border-t py-4 px-4">{user.type}</td>
+        <td className="border-t py-4 px-4">{user.tag}</td>
+        <td className="border-t py-4 px-4">{user.group}</td>
+        <td className="border-t py-4 px-4">
+  <button
+    className="bg-prime text-white py-1 px-4 rounded-md shadow-md"
+    onClick={() => handleTemplateClick(user.type)}
+  >
+    Template
+  </button>
+</td>
+
 
       </tr>
     ))}
@@ -395,7 +425,7 @@ const Form = () => {
 </table>
         </div>
          {/* Pagination Controls */}
-         <div className="pagination mt-4 flex justify-center">
+         <div className="pagination mt-4 flex gap-2 justify-center">
           <ReactPaginate
             previousLabel={"Previous"}
             nextLabel={"Next"}
