@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useRef, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useContext,
+} from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -21,11 +27,12 @@ import Ticket_status from "./components/Admin/Ticket_status";
 import Ticket_service from "./components/Admin/Ticket_service";
 import Ticket_type from "./components/Admin/Ticket_type";
 import Login from "./components/Login/Login";
-import ChangePass from './components/Login/Change_pass'; // Ensure correct import
+import ChangePass from "./components/Login/Change_pass"; // Ensure correct import
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { UserContext } from '../src/components/UserContext/UserContext';
-import { TicketProvider } from '../src/components/UserContext/TicketContext';
+import { UserContext } from "../src/components/UserContext/UserContext";
+import { TicketProvider } from "../src/components/UserContext/TicketContext";
+import SideMenu from "./components/sideMenu/SideMenu";
 
 const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour
 
@@ -45,7 +52,7 @@ function App() {
     timeoutIdRef.current = setTimeout(() => {
       setIsAuthenticated(false);
       localStorage.removeItem("isAuthenticated");
-      localStorage.removeItem('user');
+      localStorage.removeItem("user");
       window.location.href = "/login";
     }, INACTIVITY_TIMEOUT);
   }, []);
@@ -93,37 +100,53 @@ function App() {
         <ToastContainer />
         {isAuthenticated ? (
           <>
-          
             <Header />
             <div className="main-content flex overflow-y-hidden">
-              <Side open={open} setOpen={setOpen} />
+              {/* <Side open={open} setOpen={setOpen} /> */}
+              <SideMenu />
               <div className="flex-1 md:overflow-y-auto">
                 <TicketProvider>
                   <Routes>
-                  <Route path="/password-change" element={<ChangePass />} />
-                    {user && (user.creation === '1') && (
-                      <Route path="*" element={<Navigate to="/admin/access" />} />
+                    <Route path="/password-change" element={<ChangePass />} />
+                    {user && user.creation === "1" && (
+                      <Route
+                        path="*"
+                        element={<Navigate to="/admin/access" />}
+                      />
                     )}
-                    {user && (user.creation === '0') && (
+                    {user && user.creation === "0" && (
                       <Route path="*" element={<Navigate to="/dashboard" />} />
                     )}
-                    
-                      <>
-                        <Route path="/admin/user" element={<User />} />
-                        <Route path="/admin/customer" element={<Customer />} />
-                        <Route path="/admin/access" element={<Access />} />
-                        <Route path="/admin/department" element={<Department />} />
-                        <Route path="/admin/sla" element={<Sla />} />
-                        <Route path="/admin/domain" element={<Domain />} />
-                        <Route path="/admin/location" element={<Location />} />
-                        <Route path="/admin/ticket_status" element={<Ticket_status />} />
-                        <Route path="/admin/ticket_service" element={<Ticket_service />} />
-                        <Route path="/admin/ticket_type" element={<Ticket_type />} />
-                        <Route path="/admin/ticket_noc" element={<Ticket_noc />} />
-                        <Route path="/admin/subdomain" element={<SubDomain />} />
-                      </>
-                   
-                  
+
+                    <>
+                      <Route path="/admin/user" element={<User />} />
+                      <Route path="/admin/customer" element={<Customer />} />
+                      <Route path="/admin/access" element={<Access />} />
+                      <Route
+                        path="/admin/department"
+                        element={<Department />}
+                      />
+                      <Route path="/admin/sla" element={<Sla />} />
+                      <Route path="/admin/domain" element={<Domain />} />
+                      <Route path="/admin/location" element={<Location />} />
+                      <Route
+                        path="/admin/ticket_status"
+                        element={<Ticket_status />}
+                      />
+                      <Route
+                        path="/admin/ticket_service"
+                        element={<Ticket_service />}
+                      />
+                      <Route
+                        path="/admin/ticket_type"
+                        element={<Ticket_type />}
+                      />
+                      <Route
+                        path="/admin/ticket_noc"
+                        element={<Ticket_noc />}
+                      />
+                      <Route path="/admin/subdomain" element={<SubDomain />} />
+                    </>
                   </Routes>
                 </TicketProvider>
               </div>

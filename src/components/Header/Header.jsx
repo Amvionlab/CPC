@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Side from "../Side/Side";
-import { UserContext } from '../UserContext/UserContext';
+import { UserContext } from "../UserContext/UserContext";
 
 function Header() {
   const [open, setOpen] = useState(false);
@@ -18,7 +18,7 @@ function Header() {
 
   const handleIconClick = () => {
     localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
     window.location.href = "/login";
   };
 
@@ -31,7 +31,7 @@ function Header() {
   };
 
   const { user } = useContext(UserContext);
-  console.log('DashBoard context value:', user);
+  console.log("DashBoard context value:", user);
 
   return (
     <header className="h-[10vh] bg-prime w-full flex justify-between items-center">
@@ -52,12 +52,14 @@ function Header() {
       </div>
 
       {/* Desktop Icons for Settings, Notifications, and User */}
-      <div className="text-white sm:flex gap-3 mr-10 mt-6 hidden">
+      <div className="text-white sm:flex gap-3 mr-10 my-auto hidden">
         {/* Settings */}
-        <div title="Change Password" className="w-8 h-8 text-flo bg-box hover:bg-flo hover:text-box rounded-full  cursor-pointer flex items-center justify-center" onClick={handleSettingsClick}>
-          <FontAwesomeIcon
-            icon={faGear}
-             />
+        <div
+          title="Change Password"
+          className="w-8 h-8 text-flo bg-box hover:bg-flo hover:text-box rounded-full  cursor-pointer flex items-center justify-center"
+          onClick={handleSettingsClick}
+        >
+          <FontAwesomeIcon icon={faGear} />
         </div>
         {/* Notifications */}
         <div className="relative text-flo w-8 h-8 bg-box  hover:bg-flo hover:text-box rounded-full flex items-center justify-center">
@@ -67,15 +69,14 @@ function Header() {
           </p> */}
         </div>
         {/* User */}
-        <div 
+        <div
           className="w-8 h-8 cursor-pointer text-flo bg-box hover:bg-flo hover:text-box rounded-full flex items-center justify-center"
-          title="Log out" onClick={handleIconClick}
+          title="Log out"
+          onClick={handleIconClick}
         >
           <FontAwesomeIcon icon={faUser} />
         </div>
       </div>
-
-     
     </header>
   );
 }
