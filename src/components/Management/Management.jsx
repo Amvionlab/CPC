@@ -31,16 +31,16 @@ function Management() {
   }, []);
 
   return (
-    <div className="lg:flex p-4 w-full h-screen font-poppins lg:grid-cols-2 grid-cols-1">
+    <div className="lg:flex p-4 gap-4 w-full h-screen font-poppins lg:grid-cols-2 grid-cols-1 bg-slate-200">
       {/* Sidebar */}
-      <div className="p-4 h-full bg-slate-300 w-full lg:w-2/4 rounded-md flex justify-center border-r-2">
+      <div className="p-4 h-full bg-white/80 w-full lg:w-2/4 rounded-md flex justify-center border-r-2">
         <div className="grid grid-cols-2 gap-4 h-fit text-xl mt-5 w-full">
           {type.map(
             (item, i) =>
               item.group_id == 1 && (
                 <p
                   key={i}
-                  className="p-2 text-violet-700 text-center w-full border rounded-lg bg-white cursor-pointer"
+                  className="p-2 text-black  text-center w-full  rounded-lg border-2 cursor-pointer"
                 >
                   {item.type}
                 </p>
@@ -50,8 +50,8 @@ function Management() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col bg-slate-300 rounded-md">
-        <div className="flex mb-4">
+      <div className="flex-1 flex flex-col bg-white/80 rounded-md">
+        <div className="flex ">
           <div className="m-2">
             <PieChart
               series={[
@@ -75,7 +75,7 @@ function Management() {
             <div className="relative inline-block">
               <FontAwesomeIcon
                 icon={faBell}
-                className="duration-1000 animate-shake text-xl"
+                className="duration-1000  text-xl"
               />
               <div
                 style={{ borderRadius: "100%" }}
@@ -94,7 +94,7 @@ function Management() {
             />
           </div>
           <div
-            className={`scrollbar-thin overflow-y-scroll p-4 bg-second rounded-md shadow-lg transition-transform duration-500 `}
+            className={`scrollbar-thin overflow-y-scroll p-4 border-2 rounded-md shadow-lg transition-transform duration-500 `}
           >
             <p className="border-b border-gray-500 py-2 flex items-center">
               <FontAwesomeIcon icon={faComment} className="mr-2" /> Notification
