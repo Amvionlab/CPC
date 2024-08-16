@@ -68,16 +68,25 @@ function Management() {
             />
           </div>
         </div>
-        <div className="w-2/4 flex flex-col gap-2 h-full overflow-hidden px-4">
+        <div className="w-full md:w-2/4 flex flex-col gap-2 h-full px-4 py-4 overflow-hidden">
           <div
             className="flex items-center cursor-pointer"
             onClick={toggleNotifications}
           >
-            <FontAwesomeIcon
-              icon={faBell}
-              className="duration-1000 animate-shake"
-            />
-            <p className="font-poppins font-medium text-xl px-2">
+            <div className="relative inline-block">
+              <FontAwesomeIcon
+                icon={faBell}
+                className="duration-1000 animate-shake text-xl"
+              />
+              <div
+                style={{ borderRadius: "100%" }}
+                className="absolute -top-3 -right-2 bg-red-500 px-1  flex items-center justify-center text-xs"
+              >
+                <p className="text-white text-sm">1</p>
+              </div>
+            </div>
+
+            <p className="font-poppins font-medium text-xl px-2 overflow-hidden">
               Notifications
             </p>
             <FontAwesomeIcon
@@ -88,45 +97,57 @@ function Management() {
             />
           </div>
           <div
-            className={`scrollbar-thin overflow-y-scroll  p-4 bg-second rounded-md shadow-lg transition-transform duration-500 ${
+            className={`scrollbar-thin overflow-y-scroll p-4 bg-second rounded-md shadow-lg transition-transform duration-500 ${
               isNotificationsVisible ? "translate-y-0" : "translate-y-full"
             }`}
           >
-            <p className="border-b border-gray-500 py-2">
-              <FontAwesomeIcon icon={faComment} /> Notification 1
+            <p className="border-b border-gray-500 py-2 flex items-center">
+              <FontAwesomeIcon icon={faComment} className="mr-2" /> Notification
+              1
             </p>
-            <p className="border-b border-gray-500 py-2">
-              <FontAwesomeIcon icon={faComment} /> Notification 2
+            <p className="border-b border-gray-500 py-2 flex items-center">
+              <FontAwesomeIcon icon={faComment} className="mr-2" /> Notification
+              2
             </p>
-            <p className="border-b border-gray-500 py-2">
-              <FontAwesomeIcon icon={faComment} /> Notification 3
+            <p className="border-b border-gray-500 py-2 flex items-center">
+              <FontAwesomeIcon icon={faComment} className="mr-2" /> Notification
+              3
             </p>
-            <p className="border-b border-gray-500 py-2">
-              <FontAwesomeIcon icon={faComment} /> Notification 4
+            <p className="border-b border-gray-500 py-2 flex items-center">
+              <FontAwesomeIcon icon={faComment} className="mr-2" /> Notification
+              4
             </p>
-            <p className="border-b border-gray-500 py-2">
-              <FontAwesomeIcon icon={faComment} /> Notification 5
+            <p className="border-b border-gray-500 py-2 flex items-center">
+              <FontAwesomeIcon icon={faComment} className="mr-2" /> Notification
+              5
             </p>
-            <p className="border-b border-gray-500 py-2">
-              <FontAwesomeIcon icon={faComment} /> Notification 6
+            <p className="border-b border-gray-500 py-2 flex items-center">
+              <FontAwesomeIcon icon={faComment} className="mr-2" /> Notification
+              6
             </p>
-            <p className="border-b border-gray-500 py-2">
-              <FontAwesomeIcon icon={faComment} /> Notification 7
+            <p className="border-b border-gray-500 py-2 flex items-center">
+              <FontAwesomeIcon icon={faComment} className="mr-2" /> Notification
+              7
             </p>
-            <p className="border-b border-gray-500 py-2">
-              <FontAwesomeIcon icon={faComment} /> Notification 8
+            <p className="border-b border-gray-500 py-2 flex items-center">
+              <FontAwesomeIcon icon={faComment} className="mr-2" /> Notification
+              8
             </p>
-            <p className="border-b border-gray-500 py-2">
-              <FontAwesomeIcon icon={faComment} /> Notification 9
+            <p className="border-b border-gray-500 py-2 flex items-center">
+              <FontAwesomeIcon icon={faComment} className="mr-2" /> Notification
+              9
             </p>
-            <p className="border-b border-gray-500 py-2">
-              <FontAwesomeIcon icon={faComment} /> Notification 10
+            <p className="border-b border-gray-500 py-2 flex items-center">
+              <FontAwesomeIcon icon={faComment} className="mr-2" /> Notification
+              10
             </p>
-            <p className="border-b border-gray-500 py-2">
-              <FontAwesomeIcon icon={faComment} /> Notification 11
+            <p className="border-b border-gray-500 py-2 flex items-center">
+              <FontAwesomeIcon icon={faComment} className="mr-2" /> Notification
+              11
             </p>
-            <p className="border-b border-gray-500 py-2">
-              <FontAwesomeIcon icon={faComment} /> Notification 12
+            <p className="border-b border-gray-500 py-2 flex items-center">
+              <FontAwesomeIcon icon={faComment} className="mr-2" /> Notification
+              12
             </p>
           </div>
         </div>
