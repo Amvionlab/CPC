@@ -3,12 +3,23 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      keyframes: {
+        shake: {
+          "0%, 100%": { transform: "translate(0, 0)" },
+          "10%,  90%": {
+            transform: "translate(-1px,0)",
+            transform: "rotate(-30deg)",
+          },
+          "20%, 80%": { transform: "translate(1px, 0)" },
+        },
+      },
+      animation: {
+        shake: "shake 1s infinite",
+      },
       backdropFilter: {
         none: "none",
         blur: "blur(30px)",
       },
-      borderColor: ["focus"],
-      ringColor: ["focus"],
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
         mont: ["Montserrat", "sans-serif"],
@@ -20,23 +31,25 @@ export default {
         bgBlack: "#1F1F1F",
         name: "#B1B1B1",
         flo: "#0375b0",
-        prime: "#071A30", // Correct hex code for blue-950
+        prime: "#071A30",
         second: "#ebeef5",
         box: "#ffffff",
         label: "#172554",
         login: "#ffffff",
-        gcolor : '#ab01ea',
-        scolor: 'rgba(0, 66, 255, 0.08)'
+        gcolor: "#ab01ea",
+        scolor: "rgba(0, 66, 255, 0.08)",
       },
       boxShadow: {
         custom: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
       },
       height: {
-        'height' : '39.5rem',
-    },
+        height: "39.5rem",
+      },
     },
     variants: {
-      backdropFilter: ["responsive"], // Enable backdrop-filter for responsive variants
+      backdropFilter: ["responsive"],
+      borderColor: ["focus"],
+      ringColor: ["focus"],
     },
   },
   plugins: [],
