@@ -34,6 +34,8 @@ import { UserContext } from "../src/components/UserContext/UserContext";
 import { TicketProvider } from "../src/components/UserContext/TicketContext";
 import SideMenu from "./components/sideMenu/SideMenu";
 import Management from "./components/Management/Management";
+import AssetType from "./AssetType/AssetType";
+import TypeTable from "./TypeTable/TypeTable";
 
 const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour
 
@@ -123,7 +125,9 @@ function App() {
                       <Route path="/admin/user" element={<User />} />
                       <Route path="/admin/customer" element={<Customer />} />
                       <Route path="/admin/access" element={<Access />} />
-                      <Route path="/management" element={<Management/>}/>
+                      <Route path="/management" element={<Management />} />
+                      <Route path="/:id/type" element={<AssetType />} />
+                      <Route path="/:type/typetable" element={<TypeTable />} />
                       <Route
                         path="/admin/department"
                         element={<Department />}

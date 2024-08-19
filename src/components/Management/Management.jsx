@@ -8,6 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function Management() {
   const data = [
@@ -21,11 +22,12 @@ function Management() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost/AMS/backend/fetchTicket_type.php"
+          "http://localhost/AMS/backend/fetchTicket_group.php"
         );
         setType(response.data);
-      } catch (error) {}
-      setError(error);
+      } catch (error) {
+        setError(error);
+      }
     };
     fetchData();
   }, []);
@@ -37,13 +39,15 @@ function Management() {
         <div className="grid grid-cols-2 gap-4 h-fit text-xl mt-5 w-full">
           {type.map(
             (item, i) =>
-              item.group_id == 1 && (
-                <p
-                  key={i}
-                  className="p-2 text-black  text-center w-full  rounded-lg border-2 cursor-pointer"
-                >
-                  {item.type}
-                </p>
+              item.group && (
+                <Link to={`/${item.id}/type`}>
+                  <p
+                    key={i}
+                    className="p-2 text-black  text-center w-full  rounded-lg border-2 cursor-pointer"
+                  >
+                    {item.group}
+                  </p>
+                </Link>
               )
           )}
         </div>
@@ -66,7 +70,7 @@ function Management() {
                 },
               ]}
               height={300}
-              width={600}
+              width={500}
             />
           </div>
         </div>

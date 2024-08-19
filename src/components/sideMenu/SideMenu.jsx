@@ -32,14 +32,14 @@ const SideMenu = () => {
                 } flex items-center whitespace-nowrap gap-1 p-2 hover:bg-white hover:text-prime text-white text-lg rounded-lg transition-all duration-500 ease-in-out active:bg-white focus-visible:bg-white`}
               >
                 <FontAwesomeIcon className="text-2xl" icon={faThLarge} />
-                {!isExpanded && show == "Asset Management" && (
+                {!isExpanded && show === "Asset Management" && (
                   <p className="absolute left-14 px-2 rounded-sm text-sm bg-prime text-white">
                     Asset Management
                   </p>
                 )}
 
                 {isExpanded && (
-                  <p className="text-xs transition-opacity duration-1000 ">
+                  <p className="text-xs transition-opacity duration-1000">
                     Asset Management
                   </p>
                 )}
@@ -47,7 +47,7 @@ const SideMenu = () => {
             </li>
             <li>
               <Link
-                href="#"
+                to="#"
                 onMouseEnter={() => setShow("Approval Management")}
                 onMouseLeave={() => setShow(false)}
                 className={`${
@@ -55,7 +55,7 @@ const SideMenu = () => {
                 } flex items-center whitespace-nowrap gap-1 p-2 hover:bg-white hover:text-prime text-white text-lg rounded-lg transition-all duration-500 ease-in-out active:bg-white focus-visible:bg-white`}
               >
                 <FontAwesomeIcon className="text-2xl" icon={faImages} />
-                {!isExpanded && show == "Approval Management" && (
+                {!isExpanded && show === "Approval Management" && (
                   <p className="absolute left-14 bg-prime text-white border-1 border-black px-2 rounded-sm text-sm hover:text-white">
                     Approval Management
                   </p>
@@ -68,8 +68,8 @@ const SideMenu = () => {
               </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to="#"
                 onMouseEnter={() => setShow("Assets Lifecycle")}
                 onMouseLeave={() => setShow(false)}
                 className={`${
@@ -77,7 +77,7 @@ const SideMenu = () => {
                 } flex items-center whitespace-nowrap gap-1 p-2 hover:bg-white hover:text-prime text-white text-lg rounded-lg transition-all duration-500 ease-in-out active:bg-white focus-visible:bg-white`}
               >
                 <FontAwesomeIcon className="text-2xl" icon={faFolder} />
-                {!isExpanded && show == "Assets Lifecycle" && (
+                {!isExpanded && show === "Assets Lifecycle" && (
                   <p className="absolute left-14 bg-prime px-2 rounded-sm text-sm text-white">
                     Assets Lifecycle
                   </p>
@@ -88,11 +88,11 @@ const SideMenu = () => {
                     Assets Lifecycle
                   </p>
                 )}
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to="#"
                 onMouseEnter={() => setShow("Reports")}
                 onMouseLeave={() => setShow(false)}
                 className={`${
@@ -100,7 +100,7 @@ const SideMenu = () => {
                 } flex items-center whitespace-nowrap gap-1 p-2 hover:bg-white hover:text-prime text-white text-lg rounded-lg transition-all duration-500 ease-in-out active:bg-white focus-visible:bg-white`}
               >
                 <FontAwesomeIcon className="text-2xl" icon={faDownload} />
-                {!isExpanded && show == "Reports" && (
+                {!isExpanded && show === "Reports" && (
                   <p className="absolute left-14 bg-prime px-2 rounded-sm text-sm text-white">
                     Reports
                   </p>
@@ -111,11 +111,11 @@ const SideMenu = () => {
                     Reports
                   </p>
                 )}
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to="#"
                 onMouseEnter={() => setShow("Setup")}
                 onMouseLeave={() => setShow(false)}
                 className={`${
@@ -123,7 +123,7 @@ const SideMenu = () => {
                 } flex items-center whitespace-nowrap gap-1 p-2 hover:bg-white hover:text-prime text-white text-lg rounded-lg transition-all duration-500 ease-in-out active:bg-white focus-visible:bg-white`}
               >
                 <FontAwesomeIcon className="text-2xl" icon={faComment} />
-                {!isExpanded && show == "Setup" && (
+                {!isExpanded && show === "Setup" && (
                   <p className="absolute left-14 bg-prime text-white px-2 rounded-sm text-sm ">
                     Setup
                   </p>
@@ -134,11 +134,11 @@ const SideMenu = () => {
                     Setup
                   </p>
                 )}
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to="#"
                 className={`${
                   isExpanded ? "justify-start" : "justify-center"
                 } flex items-center gap-1 p-2 text-white text-lg rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500 active:bg-white focus-visible:bg-white`}
@@ -155,7 +155,7 @@ const SideMenu = () => {
                 {isExpanded && (
                   <p className="text-base transition-opacity duration-1000"></p>
                 )}
-              </a>
+              </Link>
             </li>
           </ul>
         </nav>
