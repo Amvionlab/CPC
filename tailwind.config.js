@@ -37,6 +37,8 @@ export default {
         label: "#172554",
         login: "#ffffff",
         gcolor: "#ab01ea",
+        snow: "#FAFDFF",
+        alice: "#F0F8FF",
         scolor: "rgba(0, 66, 255, 0.08)",
       },
       boxShadow: {

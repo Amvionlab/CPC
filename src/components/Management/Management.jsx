@@ -35,7 +35,9 @@ function Management() {
   return (
     <div className="lg:flex p-4 gap-4 w-full h-screen font-poppins lg:grid-cols-2 grid-cols-1 bg-slate-200">
       {/* Sidebar */}
-      <div className="p-4 h-full bg-white/80 w-full lg:w-2/4 rounded-md flex justify-center border-r-2">
+
+      <div className="p-4 h-full bg-white/80 w-full lg:w-2/4 rounded-md flex-col flex  border-r-2">
+        <div className="text-base font-medium">Asset Group</div>
         <div className="grid grid-cols-2 gap-4 h-fit text-xl mt-5 w-full">
           {type.map(
             (item, i) =>
@@ -43,7 +45,7 @@ function Management() {
                 <Link to={`/${item.id}/type`}>
                   <p
                     key={i}
-                    className="p-2 text-black  text-center w-full  rounded-lg border-2 cursor-pointer"
+                    className="p-2 border-gray-400 font-medium text-base  text-gray-700  text-center w-full  rounded-lg border-2 cursor-pointer"
                   >
                     {item.group}
                   </p>

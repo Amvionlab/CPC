@@ -31,7 +31,6 @@ function Header() {
   };
 
   const { user } = useContext(UserContext);
-  console.log("DashBoard context value:", user);
 
   return (
     <header className="h-[10vh] bg-prime w-full flex justify-between items-center">

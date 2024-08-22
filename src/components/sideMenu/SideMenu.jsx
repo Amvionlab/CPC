@@ -33,7 +33,7 @@ const SideMenu = () => {
               >
                 <FontAwesomeIcon className="text-2xl" icon={faThLarge} />
                 {!isExpanded && show === "Asset Management" && (
-                  <p className="absolute left-14 px-2 rounded-sm text-sm bg-prime text-white">
+                  <p className="absolute z-50  left-14 px-2 rounded-sm text-sm bg-prime text-white">
                     Asset Management
                   </p>
                 )}
@@ -56,7 +56,7 @@ const SideMenu = () => {
               >
                 <FontAwesomeIcon className="text-2xl" icon={faImages} />
                 {!isExpanded && show === "Approval Management" && (
-                  <p className="absolute left-14 bg-prime text-white border-1 border-black px-2 rounded-sm text-sm hover:text-white">
+                  <p className="absolute z-50 left-14 bg-prime text-white border-1 border-black px-2 rounded-sm text-sm hover:text-white">
                     Approval Management
                   </p>
                 )}
@@ -78,7 +78,7 @@ const SideMenu = () => {
               >
                 <FontAwesomeIcon className="text-2xl" icon={faFolder} />
                 {!isExpanded && show === "Assets Lifecycle" && (
-                  <p className="absolute left-14 bg-prime px-2 rounded-sm text-sm text-white">
+                  <p className="absolute z-50 left-14 bg-prime px-2 rounded-sm text-sm text-white">
                     Assets Lifecycle
                   </p>
                 )}
@@ -101,7 +101,7 @@ const SideMenu = () => {
               >
                 <FontAwesomeIcon className="text-2xl" icon={faDownload} />
                 {!isExpanded && show === "Reports" && (
-                  <p className="absolute left-14 bg-prime px-2 rounded-sm text-sm text-white">
+                  <p className="absolute z-50 left-14 bg-prime px-2 rounded-sm text-sm text-white">
                     Reports
                   </p>
                 )}
@@ -124,7 +124,7 @@ const SideMenu = () => {
               >
                 <FontAwesomeIcon className="text-2xl" icon={faComment} />
                 {!isExpanded && show === "Setup" && (
-                  <p className="absolute left-14 bg-prime text-white px-2 rounded-sm text-sm ">
+                  <p className="absolute z-50 left-14 bg-prime text-white px-2 rounded-sm text-sm ">
                     Setup
                   </p>
                 )}

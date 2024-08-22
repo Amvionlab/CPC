@@ -127,7 +127,10 @@ function App() {
                       <Route path="/admin/access" element={<Access />} />
                       <Route path="/management" element={<Management />} />
                       <Route path="/:id/type" element={<AssetType />} />
-                      <Route path="/:type/typetable" element={<TypeTable />} />
+                      <Route
+                        path="/:id/:type/typetable"
+                        element={<TypeTable />}
+                      />
                       <Route
                         path="/admin/department"
                         element={<Department />}
