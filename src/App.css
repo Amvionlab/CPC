@@ -16,16 +16,11 @@
 
 .App {
   display: flex;
-  
+
   flex-direction: column;
   height: 100vh; /* Adjust as needed */
 }
 
-.main-content {
-  display: flex;
-  flex: 1;
-  /* Adjust styles as needed for spacing, alignment, etc. */
-}
 /* Custom Scrollbar Styles */
 .ticket-scroll {
   scrollbar-width: none; /* Firefox */

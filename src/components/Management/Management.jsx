@@ -33,10 +33,10 @@ function Management() {
   }, []);
 
   return (
-    <div className="lg:flex p-4 gap-4 w-full h-screen font-poppins lg:grid-cols-2 grid-cols-1 bg-slate-200">
+    <div className="lg:flex p-4 gap-4 w-full h-screen font-poppins lg:grid-cols-2 grid-cols-1 bg-second">
       {/* Sidebar */}
 
-      <div className="p-4 h-full bg-white/80 w-full lg:w-2/4 rounded-md flex-col flex  border-r-2">
+      <div className="p-4 h-full bg-box w-full lg:w-2/4 rounded-md flex-col flex  border-r-2">
         <div className="text-base font-medium">Asset Group</div>
         <div className="grid grid-cols-2 gap-4 h-fit text-xl mt-5 w-full">
           {type.map(

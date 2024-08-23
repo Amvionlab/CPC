@@ -33,10 +33,9 @@ function Header() {
   const { user } = useContext(UserContext);
 
   return (
-    <header className="h-[10vh] bg-prime w-full flex justify-between items-center">
+    <header className="fixed top-0 z-50 h-[10vh] w-full flex justify-between items-center">
       {/* Desktop Logo and Search */}
       <div className="hidden sm:flex items-center">
-        <img src={sampatLogo} className="w-[180px] ml-3" alt="Sampat Logo" />
         <div className="hidden sm:flex lg:flex absolute left-72 text-prime bg-box pt-2 pb-2 pl-5 pr-5 rounded-full w-[25vw] items-center justify-between">
           <input
             type="text"
@@ -44,14 +43,14 @@ function Header() {
             placeholder="Search Your Asset"
           />
           <FontAwesomeIcon
-            className="text-xl text-white md:ml-3 lg:text-flo"
+            className="text-lg text-white md:ml-3 lg:text-flo"
             icon={faSearch}
           />
         </div>
       </div>
 
       {/* Desktop Icons for Settings, Notifications, and User */}
-      <div className="text-white sm:flex gap-3 mr-10 my-auto hidden">
+      <div className="text-white text-sm sm:flex gap-3 mr-10 my-auto hidden">
         {/* Settings */}
         <div
           title="Change Password"

@@ -107,7 +107,7 @@ function App() {
             <div className="main-content flex overflow-y-hidden">
               {/* <Side open={open} setOpen={setOpen} /> */}
               <SideMenu />
-              <div className="flex-1 md:overflow-y-auto">
+              <div className="flex-1 md:overflow-y-auto pt-12 h-screen">
                 <TicketProvider>
                   <Routes>
                     <Route path="/password-change" element={<ChangePass />} />
