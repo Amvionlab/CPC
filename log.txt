@@ -67,3 +67,123 @@ Traceback (most recent call last):
   File "C:\Program Files\Python312\Lib\site-packages\requests\adapters.py", line 507, in send
     raise ConnectTimeout(e, request=request)
 requests.exceptions.ConnectTimeout: HTTPConnectionPool(host='3.111.173.44', port=80): Max retries exceeded with url: /asset.php (Caused by ConnectTimeoutError(<urllib3.connection.HTTPConnection object at 0x000001E7362C2300>, 'Connection to 3.111.173.44 timed out. (connect timeout=None)'))
+2024-08-09 17:40:00,992 - ERROR - Error fetching temperature info: <x_wmi: Unexpected COM Error (-2147217394, 'OLE error 0x8004100e', None, None)>
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 1340, in connect
+    obj = GetObject(moniker)
+          ^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\win32com\client\__init__.py", line 86, in GetObject
+    return Moniker(Pathname, clsctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\win32com\client\__init__.py", line 103, in Moniker
+    moniker, i, bindCtx = pythoncom.MkParseDisplayName(Pathname)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pywintypes.com_error: (-2147217394, 'OLE error 0x8004100e', None, None)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 261, in <module>
+    c = wmi.WMI(namespace="root\OpenHardwareMonitor")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 1354, in connect
+    handle_com_error()
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 258, in handle_com_error
+    raise klass(com_error=err)
+wmi.x_wmi: <x_wmi: Unexpected COM Error (-2147217394, 'OLE error 0x8004100e', None, None)>
+2024-08-09 17:40:04,854 - ERROR - Error in final data submission: 'serial_number'
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 430, in <module>
+    'serial_number': data['serial_number'],
+                     ~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'serial_number'
+2024-08-09 17:43:04,428 - ERROR - Error fetching temperature info: <x_wmi: Unexpected COM Error (-2147217394, 'OLE error 0x8004100e', None, None)>
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 1340, in connect
+    obj = GetObject(moniker)
+          ^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\win32com\client\__init__.py", line 86, in GetObject
+    return Moniker(Pathname, clsctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\win32com\client\__init__.py", line 103, in Moniker
+    moniker, i, bindCtx = pythoncom.MkParseDisplayName(Pathname)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pywintypes.com_error: (-2147217394, 'OLE error 0x8004100e', None, None)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 261, in <module>
+    c = wmi.WMI(namespace="root\OpenHardwareMonitor")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 1354, in connect
+    handle_com_error()
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 258, in handle_com_error
+    raise klass(com_error=err)
+wmi.x_wmi: <x_wmi: Unexpected COM Error (-2147217394, 'OLE error 0x8004100e', None, None)>
+2024-08-09 17:43:07,320 - ERROR - Error in final data submission: 'serial_number'
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 430, in <module>
+    'serial_number': data['serial_number'],
+                     ~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'serial_number'
+2024-08-09 17:43:45,296 - ERROR - Error fetching temperature info: <x_wmi: Unexpected COM Error (-2147217394, 'OLE error 0x8004100e', None, None)>
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 1340, in connect
+    obj = GetObject(moniker)
+          ^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\win32com\client\__init__.py", line 86, in GetObject
+    return Moniker(Pathname, clsctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\win32com\client\__init__.py", line 103, in Moniker
+    moniker, i, bindCtx = pythoncom.MkParseDisplayName(Pathname)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pywintypes.com_error: (-2147217394, 'OLE error 0x8004100e', None, None)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 261, in <module>
+    c = wmi.WMI(namespace=r"root\OpenHardwareMonitor")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 1354, in connect
+    handle_com_error()
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 258, in handle_com_error
+    raise klass(com_error=err)
+wmi.x_wmi: <x_wmi: Unexpected COM Error (-2147217394, 'OLE error 0x8004100e', None, None)>
+2024-08-09 17:43:47,973 - ERROR - Error in final data submission: 'serial_number'
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 430, in <module>
+    'serial_number': data['serial_number'],
+                     ~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'serial_number'
+2024-08-09 22:19:51,039 - ERROR - Error fetching temperature info: <x_wmi: Unexpected COM Error (-2147217394, 'OLE error 0x8004100e', None, None)>
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 1340, in connect
+    obj = GetObject(moniker)
+          ^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\win32com\client\__init__.py", line 86, in GetObject
+    return Moniker(Pathname, clsctx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\win32com\client\__init__.py", line 103, in Moniker
+    moniker, i, bindCtx = pythoncom.MkParseDisplayName(Pathname)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pywintypes.com_error: (-2147217394, 'OLE error 0x8004100e', None, None)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 261, in <module>
+    c = wmi.WMI(namespace=r"root\OpenHardwareMonitor")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 1354, in connect
+    handle_com_error()
+  File "C:\Program Files\Python312\Lib\site-packages\wmi.py", line 258, in handle_com_error
+    raise klass(com_error=err)
+wmi.x_wmi: <x_wmi: Unexpected COM Error (-2147217394, 'OLE error 0x8004100e', None, None)>
+2024-08-10 09:26:59,940 - ERROR - Error in final data submission: 'serial_number'
+Traceback (most recent call last):
+  File "d:\download\qbss\final\new-agent.py", line 430, in <module>
+    'serial_number': data['serial_number'],
+                     ~~~~^^^^^^^^^^^^^^^^^
+KeyError: 'serial_number'
