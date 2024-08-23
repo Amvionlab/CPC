@@ -12,7 +12,23 @@ import { Link } from "react-router-dom";
 
 const SideMenu = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [show, setShow] = useState(false);
+  const [hoveredItem, setHoveredItem] = useState(null);
+
+  const menuItems = [
+    { title: "Asset Management", icon: faThLarge, to: "/management" },
+    { title: "Approval Management", icon: faImages, to: "#" },
+    { title: "Assets Lifecycle", icon: faFolder, to: "#" },
+    { title: "Reports", icon: faDownload, to: "#" },
+    { title: "Setup", icon: faComment, to: "#" },
+  ];
+
+  const handleMouseEnter = (title) => {
+    setHoveredItem(title);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredItem(null);
+  };
 
   return (
     <div className={isExpanded ? "sb-expanded" : ""}>
@@ -22,127 +38,36 @@ const SideMenu = () => {
       >
         <nav className="h-full">
           <ul className="flex flex-col h-full gap-3">
+            {menuItems.map(({ title, icon, to }) => (
+              <li key={title}>
+                <Link
+                  to={to}
+                  onMouseEnter={() => handleMouseEnter(title)}
+                  onMouseLeave={handleMouseLeave}
+                  className={`${
+                    isExpanded ? "justify-start " : "justify-center"
+                  } flex items-center whitespace-nowrap gap-1 p-3 m- hover:bg-white hover:text-prime text-white text-sm rounded-lg transition-all duration-500 ease-in-out active:bg-white focus-visible:bg-white`}
+                >
+                  <FontAwesomeIcon className="text-2xl" icon={icon} />
+                  {!isExpanded && hoveredItem === title && (
+                    <p className="absolute z-50 left-20 px-2 rounded-md text-sm bg-prime text-white">
+                      {title}
+                    </p>
+                  )}
+                  {isExpanded && (
+                    <p className="text-xs transition-opacity duration-1000">
+                      {title}
+                    </p>
+                  )}
+                </Link>
+              </li>
+            ))}
             <li>
-              <Link
-                to="/management"
-                onMouseEnter={() => setShow("Asset Management")}
-                onMouseLeave={() => setShow(false)}
-                className={`${
-                  isExpanded ? "justify-start " : "justify-center"
-                } flex items-center whitespace-nowrap gap-1 p-2 hover:bg-white hover:text-prime text-white text-lg rounded-lg transition-all duration-500 ease-in-out active:bg-white focus-visible:bg-white`}
-              >
-                <FontAwesomeIcon className="text-2xl" icon={faThLarge} />
-                {!isExpanded && show === "Asset Management" && (
-                  <p className="absolute z-50  left-14 px-2 rounded-sm text-sm bg-prime text-white">
-                    Asset Management
-                  </p>
-                )}
-
-                {isExpanded && (
-                  <p className="text-xs transition-opacity duration-1000">
-                    Asset Management
-                  </p>
-                )}
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="#"
-                onMouseEnter={() => setShow("Approval Management")}
-                onMouseLeave={() => setShow(false)}
-                className={`${
-                  isExpanded ? "justify-start " : "justify-center"
-                } flex items-center whitespace-nowrap gap-1 p-2 hover:bg-white hover:text-prime text-white text-lg rounded-lg transition-all duration-500 ease-in-out active:bg-white focus-visible:bg-white`}
-              >
-                <FontAwesomeIcon className="text-2xl" icon={faImages} />
-                {!isExpanded && show === "Approval Management" && (
-                  <p className="absolute z-50 left-14 bg-prime text-white border-1 border-black px-2 rounded-sm text-sm hover:text-white">
-                    Approval Management
-                  </p>
-                )}
-                {isExpanded && (
-                  <p className="text-xs transition-opacity duration-1000">
-                    Approval Management
-                  </p>
-                )}
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="#"
-                onMouseEnter={() => setShow("Assets Lifecycle")}
-                onMouseLeave={() => setShow(false)}
-                className={`${
-                  isExpanded ? "justify-start " : "justify-center"
-                } flex items-center whitespace-nowrap gap-1 p-2 hover:bg-white hover:text-prime text-white text-lg rounded-lg transition-all duration-500 ease-in-out active:bg-white focus-visible:bg-white`}
-              >
-                <FontAwesomeIcon className="text-2xl" icon={faFolder} />
-                {!isExpanded && show === "Assets Lifecycle" && (
-                  <p className="absolute z-50 left-14 bg-prime px-2 rounded-sm text-sm text-white">
-                    Assets Lifecycle
-                  </p>
-                )}
-
-                {isExpanded && (
-                  <p className={`text-xs transition-all duration-1000`}>
-                    Assets Lifecycle
-                  </p>
-                )}
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="#"
-                onMouseEnter={() => setShow("Reports")}
-                onMouseLeave={() => setShow(false)}
-                className={`${
-                  isExpanded ? "justify-start " : "justify-center"
-                } flex items-center whitespace-nowrap gap-1 p-2 hover:bg-white hover:text-prime text-white text-lg rounded-lg transition-all duration-500 ease-in-out active:bg-white focus-visible:bg-white`}
-              >
-                <FontAwesomeIcon className="text-2xl" icon={faDownload} />
-                {!isExpanded && show === "Reports" && (
-                  <p className="absolute z-50 left-14 bg-prime px-2 rounded-sm text-sm text-white">
-                    Reports
-                  </p>
-                )}
-
-                {isExpanded && (
-                  <p className="text-xs transition-opacity duration-1000">
-                    Reports
-                  </p>
-                )}
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="#"
-                onMouseEnter={() => setShow("Setup")}
-                onMouseLeave={() => setShow(false)}
-                className={`${
-                  isExpanded ? "justify-start " : "justify-center"
-                } flex items-center whitespace-nowrap gap-1 p-2 hover:bg-white hover:text-prime text-white text-lg rounded-lg transition-all duration-500 ease-in-out active:bg-white focus-visible:bg-white`}
-              >
-                <FontAwesomeIcon className="text-2xl" icon={faComment} />
-                {!isExpanded && show === "Setup" && (
-                  <p className="absolute z-50 left-14 bg-prime text-white px-2 rounded-sm text-sm ">
-                    Setup
-                  </p>
-                )}
-
-                {isExpanded && (
-                  <p className="text-xs transition-opacity duration-1000">
-                    Setup
-                  </p>
-                )}
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="#"
+              <button
+                onClick={() => setIsExpanded((prev) => !prev)}
                 className={`${
                   isExpanded ? "justify-start" : "justify-center"
-                } flex items-center gap-1 p-2 text-white text-lg rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500 active:bg-white focus-visible:bg-white`}
-                onClick={() => setIsExpanded((prev) => !prev)}
+                } flex items-center gap-1 p-2 text-white text-lg rounded-md transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500 active:bg-white focus-visible:bg-white`}
               >
                 <FontAwesomeIcon
                   className="transition-all duration-1000"
@@ -151,11 +76,7 @@ const SideMenu = () => {
                     transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
                   }}
                 />
-
-                {isExpanded && (
-                  <p className="text-base transition-opacity duration-1000"></p>
-                )}
-              </Link>
+              </button>
             </li>
           </ul>
         </nav>

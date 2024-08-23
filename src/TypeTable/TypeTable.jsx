@@ -28,18 +28,6 @@ const MenuProps = {
     },
   },
 };
-const names = [
-  "Oliver Hansen",
-  "Van Henry",
-  "April Tucker",
-  "Ralph Hubbard",
-  "Omar Alexander",
-  "Carlos Abbott",
-  "Miriam Wagner",
-  "Bradley Wilkerson",
-  "Virginia Andrews",
-  "Kelly Snyder",
-];
 
 function getStyles(name, personName, theme) {
   return {
@@ -70,12 +58,23 @@ function TypeTable() {
 
   const theme = useTheme();
   const [personName, setPersonName] = useState([]);
+  const [columnIndex, setColunmIndex] = useState(8);
 
   const handleChange = (event) => {
     const {
       target: { value },
     } = event;
-    setPersonName(typeof value === "string" ? value.split(",") : value);
+
+    const newPersonName = typeof value === "string" ? value.split(",") : value;
+
+    // Check if the new selection is adding or removing columns
+    if (newPersonName.length > personName.length) {
+      setColunmIndex((prevIndex) => prevIndex + 1);
+    } else {
+      setColunmIndex((prevIndex) => prevIndex - 1);
+    }
+
+    setPersonName(newPersonName);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -100,6 +99,9 @@ function TypeTable() {
   const columnsToShow = allData.active_columns.filter(
     (column) => column.type_id === id
   );
+  const inActiveColumns = allData.inactive_columns.filter(
+    (column) => column.type_id === id
+  );
 
   return (
     <div className="relative lg:flex p-4 gap-4 w-full h-screen font-poppins lg:grid-cols-2 grid-cols-1 bg-slate-200">
@@ -111,7 +113,7 @@ function TypeTable() {
             </Link>
             <p>/{type}</p>
           </div>
-          {/* <div>
+          <div>
             <FormControl sx={{ m: 1, width: 300 }}>
               <InputLabel id="demo-multiple-name-label">Add Column</InputLabel>
               <Select
@@ -123,25 +125,25 @@ function TypeTable() {
                 input={<OutlinedInput label="Add Column" />}
                 MenuProps={MenuProps}
               >
-                {names.map((name) => (
+                {inActiveColumns.map((column) => (
                   <MenuItem
-                    key={name}
-                    value={name}
-                    style={getStyles(name, personName, theme)}
+                    key={column}
+                    value={column}
+                    style={getStyles(column.column_name, personName, theme)}
                   >
-                    {name}
+                    {column.column_name}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
-          </div> */}
+          </div>
         </div>
         <Paper sx={{ width: "100%", overflow: "hidden" }}>
           <TableContainer sx={{ maxHeight: 440 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
-                  {columnsToShow.map((column, index) => (
+                  {columnsToShow.slice(0, columnIndex).map((column, index) => (
                     <TableCell
                       className="capitalize"
                       key={index}
@@ -154,33 +156,27 @@ function TypeTable() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {allData
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, rowIndex) => (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={rowIndex}
-                    >
-                      {columnsToShow.map((column, colIndex) => (
-                        <TableCell
-                          className="capitalize"
-                          key={colIndex}
-                          align="center"
-                        >
-                          {row[column.column_name] || "-"}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
+                <TableRow hover role="checkbox" tabIndex={-1}>
+                  {columnsToShow
+                    .slice(0, columnIndex)
+                    .map((column, colIndex) => (
+                      <TableCell
+                        className="capitalize"
+                        // key={colIndex}
+                        align="center"
+                      >
+                        {/* {row[column.column_name] || "-"} */}
+                        {"-"}
+                      </TableCell>
+                    ))}
+                </TableRow>
               </TableBody>
             </Table>
           </TableContainer>
           <TablePagination
             rowsPerPageOptions={[10, 25, 100]}
             component="div"
-            count={allData.data.length}
+            count={allData.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
