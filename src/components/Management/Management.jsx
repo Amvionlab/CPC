@@ -34,7 +34,7 @@ function Management() {
   }, []);
 
   return (
-    <div className="flex p-2 flex-col w-full font-poppins bg-second">
+    <div className="flex p-3 flex-col w-full font-poppins bg-second">
       {/* First Div: Full Width */}
       <div className="p-4 w-full bg-box rounded-md flex flex-col border-b-2">
         <div className="text-base font-medium">Asset Group</div>
@@ -77,7 +77,7 @@ function Management() {
   </div>
 
   {/* Second Div: 50% Width */}
-  <div className="flex-1 p-4 bg-box rounded-md flex flex-col">
+  <div className="flex-1 p-5 bg-box rounded-md flex flex-col">
     <div className="flex items-center justify-between">
       <div className="relative inline-block">
         <FontAwesomeIcon icon={faBell} className="text-xl" />
@@ -96,7 +96,7 @@ function Management() {
       />
     </div>
 
-    <div className="scrollbar-thin p-4 mt-2 bg-second rounded-lg shadow-inner transition-transform duration-500">
+    <div className="scrollbar-thin p-5 mt-2 bg-second rounded-lg shadow-inner transition-transform duration-500">
       {[...Array(5)].map((_, i) => (
         <div
           key={i}
