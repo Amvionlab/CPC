@@ -12,7 +12,6 @@ import {
   Navigate,
 } from "react-router-dom";
 import "./App.css";
-import Side from "./components/Side/Side";
 import Header from "./components/Header/Header";
 import User from "./components/Admin/User";
 import Department from "./components/Admin/Department";
@@ -103,11 +102,12 @@ function App() {
         <ToastContainer />
         {isAuthenticated ? (
           <>
-            <Header />
+            
             <div className="main-content flex overflow-y-hidden">
               {/* <Side open={open} setOpen={setOpen} /> */}
               <SideMenu />
               <div className="flex-1 md:overflow-y-auto pt-12 h-screen">
+              <Header />
                 <TicketProvider>
                   <Routes>
                     <Route path="/password-change" element={<ChangePass />} />

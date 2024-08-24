@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import sampatLogo from "../../image/sampatName.png";
 import {
   faBars,
   faBell,
@@ -9,13 +8,12 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Side from "../Side/Side";
 import { UserContext } from "../UserContext/UserContext";
 
 function Header() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-
+  const [isInputVisible, setInputVisible] = useState(false);
   const handleIconClick = () => {
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("user");
@@ -33,21 +31,30 @@ function Header() {
   const { user } = useContext(UserContext);
 
   return (
-    <header className="fixed top-0 z-50 h-[10vh] w-full flex justify-between items-center">
+    <header className="fixed bg-second top-0 right-0 h-[8vh] shadow-sm w-full flex justify-between items-center">
       {/* Desktop Logo and Search */}
       <div className="hidden sm:flex items-center">
-        <div className="hidden sm:flex lg:flex absolute left-72 text-prime bg-box pt-2 pb-2 pl-5 pr-5 rounded-full w-[25vw] items-center justify-between">
-          <input
-            type="text"
-            className="bg-transparent text-name font-poppins outline-none text-sm"
-            placeholder="Search Your Asset"
-          />
-          <FontAwesomeIcon
-            className="text-lg text-white md:ml-3 lg:text-flo"
-            icon={faSearch}
-          />
-        </div>
+      <div
+        className={`hidden sm:flex lg:flex absolute left-52 text-prime bg-box p-2 rounded-full items-center justify-between transition-all duration-300 ${
+          isInputVisible ? 'w-[15vw] scale-80' : 'w-10 scale-80'
+        }`}
+      >
+        <FontAwesomeIcon
+          className="text-xl text-prime cursor-pointer"
+          icon={faSearch}
+          onClick={() => setInputVisible(!isInputVisible)}
+        />
+        <input
+          type="text"
+          className={`bg-transparent text-prime  outline-none text-xs ml-3 transition-all duration-300 transform ${
+            isInputVisible ? 'scale-100 opacity-100 w-full' : 'scale-0 opacity-0 w-0'
+          }`}
+          placeholder="Search Your Asset"
+          style={{ transformOrigin: 'left center' }} // Optional: To control the origin of the scale effect
+          autoFocus={isInputVisible}
+        />
       </div>
+    </div>
 
       {/* Desktop Icons for Settings, Notifications, and User */}
       <div className="text-white text-sm sm:flex gap-3 mr-10 my-auto hidden">
