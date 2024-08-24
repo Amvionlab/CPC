@@ -21,7 +21,7 @@ const SideMenu = () => {
     { title: "Approval Management", icon: faImages, to: "#" },
     { title: "Assets Lifecycle", icon: faFolder, to: "#" },
     { title: "Reports", icon: faDownload, to: "#" },
-    { title: "Setup", icon: faComment, to: "#" },
+    { title: "Setup", icon: faComment, to: "Setup" },
   ];
 
   const handleMouseEnter = (title) => {

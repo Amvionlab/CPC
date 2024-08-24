@@ -33,6 +33,7 @@ import { UserContext } from "../src/components/UserContext/UserContext";
 import { TicketProvider } from "../src/components/UserContext/TicketContext";
 import SideMenu from "./components/sideMenu/SideMenu";
 import Management from "./components/Management/Management";
+import Setup from "./components/Setup/Setup";
 import AssetType from "./AssetType/AssetType";
 import TypeTable from "./TypeTable/TypeTable";
 
@@ -98,7 +99,7 @@ function App() {
 
   return (
     <Router>
-      <div className="App bg-second">
+      <div className="App bg-second font-sui">
         <ToastContainer />
         {isAuthenticated ? (
           <>
@@ -126,6 +127,7 @@ function App() {
                       <Route path="/admin/customer" element={<Customer />} />
                       <Route path="/admin/access" element={<Access />} />
                       <Route path="/management" element={<Management />} />
+                      <Route path="/setup" element={<Setup />} />
                       <Route path="/:id/type" element={<AssetType />} />
                       <Route
                         path="/:id/:type/typetable"
