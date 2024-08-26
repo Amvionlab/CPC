@@ -31,32 +31,36 @@ function Header() {
   const { user } = useContext(UserContext);
 
   return (
-    <header className="fixed bg-second top-0 right-0 h-[8vh] shadow-sm w-full flex justify-between items-center">
+    <header className="border-b-2 shadow-md fixed shadow-gray-300 bg-second top-0 right-0 h-[8vh] w-full flex justify-between items-center">
       {/* Desktop Logo and Search */}
       <div className="hidden sm:flex items-center">
-      <div
-        className={`hidden sm:flex lg:flex absolute left-52 text-prime  p-2 rounded-full items-center justify-between transition-all duration-300 ${
-          isInputVisible ? 'w-[15vw] scale-80' : 'w-10 scale-80'
-        }`}
-      >
-        <FontAwesomeIcon
-          className="text-xl text-prime cursor-pointer mr-2"
-          icon={faSearch}
-          onClick={() => setInputVisible(!isInputVisible)}
-        />
-        <div className={isInputVisible ? "p-1 rounded-full shadow-inner bg-box" : "bg-transparent"}>
-        <input
-  type="text"
-  className={`bg-transparent text-prime outline-none text-xs ml-3 transition-all duration-300 transform ${
-    isInputVisible ? 'scale-100 opacity-100 w-full' : 'scale-0 opacity-0 w-0'
-  }`}
-  placeholder="Search Your Asset"
-  style={{ transformOrigin: 'left center' }} // Optional: To control the origin of the scale effect
-  autoFocus={isInputVisible}
-/>
-</div>
+        <div
+          className={`hidden sm:flex lg:flex absolute left-52 text-prime  p-2 rounded-full items-center justify-between transition-all duration-300 ${
+            isInputVisible ? "w-[15vw] scale-80" : "w-10 scale-80"
+          }`}
+        >
+          <FontAwesomeIcon
+            className="text-xl text-prime cursor-pointer mr-2"
+            icon={faSearch}
+            onClick={() => setInputVisible(!isInputVisible)}
+          />
+          <div
+            className={
+              isInputVisible
+                ? "p-1 rounded-full shadow-inner bg-box"
+                : "bg-transparent"
+            }
+          >
+            <input
+              type="text"
+              className={`bg-transparent text-prime outline-none text-xs ml-3 transition-all duration-1000 `}
+              placeholder="Search Your Asset"
+              style={{ transformOrigin: "left center" }} // Optional: To control the origin of the scale effect
+              autoFocus={isInputVisible}
+            />
+          </div>
+        </div>
       </div>
-    </div>
 
       {/* Desktop Icons for Settings, Notifications, and User */}
       <div className="text-white text-sm sm:flex gap-3 mr-2 my-auto hidden">

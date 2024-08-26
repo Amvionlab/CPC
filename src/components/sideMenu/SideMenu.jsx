@@ -40,7 +40,7 @@ const SideMenu = () => {
       >
         <nav className="h-full">
           <ul className="flex flex-col h-full gap-3">
-          <li className="">
+            <li className="">
               <Link
                 to="/"
                 className={`${
@@ -49,17 +49,10 @@ const SideMenu = () => {
               >
                 {!isExpanded && <img src={logo} width="40px" alt="" />}
 
-                {isExpanded && (
-                  <img
-                    className=""
-                    src={sampatName}
-                    alt=""
-                  />
-                )}
+                {isExpanded && <img className="" src={sampatName} alt="" />}
               </Link>
-              </li>
+            </li>
             {menuItems.map(({ title, icon, to }) => (
-              
               <li key={title}>
                 <Link
                   to={to}
@@ -67,11 +60,14 @@ const SideMenu = () => {
                   onMouseLeave={handleMouseLeave}
                   className={`${
                     isExpanded ? "justify-start " : "justify-center"
-                  } flex items-center whitespace-nowrap gap-1 p-3 m-1 mr-2 hover:bg-white hover:text-prime text-white text-sm rounded-lg transition-all duration-500 ease-in-out active:bg-white focus-visible:bg-white`}
+                  } flex items-center whitespace-nowrap gap-1 p-3 m-1  hover:bg-white hover:text-prime text-white text-sm rounded-lg transition-all duration-500 ease-in-out active:bg-white focus-visible:bg-white`}
                 >
-                  <FontAwesomeIcon className="text-md mr-2" icon={icon} />
+                  <FontAwesomeIcon
+                    className="text-lg  text-center"
+                    icon={icon}
+                  />
                   {!isExpanded && hoveredItem === title && (
-                    <p className="absolute z-50 left-20 px-2 rounded-md text-sm bg-prime text-white">
+                    <p className="absolute z-50 left-20 px-2 rounded-sm text-sm bg-prime text-white">
                       {title}
                     </p>
                   )}
@@ -83,27 +79,29 @@ const SideMenu = () => {
                 </Link>
               </li>
             ))}
-             <li>
-                <Link
-                  to="#"
-                  className={`${
-                    isExpanded ? "justify-start" : "justify-center"
-                  } flex items-center gap-1 p-3 m-1 mr-2 text-white text-lg rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500 active:bg-white focus-visible:bg-white`}
-                  onClick={() => setIsExpanded((prev) => !prev)}
-                >
-                  <FontAwesomeIcon
-                    className="transition-all duration-1000 text-md mr-2"
-                    icon={faForward}
-                    style={{
-                      transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
-                    }}
-                  />
+            <li>
+              <Link
+                to="#"
+                className={`${
+                  isExpanded ? "justify-start" : "justify-center"
+                } flex items-center gap-1 p-3 m-1  text-white text-lg rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500 active:bg-white focus-visible:bg-white`}
+                onClick={() => setIsExpanded((prev) => !prev)}
+              >
+                <FontAwesomeIcon
+                  className="transition-all duration-1000 text-md "
+                  icon={faForward}
+                  style={{
+                    transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                  }}
+                />
 
-                  {isExpanded && (
-                    <p className="text-sm transition-opacity justify-right ">Collapse</p>
-                  )}
-                </Link>
-              </li>
+                {isExpanded && (
+                  <p className="text-sm transition-opacity justify-right ">
+                    Collapse
+                  </p>
+                )}
+              </Link>
+            </li>
           </ul>
         </nav>
       </aside>
