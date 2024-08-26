@@ -10,6 +10,7 @@ import {
   Routes,
   Route,
   Navigate,
+  useNavigate,
 } from "react-router-dom";
 import "./App.css";
 import Header from "./components/Header/Header";
@@ -18,7 +19,7 @@ import Department from "./components/Admin/Department";
 import Customer from "./components/Admin/Customer";
 import Domain from "./components/Admin/Domain";
 import SubDomain from "./components/Admin/SubDomain";
-import Location from "./components/Admin/Location";
+import Location from "./components/Admin/Location"; // Location component
 import Sla from "./components/Admin/Sla";
 import Ticket_noc from "./components/Admin/Ticket_noc";
 import Access from "./components/Admin/Access";
@@ -26,7 +27,7 @@ import Ticket_status from "./components/Admin/Ticket_status";
 import Ticket_service from "./components/Admin/Ticket_service";
 import Ticket_type from "./components/Admin/Ticket_type";
 import Login from "./components/Login/Login";
-import ChangePass from "./components/Login/Change_pass"; // Ensure correct import
+import ChangePass from "./components/Login/Change_pass";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { UserContext } from "../src/components/UserContext/UserContext";
@@ -103,12 +104,10 @@ function App() {
         <ToastContainer />
         {isAuthenticated ? (
           <>
-            
             <div className="main-content flex overflow-y-hidden">
-              {/* <Side open={open} setOpen={setOpen} /> */}
               <SideMenu />
               <div className="flex-1 md:overflow-y-auto pt-12 h-screen">
-              <Header />
+                <Header />
                 <TicketProvider>
                   <Routes>
                     <Route path="/password-change" element={<ChangePass />} />
@@ -157,6 +156,8 @@ function App() {
                         element={<Ticket_noc />}
                       />
                       <Route path="/admin/subdomain" element={<SubDomain />} />
+                      {/* Add the Route for /setup/location */}
+                      <Route path="/setup/location" element={<Location />} />
                     </>
                   </Routes>
                 </TicketProvider>

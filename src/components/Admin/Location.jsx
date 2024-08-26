@@ -107,18 +107,29 @@ const Form = () => {
         body: form,
       });
       const result = await response.json();
+      
       if (!response.ok) {
         throw new Error(result.message || "Something went wrong");
       }
-      setSubmissionStatus({ success: true, message: result.message });
-      toast.success("Branch added");
-      location.reload();
+
+      // Handle response based on the message
+      if (result.message === 'Location already exists.') {
+        setSubmissionStatus({ success: false, message: result.message });
+        toast.error(result.message); // Display error message
+      } else if (result.message === 'Location added successfully.') {
+        setSubmissionStatus({ success: true, message: result.message });
+        toast.success(result.message); // Display success message
+        location.reload(); // Reload the page to reflect changes
+      } else {
+        throw new Error("Unexpected response message.");
+      }
     } catch (error) {
       setSubmissionStatus({
         success: false,
         message:
           "There was a problem with your fetch operation: " + error.message,
       });
+      toast.error("There was a problem with your fetch operation: " + error.message); // Display error message
     }
   };
 
@@ -168,8 +179,11 @@ const Form = () => {
     const tableHeaders = Array.from(document.querySelectorAll(".header span"))
       .map(header => header.textContent.trim());
   
-    // Get table data values
-    const tableData = Array.from(document.querySelectorAll("table tr")).map(row =>
+    // Get table data values, excluding the header row
+    const tableRows = Array.from(document.querySelectorAll("table tr"));
+    
+    // Skip the first row if it is the header row
+    const tableData = tableRows.slice(1).map(row =>
       Array.from(row.querySelectorAll("td")).map(cell => cell.textContent.trim())
     );
   
@@ -193,8 +207,6 @@ const Form = () => {
     link.click();
     document.body.removeChild(link);
   };
-  
-  
   
   const exportExcel = () => {
     const table = document.querySelector('.filter-table');
@@ -264,7 +276,7 @@ const Form = () => {
             <form onSubmit={handleSubmit} className="space-y-4 text-label">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
                 <div className="font-mont font-semibold text-2xl mb-4">
-                  Branch Details:
+                  Location Details:
                 </div>
               </div>
 
@@ -277,7 +289,7 @@ const Form = () => {
                   <input
                     type="text"
                     name="name"
-                    placeholder="Enter Branch Name"
+                    placeholder="Enter Location Name"
                     value={formData.name}
                     onChange={handleChange}
                     required
@@ -323,11 +335,11 @@ const Form = () => {
 
         {/* Table displaying fetched user data */}
         <div className="ticket-table mt-8">
-          <h2 className="text-2xl font-bold text-prime mb-4"><span>Branch Data </span><span className="items-end"><button
+          <h2 className="text-2xl font-bold text-prime mb-4"><span>Location Data </span><span className="items-end"><button
           onClick={() => setShowForm(!showForm)}
           className="bg-prime font-mont font-semibold text-sm text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
         >
-          {showForm ? "Close" : "+ Add Branch"}
+          {showForm ? "Close" : "+ Add Location"}
         </button></span></h2>
         <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
             Rows per page:

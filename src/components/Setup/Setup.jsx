@@ -1,27 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import PinDropIcon from '@mui/icons-material/PinDrop';
+// Setup.jsx
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import PinDropIcon from "@mui/icons-material/PinDrop";
 
+function Setup() {
+  const navigate = useNavigate();
 
-function App() {
-
-  const [buttons] = useState([
-    { title: "Location", sub: "Location,IP address", icon: <PinDropIcon /> },
-     ]);
-    
+  const buttons = [
+    { title: "Location", sub: "Location,IP address", icon: <PinDropIcon /> }
+    // Add other buttons if needed
+  ];
 
   return (
-    <div className="w-full h-full relative ">
+    <div className="w-full h-full relative">
       <div
-        className="absolute h-[150px] w-[150px]  rounded-full  transition-transform ease-linear"
-        style={{ top: '200px', left: '200px' }}
+        className="absolute h-[150px] w-[150px] rounded-full transition-transform ease-linear"
+        style={{ top: "200px", left: "200px" }}
       ></div>
-
 
       <div className="h-full p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 bg-transparent">
         {buttons.map((item, index) => (
           <div
             key={index}
-            className="group cursor-pointer flex flex-row p-4 gap-4 items-center bg-white/30 backdrop-blur-[15px] border border-white/30 rounded-lg transition-transform  hover:bg-blue-100/50 hover:shadow-lg hover:border-blue-500"
+            className="group cursor-pointer flex flex-row p-4 gap-4 items-center bg-white/30 backdrop-blur-[15px] border border-white/30 rounded-lg transition-transform hover:bg-blue-100/50 hover:shadow-lg hover:border-blue-500"
+            onClick={() => navigate("/setup/location")} // Navigate to /setup/location
           >
             <span className="text-blue-500 text-3xl transition-transform transform group-hover:rotate-45 group-hover:scale-125 group-hover:translate-x-2">
               {item.icon}
@@ -37,4 +39,4 @@ function App() {
   );
 }
 
-export default App;
+export default Setup;
