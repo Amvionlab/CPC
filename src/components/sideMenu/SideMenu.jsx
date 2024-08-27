@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faThLarge,
-  faImages,
-  faFolder,
-  faDownload,
-  faComment,
+  faBox,
   faForward,
+  faCheckCircle,  // Approval
+  faSyncAlt,      // Lifecycle (Alternative: faLifeRing)
+  faFileAlt,      // Report
+  faWrench,
+  faTachometerAlt           // Setup
 } from "@fortawesome/free-solid-svg-icons";
+
 import { Link } from "react-router-dom";
 import logo from "../../image/sampat-logo.png";
 import sampatName from "../../image/sampatName.png";
@@ -17,11 +19,12 @@ const SideMenu = () => {
   const [hoveredItem, setHoveredItem] = useState(null);
 
   const menuItems = [
-    { title: "Asset Management", icon: faThLarge, to: "/management" },
-    { title: "Approval Management", icon: faImages, to: "#" },
-    { title: "Assets Lifecycle", icon: faFolder, to: "#" },
-    { title: "Reports", icon: faDownload, to: "#" },
-    { title: "Setup", icon: faComment, to: "Setup" },
+    { title: "Dashboard", icon: faTachometerAlt, to: "/dashboard" },
+    { title: "Asset Inventory", icon: faBox, to: "/management" },
+    { title: "Approval Handling", icon: faCheckCircle, to: "#" },
+    { title: "Assets Lifecycle", icon: faSyncAlt, to: "#" },
+    { title: "Reports", icon: faFileAlt, to: "#" },
+    { title: "Setup Wizard", icon: faWrench, to: "Setup" },
   ];
 
   const handleMouseEnter = (title) => {
@@ -35,75 +38,96 @@ const SideMenu = () => {
   return (
     <div className={isExpanded ? "sb-expanded" : ""}>
       <aside
-        className="relative inset-y-0 z-50 h-full text-sui left-0 py-4 px-2 bg-prime transition-all duration-500 ease-in-out"
-        style={{ width: isExpanded ? "12.5rem" : "5rem" }}
+        className="relative inset-y-0 z-50 h-full text-sui left-0 py-4 px-2 bg-prime transition-all"
+        style={{ width: isExpanded ? "12rem" : "5rem" }}
       >
         <nav className="h-full">
           <ul className="flex flex-col h-full gap-3">
           <li className="">
-              <Link
-                to="/"
-                className={`${
-                  isExpanded ? "justify-start " : "justify-center"
-                } flex items-center transition-none whitespace-nowrap gap-1 p-2  hover:text-prime text-white text-lg rounded-lg  active:bg-white focus-visible:bg-white`}
-              >
-                {!isExpanded && <img src={logo} width="40px" alt="" />}
+  <Link
+    to="/"
+    className={`${
+      isExpanded ? "justify-start" : "justify-center"
+    } flex items-center transition-none whitespace-nowrap gap-2 p-2 hover:text-prime text-white text-lg rounded-lg active:bg-white focus-visible:bg-white`}
+  >
+    {!isExpanded && (
+      <img
+        src={logo}
+        width="40px"
+        height="50px"  // Set a fixed height
+        alt="Logo"
+        style={{ minWidth: "40px", minHeight: "50px", textAlign: "center" }}
+      />
+    )}
 
-                {isExpanded && (
-                  <img
-                    className=""
-                    src={sampatName}
-                    alt=""
-                  />
-                )}
-              </Link>
-              </li>
-            {menuItems.map(({ title, icon, to }) => (
-              
-              <li key={title}>
-                <Link
-                  to={to}
-                  onMouseEnter={() => handleMouseEnter(title)}
-                  onMouseLeave={handleMouseLeave}
-                  className={`${
-                    isExpanded ? "justify-start " : "justify-center"
-                  } flex items-center whitespace-nowrap gap-1 p-3 m-1 mr-2 hover:bg-white hover:text-prime text-white text-sm rounded-lg transition-all duration-500 ease-in-out active:bg-white focus-visible:bg-white`}
-                >
-                  <FontAwesomeIcon className="text-md mr-2" icon={icon} />
-                  {!isExpanded && hoveredItem === title && (
-                    <p className="absolute z-50 left-20 px-2 rounded-md text-sm bg-prime text-white">
-                      {title}
-                    </p>
-                  )}
-                  {isExpanded && (
-                    <p className="text-xs transition-opacity duration-1000">
-                      {title}
-                    </p>
-                  )}
-                </Link>
-              </li>
-            ))}
-             <li>
-                <Link
-                  to="#"
-                  className={`${
-                    isExpanded ? "justify-start" : "justify-center"
-                  } flex items-center gap-1 p-3 m-1 mr-2 text-white text-lg rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500 active:bg-white focus-visible:bg-white`}
-                  onClick={() => setIsExpanded((prev) => !prev)}
-                >
-                  <FontAwesomeIcon
-                    className="transition-all duration-1000 text-md mr-2"
-                    icon={faForward}
-                    style={{
-                      transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
-                    }}
-                  />
+    {isExpanded && (
+      <img
+        className=""
+        src={sampatName}
+        alt="Sampat Name"
+        style={{
+          minWidth: "130px",
+          height: "50px",  
+        }}
+      />
+    )}
+  </Link>
+</li>
 
-                  {isExpanded && (
-                    <p className="text-sm transition-opacity justify-right ">Collapse</p>
-                  )}
-                </Link>
-              </li>
+
+              {menuItems.map(({ title, icon, to }) => (
+  <li key={title}>
+    <Link
+      to={to}
+      onMouseEnter={() => handleMouseEnter(title)}
+      onMouseLeave={handleMouseLeave}
+      className={`${
+        isExpanded ? "justify-start" : "justify-center"
+      } flex items-center whitespace-nowrap gap-2 p-3 m-1 mr-2 hover:bg-white hover:text-prime text-white text-sm rounded-lg transition-all duration-500 ease-in-out active:bg-white focus-visible:bg-white`}
+    >
+      <FontAwesomeIcon
+        className="text-md"
+        icon={icon}
+        style={{ minWidth: "24px", textAlign: "center" }}
+      />
+      {!isExpanded && hoveredItem === title && (
+        <p className="absolute z-50 left-20 px-2 rounded-md text-sm bg-prime text-white">
+          {title}
+        </p>
+      )}
+      {isExpanded && (
+        <p className="text-xs font-medium transition-opacity duration-1000" style={{ minWidth: "100px" }}>
+          {title}
+        </p>
+      )}
+    </Link>
+  </li>
+))}
+<li>
+  <Link
+    to="#"
+    className={`${
+      isExpanded ? "justify-start" : "justify-center"
+    } flex items-center gap-2 p-3 m-1 mt-10 mr-2 text-white rounded-lg transition-all  ease-in-out hover:bg-white hover:text-purple-500 active:bg-white focus-visible:bg-white`}
+    onClick={() => setIsExpanded((prev) => !prev)}
+  >
+    <FontAwesomeIcon
+      className="transition-all duration-300 text-sm"
+      icon={faForward}
+      style={{
+        minWidth: "24px",
+        textAlign: "center",
+        transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+      }}
+    />
+    {isExpanded && (
+      <p className="text-xs font-medium transition-opacity" style={{ minWidth: "100px" }}>
+        Collapse
+      </p>
+    )}
+  </Link>
+</li>
+
           </ul>
         </nav>
       </aside>

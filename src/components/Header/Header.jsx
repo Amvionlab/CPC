@@ -1,11 +1,10 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  faBars,
+  faKey,
   faBell,
-  faGear,
   faSearch,
-  faUser,
+  faSignOutAlt
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { UserContext } from "../UserContext/UserContext";
@@ -66,7 +65,7 @@ function Header() {
           className="w-8 h-8 text-flo bg-box hover:bg-flo hover:text-box rounded-full shadow-inner  cursor-pointer flex items-center justify-center"
           onClick={handleSettingsClick}
         >
-          <FontAwesomeIcon icon={faGear} />
+          <FontAwesomeIcon icon={faKey} />
         </div>
         {/* Notifications */}
         <div className="relative shadow-inner text-flo w-8 h-8 bg-box  hover:bg-flo hover:text-box rounded-full flex items-center justify-center">
@@ -81,7 +80,7 @@ function Header() {
           title="Log out"
           onClick={handleIconClick}
         >
-          <FontAwesomeIcon icon={faUser} />
+          <FontAwesomeIcon icon={faSignOutAlt} />
         </div>
       </div>
     </header>
