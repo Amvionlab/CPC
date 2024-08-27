@@ -31,7 +31,7 @@ function Header() {
   const { user } = useContext(UserContext);
 
   return (
-    <header className="border-b-2 shadow-md fixed shadow-gray-300 bg-second top-0 right-0 h-[8vh] w-full flex justify-between items-center">
+    <header className="border-b-2  fixed shadow-gray-300 bg-box top-0 right-0 h-[8vh] w-full flex justify-between items-center">
       {/* Desktop Logo and Search */}
       <div className="hidden sm:flex items-center">
         <div
@@ -67,13 +67,13 @@ function Header() {
         {/* Settings */}
         <div
           title="Change Password"
-          className="w-8 h-8 text-flo bg-box hover:bg-flo hover:text-box rounded-full shadow-inner  cursor-pointer flex items-center justify-center"
+          className="w-8 h-8 text-flo bg-box hover:bg-flo hover:text-box rounded-full shadow-inner  cursor-pointer flex items-center justify-center border-2"
           onClick={handleSettingsClick}
         >
           <FontAwesomeIcon icon={faGear} />
         </div>
         {/* Notifications */}
-        <div className="relative shadow-inner text-flo w-8 h-8 bg-box  hover:bg-flo hover:text-box rounded-full flex items-center justify-center">
+        <div className="relative shadow-inner text-flo w-8 h-8 bg-box  hover:bg-flo hover:text-box rounded-full flex items-center justify-center border-2">
           <FontAwesomeIcon icon={faBell} />
           {/* <p className="absolute -top-1 -right-1 bg-flo text-black rounded-full w-4 h-4 flex items-center justify-center text-sm">
             3
@@ -81,7 +81,7 @@ function Header() {
         </div>
         {/* User */}
         <div
-          className="w-8 h-8 shadow-inner cursor-pointer text-flo bg-box hover:bg-flo hover:text-box rounded-full flex items-center justify-center"
+          className="w-8 h-8 shadow-inner cursor-pointer text-flo bg-box hover:bg-flo hover:text-box rounded-full flex items-center justify-center border-2"
           title="Log out"
           onClick={handleIconClick}
         >
