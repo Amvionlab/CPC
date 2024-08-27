@@ -26,6 +26,9 @@ export default {
         raleway: ["Raleway", "sans-serif"],
         sui: ["system-ui", "sans-serif"]
       },
+      fontSize: {
+        fontadd: '0.9rem',
+      },
       colors: {
         glass: "rgba(240, 245, 255, 0.7)",
         bgGray: "#2F2F2F",
