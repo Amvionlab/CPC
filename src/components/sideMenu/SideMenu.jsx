@@ -11,8 +11,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { Link } from "react-router-dom";
-import logo from "../../image/sampat-logo.png";
-import sampatName from "../../image/sampatName.png";
+import logo from "../../image/S1.svg";
+import sampatName from "../../image/S2.svg";
 
 const SideMenu = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -39,7 +39,7 @@ const SideMenu = () => {
     <div className={isExpanded ? "sb-expanded" : ""}>
       <aside
         className="relative inset-y-0 z-50 h-full text-sui left-0 py-4 px-2 bg-prime transition-all"
-        style={{ width: isExpanded ? "12rem" : "5rem" }}
+        style={{ width: isExpanded ? "12rem" : "4.5rem" }}
       >
         <nav className="h-full">
           <ul className="flex flex-col h-full gap-3">
@@ -48,9 +48,9 @@ const SideMenu = () => {
     to="/"
     className={`${
       isExpanded ? "justify-start" : "justify-center"
-    } flex items-center transition-none whitespace-nowrap gap-2 p-2 hover:text-prime text-white text-lg rounded-lg active:bg-white focus-visible:bg-white`}
+    } flex items-center transition-none whitespace-nowrap gap-2 p-1 hover:text-prime text-white text-lg rounded-lg active:bg-white focus-visible:bg-white`}
   >
-    {!isExpanded && (
+   
       <img
         src={logo}
         width="40px"
@@ -58,19 +58,20 @@ const SideMenu = () => {
         alt="Logo"
         style={{ minWidth: "40px", minHeight: "50px", textAlign: "center" }}
       />
-    )}
+      {isExpanded && (
+        <img
+          className=""
+          src={sampatName}
+          alt="Sampat Name"
+          style={{
+            minWidth: "115px",
+            height: "40px",  
+          }}
+        />
+      )}
+    
 
-    {isExpanded && (
-      <img
-        className=""
-        src={sampatName}
-        alt="Sampat Name"
-        style={{
-          minWidth: "130px",
-          height: "50px",  
-        }}
-      />
-    )}
+    
   </Link>
 </li>
 
@@ -83,7 +84,7 @@ const SideMenu = () => {
       onMouseLeave={handleMouseLeave}
       className={`${
         isExpanded ? "justify-start" : "justify-center"
-      } flex items-center whitespace-nowrap gap-2 p-3 m-1 mr-2 hover:bg-white hover:text-prime text-white text-sm rounded-lg transition-all duration-500 ease-in-out active:bg-white focus-visible:bg-white`}
+      } flex items-center whitespace-nowrap gap-2 p-3 m-1 mr-2 hover:bg-white hover:text-prime text-white text-sm rounded-lg transition-all duration-300 ease-in-out active:bg-white focus-visible:bg-white`}
     >
       <FontAwesomeIcon
         className="text-md"
@@ -91,12 +92,12 @@ const SideMenu = () => {
         style={{ minWidth: "24px", textAlign: "center" }}
       />
       {!isExpanded && hoveredItem === title && (
-        <p className="absolute z-50 left-20 px-2 rounded-md text-sm bg-prime text-white">
+        <p className="absolute z-50 left-20 p-1 rounded-md text-sm bg-purple-500 text-white">
           {title}
         </p>
       )}
       {isExpanded && (
-        <p className="text-xs font-medium transition-opacity duration-1000" style={{ minWidth: "100px" }}>
+        <p className="text-xs font-medium transition-all duration-300 ease-in-out" style={{ minWidth: "100px" }}>
           {title}
         </p>
       )}

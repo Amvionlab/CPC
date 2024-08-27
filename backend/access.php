@@ -60,10 +60,12 @@ if (mysqli_num_rows($result) > 0) {
                 'lastname' => $user['lastname'],
                 'photo' => $user['photo'],
                 'name' => $access['name'],
-                'approval' => $access['approval'],
+                'add' => $access['add'],
                 'transfer' => $access['transfer'],
-                'asset' => $access['asset'],
-                'creation' => $access['creation']               
+                'dashboard' => $access['dashboard'],
+                'alc' => $access['alc'],
+                'report' => $access['report'],
+                'setup' => $access['setup'],
 
             ]);
         } else {
