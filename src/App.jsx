@@ -37,6 +37,7 @@ import Management from "./components/Management/Management";
 import Setup from "./components/Setup/Setup";
 import AssetType from "./AssetType/AssetType";
 import TypeTable from "./TypeTable/TypeTable";
+import { Group } from "@mui/icons-material";
 
 const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour
 
@@ -156,8 +157,10 @@ function App() {
                         element={<Ticket_noc />}
                       />
                       <Route path="/admin/subdomain" element={<SubDomain />} />
-                      {/* Add the Route for /setup/location */}
-                      <Route path="/setup/location" element={<Location />} />
+                      <Route path="/Setup/location" element={<Location />} />
+                      <Route path="/Setup/group" element={<Group />} />
+                      <Route path="/Setup/type" element={<Ticket_type />} />
+
                     </>
                   </Routes>
                 </TicketProvider>

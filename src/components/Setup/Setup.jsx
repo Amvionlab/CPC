@@ -7,7 +7,9 @@ function Setup() {
   const navigate = useNavigate();
 
   const buttons = [
-    { title: "Location", sub: "Location,IP address", icon: <PinDropIcon /> }
+    { title: "Group", sub: "Group, Type Id", icon: <PinDropIcon />, path: "/setup/group" },
+    { title: "Type", sub: "Type Name", icon: <PinDropIcon />, path: "/setup/type" },
+    { title: "Location", sub: "Location, IP address", icon: <PinDropIcon />, path: "/setup/location" }
     // Add other buttons if needed
   ];
 
@@ -23,7 +25,7 @@ function Setup() {
           <div
             key={index}
             className="group cursor-pointer flex flex-row p-4 gap-4 items-center bg-white/30 backdrop-blur-[15px] border border-white/30 rounded-lg transition-transform hover:bg-blue-100/50 hover:shadow-lg hover:border-blue-500"
-            onClick={() => navigate("/setup/location")} // Navigate to /setup/location
+            onClick={() => navigate(item.path)} 
           >
             <span className="text-blue-500 text-3xl transition-transform transform group-hover:rotate-45 group-hover:scale-125 group-hover:translate-x-2">
               {item.icon}

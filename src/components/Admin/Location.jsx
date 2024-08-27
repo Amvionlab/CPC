@@ -91,7 +91,7 @@ const Form = () => {
     setCurrentPage(selected);
   };
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
     const form = new FormData();
     for (const key in formData) {
@@ -132,6 +132,7 @@ const Form = () => {
       toast.error("There was a problem with your fetch operation: " + error.message); // Display error message
     }
   };
+
 
   const handleFilterChange = (e, field, type) => {
     const value = e.target.value.toLowerCase(); // convert filter value to lowercase
