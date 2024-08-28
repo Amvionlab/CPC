@@ -30,7 +30,7 @@ function Header() {
   const { user } = useContext(UserContext);
 
   return (
-    <header className="fixed bg-box top-0 right-0 h-[8vh] shadow-sm w-full flex justify-between items-center">
+    <header className="fixed bg-box top-0 right-0 h-[8vh] shadow-xs w-full flex justify-between items-center">
       {/* Desktop Logo and Search */}
       <div className="hidden sm:flex items-center">
       <div
