@@ -1,4 +1,35 @@
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  list-style-type: none;
+  padding: 0;
+}
 
+.pagination-page {
+  margin: 0 5px;
+}
+
+.pagination-link {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.pagination-previous, .pagination-next {
+  font-weight: bold;
+}
+
+.pagination-active .pagination-link {
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #007bff;
+}
+
+.pagination-break {
+  margin: 0 5px;
+  padding: 10px 15px;
+  cursor: default;
+}
 
 #app {
   width: 100%;

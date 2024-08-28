@@ -38,7 +38,7 @@ const SideMenu = () => {
   return (
     <div className={isExpanded ? "sb-expanded" : ""}>
       <aside
-        className="relative inset-y-0 z-50 h-full text-sui left-0 py-4 px-2 bg-prime transition-all"
+        className="relative inset-y-0 z-50 h-full text-sui left-0 py-4 px-2 bg-prime transition-all duration-500 ease-in-out"
         style={{ width: isExpanded ? "12rem" : "4.5rem" }}
       >
         <nav className="h-full">
@@ -79,7 +79,7 @@ const SideMenu = () => {
                   onMouseLeave={handleMouseLeave}
                   className={`${
                     isExpanded ? "justify-start" : "justify-center"
-                  } flex items-center whitespace-nowrap gap-2 p-3 m-1 mr-2 rounded-lg transition-all duration-300 ease-in-out 
+                  } flex items-center whitespace-nowrap gap-2 p-3 m-1 mr-2 rounded-lg transition-all duration-500 ease-in-out 
                     ${location.pathname === to ? "bg-white text-prime" : "hover:bg-white hover:text-prime text-white"}`}
                 >
                   <FontAwesomeIcon
@@ -93,7 +93,7 @@ const SideMenu = () => {
                     </p>
                   )}
                   {isExpanded && (
-                    <p className="text-xs font-medium transition-all duration-300 ease-in-out" style={{ minWidth: "100px" }}>
+                    <p className="text-xs font-medium transition-all duration-500 ease-in-out" style={{ minWidth: "100px" }}>
                       {title}
                     </p>
                   )}
@@ -105,7 +105,7 @@ const SideMenu = () => {
                 to="#"
                 className={`${
                   isExpanded ? "justify-start" : "justify-center"
-                } flex items-center gap-2 p-3 m-1 mt-10 mr-2 text-white rounded-lg transition-all  ease-in-out hover:bg-white hover:text-purple-500 active:bg-white focus-visible:bg-white`}
+                } flex items-center gap-2 p-3 m-1 mt-10 mr-2 text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500 active:bg-white focus-visible:bg-white`}
                 onClick={() => setIsExpanded((prev) => !prev)}
               >
                 <FontAwesomeIcon

@@ -401,7 +401,7 @@ const Form = () => {
   <thead className="bg-second border-2 border-prime  text-prime font-semibold font-poppins text-fontadd">
  
     <tr>
-      {["Id", "name", "Group"].map((header, index) => (
+      {["Id", "Type", "Group"].map((header, index) => (
         <td key={index} className="w-1/6 py-4 px-4">
           <div className="flex items-center justify-center">
           <div className="header flex">
@@ -445,7 +445,7 @@ const Form = () => {
       <tr key={user.id} className="bg-white text-fontadd text-center font-medium">
         <td className="border-t py-4 px-4">{(i++)+(offset)}</td>
         <td className="border-t py-4 px-4">{user.type}</td>
-        <td className="border-t py-4 px-4">{user.group_name}</td>
+        <td className="border-t py-4 px-4">{user.group}</td>
 
       </tr>
     ))}
