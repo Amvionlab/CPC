@@ -30,7 +30,7 @@ function Header() {
   const { user } = useContext(UserContext);
 
   return (
-    <header className="fixed bg-second top-0 right-0 h-[8vh] shadow-sm w-full flex justify-between items-center">
+    <header className="fixed bg-box top-0 right-0 h-[8vh] shadow-sm w-full flex justify-between items-center">
       {/* Desktop Logo and Search */}
       <div className="hidden sm:flex items-center">
       <div
@@ -43,7 +43,7 @@ function Header() {
           icon={faSearch}
           onClick={() => setInputVisible(!isInputVisible)}
         />
-        <div className={isInputVisible ? "p-1 rounded-full shadow-inner bg-box" : "bg-transparent"}>
+        <div className={isInputVisible ? "p-1 rounded-full shadow-inner bg-second" : "bg-transparent"}>
         <input
   type="text"
   className={`bg-transparent text-prime outline-none text-xs ml-3 transition-all duration-300 transform ${
@@ -62,13 +62,13 @@ function Header() {
         {/* Settings */}
         <div
           title="Change Password"
-          className="w-8 h-8 text-flo bg-box hover:bg-flo hover:text-box rounded-full shadow-inner  cursor-pointer flex items-center justify-center"
+          className="w-8 h-8 text-flo bg-second hover:bg-flo hover:text-box rounded-full shadow-inner  cursor-pointer flex items-center justify-center"
           onClick={handleSettingsClick}
         >
           <FontAwesomeIcon icon={faKey} />
         </div>
         {/* Notifications */}
-        <div className="relative shadow-inner text-flo w-8 h-8 bg-box  hover:bg-flo hover:text-box rounded-full flex items-center justify-center">
+        <div className="relative shadow-inner text-flo w-8 h-8 bg-second  hover:bg-flo hover:text-box rounded-full flex items-center justify-center">
           <FontAwesomeIcon icon={faBell} />
           {/* <p className="absolute -top-1 -right-1 bg-flo text-black rounded-full w-4 h-4 flex items-center justify-center text-sm">
             3
@@ -76,7 +76,7 @@ function Header() {
         </div>
         {/* User */}
         <div
-          className="w-8 h-8 shadow-inner cursor-pointer text-flo bg-box hover:bg-flo hover:text-box rounded-full flex items-center justify-center"
+          className="w-8 h-8 shadow-inner cursor-pointer text-flo bg-second hover:bg-flo hover:text-box rounded-full flex items-center justify-center"
           title="Log out"
           onClick={handleIconClick}
         >

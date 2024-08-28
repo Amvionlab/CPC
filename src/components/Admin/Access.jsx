@@ -79,8 +79,8 @@ const Form = () => {
           <h2 className="text-2xl font-bold text-prime mb-5">
             <span>Access Matrix </span>
           </h2>
-          <table className="min-w-full mb-5 p-2 bg-box rounded-lg overflow-hidden">
-            <thead className="bg-prime text-white">
+          <table className="min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
+            <thead className="bg-second border-2 border-prime  text-prime font-semibold font-poppins text-fontadd">
               <tr>
                 {[
                   "Id",
@@ -94,7 +94,7 @@ const Form = () => {
                   "Setup",
                   "Active",
                 ].map((header, index) => (
-                  <th key={index} className="min-w-20 p-3 text-center">
+                  <th key={index} className="min-w-20 p-4 text-center">
                     {header}
                   </th>
                 ))}
@@ -102,7 +102,7 @@ const Form = () => {
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-100">
+                <tr key={user.id} className="hover:bg-gray-100 bg-box text-fontadd text-center font-medium">
                   <td className="border-t py-3 px-3 text-center">{user.id}</td>
                   <td className="border-t py-3 px-3 text-center">
                     {user.name}

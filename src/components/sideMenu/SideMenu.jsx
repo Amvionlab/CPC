@@ -48,7 +48,7 @@ const SideMenu = () => {
                 to="/"
                 className={`${
                   isExpanded ? "justify-start" : "justify-center"
-                } flex items-center transition-none whitespace-nowrap gap-2 p-1 hover:text-prime text-white text-lg rounded-lg active:bg-white focus-visible:bg-white`}
+                } flex items-center transition-none whitespace-nowrap gap-2 p-2 pr-3 hover:text-prime text-white text-lg rounded-lg active:bg-white focus-visible:bg-white`}
               >
                 <img
                   src={logo}
@@ -63,7 +63,7 @@ const SideMenu = () => {
                     src={sampatName}
                     alt="Sampat Name"
                     style={{
-                      minWidth: "115px",
+                      minWidth: "110px",
                       height: "40px",  
                     }}
                   />
