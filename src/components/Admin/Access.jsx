@@ -72,29 +72,29 @@ const Form = () => {
   };
 
   return (
-    <div className="bg-second max-h-5/6 w-full text-xs mx-auto p-1 lg:overflow-y-hidden h-auto ticket-scroll">
+    <div className="bg-second max-h-5/6 w-full text-xs mx-auto p-2 pr-6 lg:overflow-y-hidden h-auto ticket-scroll">
       <div className=" m-2 bg-box p-5 w-full rounded-lg font-medium">
         {/* Table displaying fetched user data */}
         <div className="ticket-table mt-8">
           <h2 className="text-2xl font-bold text-prime mb-5">
             <span>Access Matrix </span>
           </h2>
-          <table className="min-w-full mb-5 p-2 bg-box rounded-lg overflow-hidden">
-            <thead className="bg-prime text-white">
+          <table className="min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
+            <thead className="bg-second border-2 border-prime  text-prime font-semibold font-poppins text-fontadd">
               <tr>
                 {[
                   "Id",
                   "Name",
                   "Dashboard",
-                  "Ticket Create",
-                  "Analytics",
-                  "Ticket Action",
-                  "Single Ticket",
-                  "Admin",
-                  "Assign",
+                  "Inventory",
+                  "Add Approval",
+                  "Transfer Approval",
+                  "Asset LifeCycle",
+                  "Report",
+                  "Setup",
                   "Active",
                 ].map((header, index) => (
-                  <th key={index} className="w-1/10 p-3 text-center">
+                  <th key={index} className="min-w-20 p-4 text-center">
                     {header}
                   </th>
                 ))}
@@ -102,7 +102,7 @@ const Form = () => {
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-100">
+                <tr key={user.id} className="hover:bg-gray-100 bg-box text-fontadd text-center font-medium">
                   <td className="border-t py-3 px-3 text-center">{user.id}</td>
                   <td className="border-t py-3 px-3 text-center">
                     {user.name}
@@ -117,52 +117,53 @@ const Form = () => {
                   </td>
                   <td className="border-t py-3 px-3 text-center">
                     <ToggleSwitch
-                      value={user.ticket}
+                      value={user.inventory}
                       onChange={() =>
-                        handleToggle(user.id, "ticket", user.ticket)
+                        handleToggle(user.id, "inventory", user.inventory)
                       }
                     />
                   </td>
                   <td className="border-t py-3 px-3 text-center">
                     <ToggleSwitch
-                      value={user.analytics}
+                      value={user.add}
                       onChange={() =>
-                        handleToggle(user.id, "analytics", user.analytics)
+                        handleToggle(user.id, "add", user.add)
                       }
                     />
                   </td>
                   <td className="border-t py-3 px-3 text-center">
                     <ToggleSwitch
-                      value={user.ticketaction}
+                      value={user.transfer}
                       onChange={() =>
-                        handleToggle(user.id, "ticketaction", user.ticketaction)
+                        handleToggle(user.id, "transfer", user.transfer)
                       }
                     />
                   </td>
                   <td className="border-t py-3 px-3 text-center">
                     <ToggleSwitch
-                      value={user.singleticket}
+                      value={user.alc}
                       onChange={() =>
-                        handleToggle(user.id, "singleticket", user.singleticket)
+                        handleToggle(user.id, "alc", user.alc)
                       }
                     />
                   </td>
                   <td className="border-t py-3 px-3 text-center">
                     <ToggleSwitch
-                      value={user.creation}
+                      value={user.report}
                       onChange={() =>
-                        handleToggle(user.id, "creation", user.creation)
+                        handleToggle(user.id, "report", user.report)
                       }
                     />
                   </td>
                   <td className="border-t py-3 px-3 text-center">
                     <ToggleSwitch
-                      value={user.assign}
+                      value={user.setup}
                       onChange={() =>
-                        handleToggle(user.id, "assign", user.assign)
+                        handleToggle(user.id, "setup", user.setup)
                       }
                     />
                   </td>
+                  
                   <td className="border-t py-3 px-3 text-center">
                     <ToggleSwitch
                       value={user.is_active}

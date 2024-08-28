@@ -113,13 +113,13 @@ function App() {
                 <TicketProvider>
                   <Routes>
                     <Route path="/password-change" element={<ChangePass />} />
-                    {user && user.creation === "1" && (
+                    {user && user.setup === "1" && (
                       <Route
                         path="*"
                         element={<Navigate to="/admin/access" />}
                       />
                     )}
-                    {user && user.creation === "0" && (
+                    {user && user.setup === "0" && (
                       <Route path="*" element={<Navigate to="/dashboard" />} />
                     )}
 

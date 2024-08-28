@@ -26,7 +26,6 @@ const Form = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [attachment, setAttachment] = useState(null);
   const [submissionStatus, setSubmissionStatus] = useState(null);
-  const [attachmentError, setAttachmentError] = useState("");
   const [filters, setFilters] = useState({});
   const [showFilter, setShowFilter] = useState({
     id: false,
@@ -38,7 +37,7 @@ const Form = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${baseURL}/backend/fetchDomain.php`);
+        const response = await fetch(`${baseURL}/backend/fetchGroup.php`);
         const data = await response.json();
         setUsers(data);
         setFilteredUsers(data);
@@ -102,23 +101,34 @@ const Form = () => {
     }
 
     try {
-      const response = await fetch(`${baseURL}/backend/domain_add.php`, {
+      const response = await fetch(`${baseURL}/backend/group_add.php`, {
         method: "POST",
         body: form,
       });
       const result = await response.json();
+     
       if (!response.ok) {
         throw new Error(result.message || "Something went wrong");
       }
-      setSubmissionStatus({ success: true, message: result.message });
-      toast.success("Domain added");
-      location.reload();
+
+      // Handle response based on the message
+      if (result.message === 'Group already exists.') {
+        setSubmissionStatus({ success: false, message: result.message });
+        toast.error(result.message); // Display error message
+      } else if (result.message === 'Group added successfully.') {
+        setSubmissionStatus({ success: true, message: result.message });
+        toast.success(result.message); // Display success message
+        Group.reload(); // Reload the page to reflect changes
+      } else {
+        throw new Error("Unexpected response message.");
+      }
     } catch (error) {
       setSubmissionStatus({
         success: false,
         message:
           "There was a problem with your fetch operation: " + error.message,
       });
+      toast.error("There was a problem with your fetch operation: " + error.message); // Display error message
     }
   };
 
@@ -137,15 +147,15 @@ const Form = () => {
       if (value) {
         filtered = filtered.filter((ticket) => {
           const fieldValue = ticket[field];
-  
+ 
           if (fieldValue == null) {
             if (type === "contain" || type === "equal to") return false;
             if (type === "not contain") return true; if (type === "more than" || type === "less than") return false;
           }
-  
+ 
           const fieldValueStr = fieldValue.toString().toLowerCase();
           const valueStr = value.toLowerCase();
-  
+ 
           if (type === "contain")
             return fieldValueStr.includes(valueStr);
           if (type === "not contain")
@@ -167,78 +177,79 @@ const Form = () => {
     // Get table headers
     const tableHeaders = Array.from(document.querySelectorAll(".header span"))
       .map(header => header.textContent.trim());
-  
-    // Get table data values
-    const tableData = Array.from(document.querySelectorAll("table tr")).map(row =>
+ 
+    // Get table data values, excluding the header row
+    const tableRows = Array.from(document.querySelectorAll("table tr"));
+   
+    // Skip the first row if it is the header row
+    const tableData = tableRows.slice(1).map(row =>
       Array.from(row.querySelectorAll("td")).map(cell => cell.textContent.trim())
     );
-  
+ 
     // Filter out rows that contain filter content
-    const filteredTableData = tableData.filter(row => 
+    const filteredTableData = tableData.filter(row =>
       !row.some(cell => cell.includes("Contains") || cell.includes("Does Not Contain") || cell.includes("Equal To") || cell.includes("More Than") || cell.includes("Less Than"))
     );
-  
+ 
     // Create CSV content
     const csvContent = [
       tableHeaders.join(","),
       ...filteredTableData.map(row => row.join(","))
     ].join("\n");
-  
+ 
     // Create and download CSV file
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", "Domain.csv");
+    link.setAttribute("download", "Group.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
-  
-  
-
+ 
   const exportExcel = () => {
     const table = document.querySelector('.filter-table');
     if (!table) return;
-  
+ 
     // Extract table headers
     const headers = Array.from(document.querySelectorAll(".header span")).map(header => header.textContent.trim());
-  
+ 
     // Extract table data values
     const rows = Array.from(table.querySelectorAll('tbody tr')).map(row =>
       Array.from(row.querySelectorAll('td')).map(td => td.innerText.trim())
     );
-  
+ 
     // Filter out rows that contain filter content
     const filteredRows = rows.filter(row =>
       !row.some(cell => cell.includes("Contains") || cell.includes("Does Not Contain") || cell.includes("Equal To") || cell.includes("More Than") || cell.includes("Less Than"))
     );
-  
+ 
     const data = [headers, ...filteredRows];
     const worksheet = XLSX.utils.aoa_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-    XLSX.writeFile(workbook, 'Domain.xlsx');
+    XLSX.writeFile(workbook, 'Group.xlsx');
   };
-  
-
+ 
+ 
   const exportPDF = () => {
     const table = document.querySelector('.filter-table');
     if (!table) return;
-  
+ 
     // Create a copy of the table
     const tableClone = table.cloneNode(true);
-  
+ 
     // Remove filter dropdowns and inputs from the cloned table
     tableClone.querySelectorAll('.filter').forEach(filter => filter.remove());
-  
+ 
     // Center-align all table cell contents
     tableClone.querySelectorAll('th, td').forEach(cell => {
       cell.style.textAlign = 'center';
     });
-  
+ 
     // Append the cloned table to the body (temporarily)
     document.body.appendChild(tableClone);
-  
+ 
     // Use html2canvas to convert the cloned table to an image
     html2canvas(tableClone).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
@@ -246,29 +257,28 @@ const Form = () => {
       const imgWidth = 210;
       const imgHeight = canvas.height * imgWidth / canvas.width;
       pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-      pdf.save('Domain.pdf');
-  
+      pdf.save('Group.pdf');
+ 
       // Remove the cloned table from the document
       document.body.removeChild(tableClone);
     });
   };
-  
   const offset = currentPage * ticketsPerPage;
   const currentTickets = filteredUsers.slice(offset, offset + ticketsPerPage);
 
   return (
-    <div className="bg-second max-h-5/6 max-w-4/6 text-xs mx-auto p-1 lg:overflow-y-hidden h-auto ticket-scroll">
-      
+    <div className="bg-second max-h-5/6 max-w-full text-xs mx-auto p-2 lg:overflow-y-hidden h-auto ticket-scroll font-poppins">
+     
       {showForm && (
-        <div className="max-w-5xl m-2 mb-4 bg-box p-3 rounded-lg font-mont " >
+        <div className="max-w-full m-2 mb-4 p-4 bg-box rounded-lg font-mont " >
           <div className="ticket-table mt-2">
             <form onSubmit={handleSubmit} className="space-y-4 text-label">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
                 <div className="font-mont font-semibold text-2xl mb-4">
-                  Domain Details:
+                  Add Group :
                 </div>
               </div>
-
+ 
               {/* Additional Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
                 <div className="flex items-center mb-2 mr-4">
@@ -278,11 +288,11 @@ const Form = () => {
                   <input
                     type="text"
                     name="name"
-                    placeholder="Enter Domain Name"
+                    placeholder="Enter Group Name"
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
+                    className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
                   />
                   <button
                   type="submit"
@@ -291,8 +301,8 @@ const Form = () => {
                   Submit
                 </button>
                 </div>
-                
-                
+               
+               
               </div>
              
             </form>
@@ -300,7 +310,7 @@ const Form = () => {
           </div>
         )}
        
-      <div className="max-w-5xl m-2 bg-box p-3 rounded-lg font-mont">
+      <div className="max-w-1/2 m-2 bg-box p-4 rounded-lg font-mont">
        <div className="flex justify-end flex-wrap space-x-2 mt-4">
           <button
             onClick={exportCSV}
@@ -323,81 +333,83 @@ const Form = () => {
         </div>
 
         {/* Table displaying fetched user data */}
-        <div className="ticket-table mt-8">
-          <h2 className="text-2xl font-bold text-prime mb-4"><span>Domain Data </span><span className="items-end"><button
+        <div className="ticket-table mt-8 ">
+          <h2 className="text-2xl font-bold text-prime mb-4"><span>Group Data </span><span className="items-end"><button
           onClick={() => setShowForm(!showForm)}
-          className="bg-prime font-mont font-semibold text-sm text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
+          className="ml-2 bg-second hover:bg-prime hover:text-box font-mont font-bold text-sm text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
         >
-          {showForm ? "Close" : "+ Add Domain"}
+          {showForm ? "Close" : "+ Add Group"}
         </button></span></h2>
         <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
-            Rows per page:
+            Rows per page :
           </label>
           <input
             type="number"
             id="rowsPerPage"
             placeholder={ticketsPerPage}
             onChange={handleRowsPerPageChange}
-            className="w-16 px-1 py-1 border rounded text-gray-900"
+            className="w-16 px-2 py-2 border-2 rounded text-gray-900 ml-2"
             min="0"
           />
-        
+       
 
-          <table className=" min-w-full bg-second rounded-lg overflow-hidden filter-table">
-            <thead className="bg-prime text-white">
-              <tr>
-                {["Id", "name"].map((header, index) => (
-                  <td key={index} className="w-1/6 py-2 px-4">
-                    <div className="flex items-center justify-center">
-                    <div className="header flex">
-                      <span>{header}</span>
-                      <FaFilter
-                        className="cursor-pointer ml-3"
-                        onClick={() => setShowFilter(prevState => ({
-                          ...prevState,
-                          [header.toLowerCase().replace(" ", "")]: !prevState[header.toLowerCase().replace(" ", "")]
-                        }))}
-                      />
-                    </div>
-                  </div>
-                  {showFilter[header.toLowerCase().replace(" ", "")] && (
-                    <div className="mt-2 bg-prime p-2 rounded shadow-md filter">
-                      <select
-                        onChange={(e) => handleFilterChange(e, header.toLowerCase().replace(" ", ""), e.target.value)}
-                        className="mb-2 p-1 border text-prime rounded w-full"
-                      >
-                        <option value="contain">Contains</option>
-                        <option value="not contain">Does Not Contain</option>
-                        <option value="equal to">Equal To</option>
-                        <option value="more than">More Than</option>
-                        <option value="less than">Less Than</option>
-                      </select>
-                      <input
-                        type="text"
-                        placeholder="Enter value"
-                        onChange={(e) => handleFilterChange(e, header.toLowerCase().replace(" ", ""), filters[header.toLowerCase().replace(" ", "")]?.type || "contain")}
-                        className="p-1 border rounded text-prime w-full"
-                      />
-                    </div>
-                  )}
+        <table className=" min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
+       
+  <thead className="bg-second border-2 border-prime  text-prime font-semibold font-poppins text-fontadd">
+ 
+    <tr>
+      {["Id", "name"].map((header, index) => (
+        <td key={index} className="w-1/6 py-4 px-4">
+          <div className="flex items-center justify-center">
+          <div className="header flex">
+            <span>{header}</span>
+            <FaFilter
+              className="cursor-pointer ml-3"
+              onClick={() => setShowFilter(prevState => ({
+                ...prevState,
+                [header.toLowerCase().replace(" ", "")]: !prevState[header.toLowerCase().replace(" ", "")]
+              }))}
+            />
+          </div>
+        </div>
+        {showFilter[header.toLowerCase().replace(" ", "")] && (
+          <div className="mt-2 bg-prime p-2 rounded shadow-md filter">
+            <select
+              onChange={(e) => handleFilterChange(e, header.toLowerCase().replace(" ", ""), e.target.value)}
+              className="mb-2 p-1 border text-prime rounded w-full"
+            >
+              <option value="contain">Contains</option>
+              <option value="not contain">Does Not Contain</option>
+              <option value="equal to">Equal To</option>
+              <option value="more than">More Than</option>
+              <option value="less than">Less Than</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Enter value"
+              onChange={(e) => handleFilterChange(e, header.toLowerCase().replace(" ", ""), filters[header.toLowerCase().replace(" ", "")]?.type || "contain")}
+              className="p-1 border rounded text-prime w-full"
+            />
+          </div>
+        )}
 
-                  </td>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {currentTickets.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-100">
-                  <td className="border-t py-4 px-4">{(i++)+(offset)}</td>
-                  <td className="border-t py-4 px-4">{user.name}</td>
+        </td>
+      ))}
+    </tr>
+  </thead>
+  <tbody>
+    {currentTickets.map((user) => (
+      <tr key={user.id} className="bg-box text-fontadd text-center font-medium">
+        <td className="border-t py-3 px-3">{(i++)+(offset)}</td>
+        <td className="border-t py-3 px-3">{user.group}</td>
 
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      </tr>
+    ))}
+  </tbody>
+</table>
         </div>
          {/* Pagination Controls */}
-         <div className="pagination mt-4 flex justify-center">
+         <div className="pagination mt-4 flex justify-center font-semibold">
           <ReactPaginate
             previousLabel={"Previous"}
             nextLabel={"Next"}
@@ -421,4 +433,3 @@ const Form = () => {
 };
 
 export default Form;
-

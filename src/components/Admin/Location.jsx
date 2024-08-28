@@ -26,7 +26,6 @@ const Form = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [attachment, setAttachment] = useState(null);
   const [submissionStatus, setSubmissionStatus] = useState(null);
-  const [attachmentError, setAttachmentError] = useState("");
   const [filters, setFilters] = useState({});
   const [showFilter, setShowFilter] = useState({
     id: false,
@@ -401,9 +400,9 @@ const Form = () => {
   </thead>
   <tbody>
     {currentTickets.map((user) => (
-      <tr key={user.id} className="bg-white text-fontadd text-center font-medium">
-        <td className="border-t py-4 px-4">{(i++)+(offset)}</td>
-        <td className="border-t py-4 px-4">{user.name}</td>
+      <tr key={user.id} className="bg-box text-fontadd text-center font-medium">
+        <td className="border-t py-3 px-3">{(i++)+(offset)}</td>
+        <td className="border-t py-3 px-3">{user.name}</td>
 
       </tr>
     ))}
