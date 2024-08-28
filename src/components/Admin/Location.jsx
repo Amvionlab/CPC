@@ -359,7 +359,7 @@ const Form = () => {
   <thead className="bg-second border-2 border-prime  text-prime font-semibold font-poppins text-fontadd">
  
     <tr>
-      {["Id", "name"].map((header, index) => (
+      {["Id", "Name"].map((header, index) => (
         <td key={index} className="w-1/6 py-4 px-4">
           <div className="flex items-center justify-center">
           <div className="header flex">
