@@ -27,6 +27,7 @@ import Ticket_status from "./components/Admin/Ticket_status";
 import Ticket_service from "./components/Admin/Ticket_service";
 import Ticket_type from "./components/Admin/Ticket_type";
 import Type from "./components/Admin/Type";
+import Group from "./components/Admin/Group";  // Your custom Group component
 import Login from "./components/Login/Login";
 import ChangePass from "./components/Login/Change_pass";
 import { ToastContainer, toast } from "react-toastify";
@@ -38,7 +39,7 @@ import Management from "./components/Management/Management";
 import Setup from "./components/Setup/Setup";
 import AssetType from "./AssetType/AssetType";
 import TypeTable from "./TypeTable/TypeTable";
-import { Group } from "@mui/icons-material";
+import { Group as GroupIcon } from "@mui/icons-material";  // Renamed the MUI icon import
 
 const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour
 

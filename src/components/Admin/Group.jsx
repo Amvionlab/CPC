@@ -38,7 +38,7 @@ const Form = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${baseURL}/backend/fetchTicket_group.php`);
+        const response = await fetch(`${baseURL}/backend/fetchGroup.php`);
         const data = await response.json();
         setUsers(data);
         setFilteredUsers(data);
@@ -277,7 +277,7 @@ const Form = () => {
             <form onSubmit={handleSubmit} className="space-y-4 text-label">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
                 <div className="font-mont font-semibold text-2xl mb-4">
-                  Add Location :
+                  Add Group :
                 </div>
               </div>
  
@@ -290,7 +290,7 @@ const Form = () => {
                   <input
                     type="text"
                     name="name"
-                    placeholder="Enter Location Name"
+                    placeholder="Enter Group Name"
                     value={formData.name}
                     onChange={handleChange}
                     required
@@ -336,11 +336,11 @@ const Form = () => {
 
         {/* Table displaying fetched user data */}
         <div className="ticket-table mt-8 ">
-          <h2 className="text-2xl font-bold text-prime mb-4"><span>Location Data </span><span className="items-end"><button
+          <h2 className="text-2xl font-bold text-prime mb-4"><span>Group Data </span><span className="items-end"><button
           onClick={() => setShowForm(!showForm)}
           className="ml-2 bg-second hover:bg-prime hover:text-box font-mont font-bold text-sm text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
         >
-          {showForm ? "Close" : "+ Add Location"}
+          {showForm ? "Close" : "+ Add Group"}
         </button></span></h2>
         <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
             Rows per page :
@@ -403,7 +403,7 @@ const Form = () => {
     {currentTickets.map((user) => (
       <tr key={user.id} className="bg-white text-fontadd text-center font-medium">
         <td className="border-t py-4 px-4">{(i++)+(offset)}</td>
-        <td className="border-t py-4 px-4">{user.name}</td>
+        <td className="border-t py-4 px-4">{user.group}</td>
 
       </tr>
     ))}
