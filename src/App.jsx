@@ -26,6 +26,7 @@ import Access from "./components/Admin/Access";
 import Ticket_status from "./components/Admin/Ticket_status";
 import Ticket_service from "./components/Admin/Ticket_service";
 import Ticket_type from "./components/Admin/Ticket_type";
+import Type from "./components/Admin/Type";
 import Login from "./components/Login/Login";
 import ChangePass from "./components/Login/Change_pass";
 import { ToastContainer, toast } from "react-toastify";
@@ -159,7 +160,7 @@ function App() {
                       <Route path="/admin/subdomain" element={<SubDomain />} />
                       <Route path="/Setup/location" element={<Location />} />
                       <Route path="/Setup/group" element={<Group />} />
-                      <Route path="/Setup/type" element={<Ticket_type />} />
+                      <Route path="/Setup/type" element={<Type />} />
 
                     </>
                   </Routes>
