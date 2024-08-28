@@ -24,7 +24,7 @@ function Setup() {
         {buttons.map((item, index) => (
           <div
             key={index}
-            className="group cursor-pointer flex flex-row p-4 gap-4 items-center bg-box backdrop-blur-[15px] border border-white/30 rounded-lg transition-transform hover:bg-blue-100/50 hover:shadow-lg hover:border-blue-500"
+            className="group cursor-pointer flex flex-row p-4 gap-4 items-center bg-box backdrop-blur-[15px] border border-white/30 rounded-lg transition-transform  hover:shadow-lg hover:border-blue-500"
             onClick={() => navigate(item.path)} 
           >
             <span className="text-blue-500 text-3xl transition-transform transform group-hover:rotate-45 group-hover:scale-125 group-hover:translate-x-2">
