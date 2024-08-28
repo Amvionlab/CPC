@@ -15,8 +15,15 @@
   cursor: pointer;
 }
 
-.pagination-previous, .pagination-next {
+.pagination-previous {
   font-weight: bold;
+  margin-right:10px;
+  margin-left:-10px;
+}
+
+.pagination-next{
+  font-weight: bold;
+  margin-left:10px;
 }
 
 .pagination-active .pagination-link {
