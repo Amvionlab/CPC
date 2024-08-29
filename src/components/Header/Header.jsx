@@ -46,7 +46,7 @@ function Header() {
           <div
             className={
               isInputVisible
-                ? "p-1 rounded-full shadow-inner bg-box"
+                ? "p-1 rounded-full shadow-inner bg-second"
                 : "bg-transparent"
             }
           >

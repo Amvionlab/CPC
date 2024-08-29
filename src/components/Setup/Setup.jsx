@@ -23,13 +23,13 @@ function Setup() {
     { title: "Type", sub: "Asset Type and detail", icon: <CategoryIcon />, path: "/setup/type" },
     { title: "Location", sub: "Location Name", icon: <PinDropIcon />, path: "/setup/location" },
     { title: "IP Details", sub: "Location Name, IP details ( range ) ", icon: <LanguageIcon />, path: "/setup/ip_address" },
-    { title: "Template", sub: "Template for Asset Types", icon: <TemplateIcon />, path: "/setup/location" },
-    { title: "Asset Add", sub: "Single Asset Add", icon: <AddBoxIcon />, path: "/setup/location" },
-    { title: "Asset Import", sub: "Multiple Asset Import", icon: <FileUploadIcon />, path: "/setup/location" },
-    { title: "Employee", sub: "Employee's Name and Details", icon: <PeopleIcon />, path: "/setup/location" },
-    { title: "Vendor", sub: "Vendor's Name and Details", icon: <BusinessIcon />, path: "/setup/location" },
-    { title: "User", sub: "Software Users", icon: <PersonIcon />, path: "/setup/location" },
-    { title: "Email Config", sub: "Location Name", icon: <EmailIcon />, path: "/setup/location" },
+    { title: "Template", sub: "Template for Asset Types", icon: <TemplateIcon />, path: "/setup/template" },
+    { title: "Asset Add", sub: "Single Asset Add", icon: <AddBoxIcon />, path: "/setup/asset-add" },
+    { title: "Asset Import", sub: "Multiple Asset Import", icon: <FileUploadIcon />, path: "/setup/asset-import" },
+    { title: "Employee", sub: "Employee's Name and Details", icon: <PeopleIcon />, path: "/setup/employee" },
+    { title: "Vendor", sub: "Vendor's Name and Details", icon: <BusinessIcon />, path: "/setup/vendor" },
+    { title: "User", sub: "Software Users", icon: <PersonIcon />, path: "/setup/user" },
+    { title: "Email Config", sub: "Location Name", icon: <EmailIcon />, path: "/setup/smtp" },
     
     // Add other buttons if needed
   ];
