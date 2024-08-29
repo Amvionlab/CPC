@@ -32,10 +32,42 @@ if ($resultTypes->num_rows > 0) {
     }
 }
 
+$sqlLocations = "SELECT id, `name` FROM location WHERE is_active = 1";
+$resultLocations = $conn->query($sqlLocations);
+
+$locations = array();
+
+if ($resultLocations->num_rows > 0) {
+    while ($row = $resultLocations->fetch_assoc()) {
+        $locations[] = array(
+            "id" => $row["id"],
+            "name" => $row["name"]
+        );
+    }
+}
+
+$sqlIpdetails = "SELECT id, `ip_from`, `ip_to`, `location_id` FROM ip_details WHERE is_active = 1";
+$resultIpdetails = $conn->query($sqlIpdetails);
+
+$Ipdetails = array();
+
+if ($resultIpdetails->num_rows > 0) {
+    while ($row = $resultIpdetails->fetch_assoc()) {
+        $Ipdetails[] = array(
+            "id" => $row["id"],
+            "ip_from" => $row["ip_from"],
+            "ip_to" => $row["ip_to"],
+            "location_id" => $row["location_id"]
+
+        );
+    }
+}
 // Return the data as JSON
 $response = array(
     "groups" => $groups,
-    "types" => $types
+    "types" => $types,
+    "locations"=>$locations,
+    "Ipdetails"=>$Ipdetails
 );
 
 header('Content-Type: application/json');

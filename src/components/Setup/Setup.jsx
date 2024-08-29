@@ -9,7 +9,8 @@ function Setup() {
   const buttons = [
     { title: "Group", sub: "Group", icon: <PinDropIcon />, path: "/setup/group" },
     { title: "Type", sub: "Type Name, Group", icon: <PinDropIcon />, path: "/setup/type" },
-    { title: "Location", sub: "Location, IP address", icon: <PinDropIcon />, path: "/setup/location" }
+    { title: "Location", sub: "Location, IP address", icon: <PinDropIcon />, path: "/setup/location" },
+    { title: "IP Address", sub: "IP address", icon: <PinDropIcon />, path: "/setup/ip_address" }
     // Add other buttons if needed
   ];
 
