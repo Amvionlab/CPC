@@ -26,7 +26,6 @@ const Form = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [attachment, setAttachment] = useState(null);
   const [submissionStatus, setSubmissionStatus] = useState(null);
-  const [attachmentError, setAttachmentError] = useState("");
   const [filters, setFilters] = useState({});
   const [showFilter, setShowFilter] = useState({
     id: false,
@@ -42,6 +41,7 @@ const Form = () => {
         const data = await response.json();
         setUsers(data);
         setFilteredUsers(data);
+        console.log(users)
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -50,7 +50,7 @@ const Form = () => {
     fetchData();
   }, []);
 
-  const navigate = useNavigate();
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -59,22 +59,7 @@ const Form = () => {
     });
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    const allowedExtensions = ["pdf", "jpg", "jpeg", "png"];
-    const fileExtension = file ? file.name.split(".").pop().toLowerCase() : "";
-
-    if (file && allowedExtensions.includes(fileExtension)) {
-      setAttachment(file);
-      setAttachmentError("");
-    } else {
-      setAttachment(null);
-      setAttachmentError(
-        "Invalid file type. Only PDF, JPG, JPEG, and PNG files are allowed."
-      );
-    }
-  };
-
+  
   const handleRowsPerPageChange = (e) => {
     const value = parseInt(e.target.value, 10); // Parse the input value as an integer
     if (!isNaN(value) && value >= 1) {
@@ -147,8 +132,8 @@ const Form = () => {
     Object.keys(filters).forEach((field) => {
       const { type, value } = filters[field];
       if (value) {
-        filtered = filtered.filter((ticket) => {
-          const fieldValue = ticket[field];
+        filtered = filtered.filter((users) => {
+          const fieldValue = users[field];
  
           if (fieldValue == null) {
             if (type === "contain" || type === "equal to") return false;
@@ -173,6 +158,7 @@ const Form = () => {
       }
     });
     setFilteredUsers(filtered);
+    console.log("s",filtered)
   }, [filters, users]);
 
   const exportCSV = () => {
@@ -360,7 +346,7 @@ const Form = () => {
   <thead className="bg-second border-2 border-prime  text-prime font-semibold font-poppins text-fontadd">
  
     <tr>
-      {["Id", "name"].map((header, index) => (
+      {["Id", "Group"].map((header, index) => (
         <td key={index} className="w-1/6 py-4 px-4">
           <div className="flex items-center justify-center">
           <div className="header flex">
@@ -387,11 +373,18 @@ const Form = () => {
               <option value="less than">Less Than</option>
             </select>
             <input
-              type="text"
-              placeholder="Enter value"
-              onChange={(e) => handleFilterChange(e, header.toLowerCase().replace(" ", ""), filters[header.toLowerCase().replace(" ", "")]?.type || "contain")}
-              className="p-1 border rounded text-prime w-full"
-            />
+                          type="text"
+                          placeholder="Enter value"
+                          onChange={(e) =>
+                            handleFilterChange(
+                              e,
+                              header.toLowerCase().replace(" ", ""),
+                              filters[header.toLowerCase().replace(" ", "")]
+                                ?.type || "contain"
+                            )
+                          }
+                          className="p-1 border rounded text-prime w-full"
+                        />
           </div>
         )}
 

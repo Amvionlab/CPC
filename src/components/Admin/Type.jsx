@@ -305,7 +305,7 @@ const Form = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
               <div className="flex items-center mb-2 mr-4">
                 <label className="text-sm font-semibold text-prime mr-2 w-32">
-                  Name
+                  Type
                 </label>
                 <input
                   type="text"
@@ -317,6 +317,9 @@ const Form = () => {
                   className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
                 />
                 {/* Dropdown Field */}
+                <label className="text-sm font-semibold text-prime ml-12 mr-2 w-32">
+                  Group
+                </label>
                 <select
                   name="dropdown"
                   value={formData.dropdown}
@@ -377,31 +380,37 @@ const Form = () => {
 
         {/* Table displaying fetched user data */}
         <div className="ticket-table mt-8 ">
-          <h2 className="text-2xl font-bold text-prime mb-4"><span>Type Data </span><span className="items-end"><button
-          onClick={() => setShowForm(!showForm)}
-          className="ml-2 bg-second hover:bg-prime hover:text-box font-mont font-bold text-sm text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
-        >
-          {showForm ? "Close" : "+ Add Type"}
-        </button></span></h2>
-        <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
-            Rows per page :
-          </label>
-          <input
-            type="number"
-            id="rowsPerPage"
-            placeholder={ticketsPerPage}
-            onChange={handleRowsPerPageChange}
-            className="w-16 px-2 py-2 border-2 rounded text-gray-900 ml-2"
-            min="0"
-          />
-       
+        <h3 className="text-2xl font-bold text-prime mb-4 flex justify-between items-center">
+  <span>
+    Type Data
+    <button
+      onClick={() => setShowForm(!showForm)}
+      className="ml-4 -mt-4 bg-second hover:bg-prime hover:text-box font-mont font-bold text-sm text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
+    >
+      {showForm ? "Close" : "+ Add Type"}
+    </button>
+  </span>
+  <span className="text-xs flex items-center">
+    <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
+      Rows per page:
+    </label>
+    <input
+      type="number"
+      id="rowsPerPage"
+      placeholder={ticketsPerPage}
+      onChange={handleRowsPerPageChange}
+      className="w-16 px-2 py-2 border-2 rounded text-gray-900 ml-2"
+      min="0"
+    />
+  </span>
+</h3> 
 
         <table className=" min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
        
   <thead className="bg-second border-2 border-prime  text-prime font-semibold font-poppins text-fontadd">
  
     <tr>
-      {["Id", "name", "Group"].map((header, index) => (
+      {["Id", "Type", "Group"].map((header, index) => (
         <td key={index} className="w-1/6 py-4 px-4">
           <div className="flex items-center justify-center">
           <div className="header flex">
@@ -445,7 +454,7 @@ const Form = () => {
       <tr key={user.id} className="bg-white text-fontadd text-center font-medium">
         <td className="border-t py-4 px-4">{(i++)+(offset)}</td>
         <td className="border-t py-4 px-4">{user.type}</td>
-        <td className="border-t py-4 px-4">{user.group_name}</td>
+        <td className="border-t py-4 px-4">{user.group}</td>
 
       </tr>
     ))}

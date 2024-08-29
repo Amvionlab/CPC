@@ -27,7 +27,7 @@ if ($resultTypes->num_rows > 0) {
         $types[] = array(
             "type" => $row["type"],
             "group_id" => $row["group_id"],
-            "group_name" => $row["group_name"],
+            "group" => $row["group_name"],
         );
     }
 }
