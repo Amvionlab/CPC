@@ -30,6 +30,7 @@ import Type from "./components/Admin/Type";
 import Group from "./components/Admin/Group";  // Your custom Group component
 import IP_Address from "./components/Admin/IP_Address";
 import Employee from "./components/Admin/Employee";
+import Vendor from "./components/Admin/Vendor";
 import Login from "./components/Login/Login";
 import ChangePass from "./components/Login/Change_pass";
 import { ToastContainer, toast } from "react-toastify";
@@ -166,6 +167,7 @@ function App() {
                       <Route path="/Setup/type" element={<Type />} />
                       <Route path="/Setup/ip_address" element={<IP_Address />} />
                       <Route path="/Setup/employee" element={<Employee />} />
+                      <Route path="/Setup/vendor" element={<Vendor />} />
 
                     </>
                   </Routes>
