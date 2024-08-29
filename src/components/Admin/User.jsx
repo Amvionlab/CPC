@@ -32,7 +32,6 @@ const Form = () => {
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [attachment, setAttachment] = useState(null);
   const [submissionStatus, setSubmissionStatus] = useState(null);
-  const [attachmentError, setAttachmentError] = useState("");
   const [filters, setFilters] = useState({});
   const [showFilter, setShowFilter] = useState({
     id: false,
@@ -325,7 +324,7 @@ const handleRowsPerPageChange = (e) => {
     <div className="bg-second max-h-5/6 max-w-4/6 text-xs mx-auto p-1 lg:overflow-y-hidden h-auto ticket-scroll">
       
       {showForm && (
-        <div className="max-w-5xl m-2 mb-4 bg-box p-3 rounded-lg font-mont " >
+       <div className="max-w-full m-2 mb-4 p-4 bg-box rounded-lg font-mont " >
           <div className="ticket-table mt-2">
             <form onSubmit={handleSubmit} className="space-y-4 text-label">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
@@ -336,33 +335,6 @@ const handleRowsPerPageChange = (e) => {
 
               {/* Additional Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    First Name<span className="text-red-600 text-md font-bold">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="firstname"
-                    placeholder="Enter First Name"
-                    value={formData.firstname}
-                    onChange={handleChange}
-                    required
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
-                  />
-                </div>
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    name="lastname"
-                    placeholder="Enter Last Name"
-                    value={formData.lastname}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
-                  />
-                </div>
                 
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">
@@ -378,20 +350,7 @@ const handleRowsPerPageChange = (e) => {
                     className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
                   />
                 </div>
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Email<span className="text-red-600 text-md font-bold">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Enter Email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
-                  />
-                </div>
+                
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">
                     User Type<span className="text-red-600 text-md font-bold">*</span>
@@ -417,128 +376,8 @@ const handleRowsPerPageChange = (e) => {
                 ))}
               </select>
                 </div>
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Mobile
-                  </label>
-                  <input
-                    type="tel"
-                    name="mobile"
-                    placeholder="Enter Mobile"
-                    value={formData.mobile}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
-                  />
-                </div>
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Location
-                  </label>
-                  <input
-                    type="text"
-                    name="location"
-                    placeholder="Enter Location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
-                  />
-                </div>
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Employee ID
-                  </label>
-                  <input
-                    type="text"
-                    name="employee_id"
-                    placeholder="Enter Employee ID"
-                    value={formData.employee_id}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
-                  />
-                </div>
-                <div className="flex items-center mb-4 mr-4">
-        <label className="text-sm font-semibold text-prime mr-2 w-32">
-          Domain <span className="text-red-600 text-md font-bold">*</span>
-        </label>
-        <select
-          name="domain"
-          value={formData.domain}
-          onChange={handleChange}
-          required
-          className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none focus:border-bgGray focus:ring-bgGray max-w-72"
-        >
-          <option value="" className="custom-option">
-            Select Domain
-          </option>
-          {domains.map((domain) => (
-            <option key={domain.id} value={domain.id} className="custom-option">
-              {domain.name}
-            </option>
-          ))}
-        </select>
-      </div>
-               
-      <div className="flex items-center mb-4 mr-4">
-        <label className="text-sm font-semibold text-prime mr-2 w-32">
-          Sub Domain
-        </label>
-        <select
-          name="sub_domain"
-          value={formData.sub_domain}
-          onChange={handleChange}
-          className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none focus:border-bgGray focus:ring-bgGray max-w-72"
-          disabled={!formData.domain} // Disable if no domain is selected
-        >
-          <option value="" className="custom-option">
-            Select Sub Domain
-          </option>
-          {filteredSubDomains.map((subDomain) => (
-            <option key={subDomain.id} value={subDomain.id} className="custom-option">
-              {subDomain.name}
-            </option>
-          ))}
-        </select>
-      </div>            
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-1 ml-20 pr-20">
-           
-
-            <div className="ml-4 mt-1 md:ml-0 md:w-full flex justify-center items-center">
-              <label
-                htmlFor="dropzone-file"
-                className="flex flex-col items-center justify-center rounded-lg cursor-pointer  dark:hover:bg-bray-800 w-full md:w-1/2"
-              >
-                <div className="flex flex-col items-center justify-center">
-                  <svg
-                    className={attachment ? "w-8 h-8 text-flo dark:text-gray-500" : "w-8 h-8 text-gray-500 dark:text-gray-500"}
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20 16"
-                  >
-                    <path
-                      stroke="currentcolor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                    />
-                  </svg>
-                  <p  className={attachment ? " text-sm text-flo font-bold" : " text-sm text-prime font-bold"}>
-                    {attachment ? attachment.name : "Click to upload"}
-                  </p>
-                </div>
-                <input
-                  id="dropzone-file"
-                  name="attachment"
-                  type="file"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
-              </label>
-            </div>
-          </div>
-
+                  </div>
+              
               <div className="flex justify-center">
                 <button
                   type="submit"
@@ -552,7 +391,7 @@ const handleRowsPerPageChange = (e) => {
           </div>
         )}
        
-      <div className="max-w-5xl m-2 bg-box p-3 rounded-lg font-mont">
+       <div className="max-w-1/2 m-2 bg-box p-4 rounded-lg font-mont">
        <div className="flex justify-end flex-wrap space-x-2 mt-4">
           <button
             onClick={exportCSV}
@@ -595,8 +434,8 @@ const handleRowsPerPageChange = (e) => {
           />
         
 
-        <table className=" min-w-full bg-second rounded-lg overflow-hidden filter-table">
-  <thead className="bg-prime text-white">
+        <table className=" min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
+  <thead className="bg-second border-2 border-prime  text-prime font-semibold font-poppins text-fontadd">
     <tr>
       {["Id", "First Name", "Last Name", "Username", "User Type", "Mobile","Location","Employee ID","Domain","Sub Domain"].map((header, index) => (
         <td key={index} className="w-1/10 py-2 px-4">
@@ -639,7 +478,7 @@ const handleRowsPerPageChange = (e) => {
   </thead>
   <tbody>
     {currentTickets.map((userdet) => (
-      <tr key={userdet.id} className="hover:bg-gray-100">
+      <tr key={userdet.id} className="bg-box text-fontadd text-center font-medium">
          <td className="border-t py-4 px-4">{(i++)+(offset)}</td>
                   <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.firstname}</td>
                   <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.lastname}</td>
