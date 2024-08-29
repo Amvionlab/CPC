@@ -44,11 +44,11 @@ function Management() {
             (item, i) =>
               item.group && (
                 <Link to={`/${item.id}/type`} key={i} className="flex-1">
-                  <div className="m-2 group transform transition-transform duration-300 hover:scale-105 border-2  shadow-md rounded-lg p-4 flex items-center justify-center cursor-pointer">
-                    <p className="font-medium text-base text-gray-700 text-center">
-                      {item.group}
-                    </p>
-                  </div>
+                  <div className="m-2 group transform transition-transform duration-300 hover:scale-105 bg-second shadow-md rounded-lg p-4 flex items-center justify-center cursor-pointer">
+            <p className="font-medium text-base text-gray-700 text-center">
+              {item.group}
+            </p>
+          </div>
                 </Link>
               )
           )}

@@ -41,8 +41,8 @@ const AssetType = () => {
                 .replace(/\s+/g, "")
                 .toUpperCase()}/typetable`}
             >
-              <div className="m-2 group transform transition-transform duration-300 hover:scale-105 border-2  shadow-md rounded-lg p-4 flex items-center justify-center cursor-pointer">
-                <p className="font-medium text-base text-gray-700 text-center">
+             <div className="m-2 group transform transition-transform duration-300 hover:scale-105 bg-second shadow-md rounded-lg p-4 flex items-center justify-center cursor-pointer">
+            <p className="font-medium text-base text-gray-700 text-center">
                   {item.type}
                 </p>
               </div>

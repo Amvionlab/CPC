@@ -13,8 +13,7 @@ import { ConstructionOutlined } from "@mui/icons-material";
 
 const Form = () => {
   const [formData, setFormData] = useState({
-    domain : "",
-    sub_domain : "",
+    
     location : "",
     employee_id : "",
     password: '',
@@ -79,23 +78,7 @@ const Form = () => {
 
     fetchAccess();
 
-    const fetchDrop = async () => {
-      try {
-        const response = await fetch(
-          `${baseURL}backend/dropdown.php`
-        );
-        const data = await response.json();
-       
-        setDomains(data.domains);
-        setSubDomains(data.subDomains);
-        
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchDrop();
-
+    
     const fetchData = async () => {
       try {
         const response = await fetch(`${baseURL}/backend/fetchUsers.php`);
@@ -324,7 +307,7 @@ const handleRowsPerPageChange = (e) => {
     <div className="bg-second max-h-5/6 max-w-4/6 text-xs mx-auto p-1 lg:overflow-y-hidden h-auto ticket-scroll">
       
       {showForm && (
-       <div className="max-w-full m-2 mb-4 p-4 bg-box rounded-lg font-mont " >
+       <div className="max-w-full mt-3 m-2 mb-4 p-2 bg-box rounded-lg font-mont " >
           <div className="ticket-table mt-2">
             <form onSubmit={handleSubmit} className="space-y-4 text-label">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
@@ -334,7 +317,7 @@ const handleRowsPerPageChange = (e) => {
               </div>
 
               {/* Additional Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 ml-10 pr-10 mb-0">
                 
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">
@@ -347,7 +330,7 @@ const handleRowsPerPageChange = (e) => {
                     value={formData.username}
                     onChange={handleChange}
                     required
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
+                    className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
                   />
                 </div>
                 
@@ -359,7 +342,7 @@ const handleRowsPerPageChange = (e) => {
                 name="usertype"
                 value={formData.usertype}
                 onChange={handleChange}
-                className="selectbox flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none focus:border-bgGray focus:ring-bgGray"
+                className="selectbox flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none focus:border-bgGray focus:ring-bgGray"
               >
                 <option value="" className="custom-option">
                   Select User Type
@@ -381,7 +364,7 @@ const handleRowsPerPageChange = (e) => {
               <div className="flex justify-center">
                 <button
                   type="submit"
-                  className="mt-1 bg-prime font-mont font-semibold text-lg text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
+                  className="mt-1 bg-prime font-mont font-semibold text-lg text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
                 >
                   Submit
                 </button>
@@ -391,9 +374,33 @@ const handleRowsPerPageChange = (e) => {
           </div>
         )}
        
-       <div className="max-w-1/2 m-2 bg-box p-4 rounded-lg font-mont">
-       <div className="flex justify-end flex-wrap space-x-2 mt-4">
-          <button
+       <div className="max-w-1/2 m-2 bg-box p-5 rounded-lg font-mont">
+       
+        {/* Table displaying fetched user data */}
+        <div className="ticket-table mt-4">
+        <h3 className="text-2xl font-bold text-prime mb-4 flex justify-between items-center">
+  <span>
+    User Data
+    <button
+      onClick={() => setShowForm(!showForm)}
+      className="ml-4 bg-second hover:bg-prime hover:text-box font-mont font-bold text-sm text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
+    >
+      {showForm ? "Close" : "+ Add User"}
+    </button>
+  </span>
+  <span className="text-xs flex items-center gap-2">
+    <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
+      Rows per page:
+    </label>
+    <input
+      type="number"
+      id="rowsPerPage"
+      placeholder={ticketsPerPage}
+      onChange={handleRowsPerPageChange}
+      className="w-16 px-2 py-2 border-2 rounded text-gray-900 ml-2 mr-2"
+      min="0"
+    />
+    <button
             onClick={exportCSV}
             className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
           >
@@ -411,34 +418,14 @@ const handleRowsPerPageChange = (e) => {
           >
             PDF
           </button>
-        </div>
-
-        {/* Table displaying fetched user data */}
-        <div className="ticket-table mt-8">
-          <h2 className="text-2xl font-bold text-prime mb-4"><span>User Data </span><span className="items-end"><button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-prime font-mont font-semibold text-sm text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
-        >
-          {showForm ? "Close" : "+ Add User"}
-        </button></span></h2>
-        <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
-            Rows per page:
-          </label>
-          <input
-            type="number"
-            id="rowsPerPage"
-            placeholder={ticketsPerPage}
-            onChange={handleRowsPerPageChange}
-            className="w-16 px-1 py-1 border rounded text-gray-900"
-            min="0"
-          />
-        
+  </span>
+</h3> 
 
         <table className=" min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
   <thead className="bg-second border-2 border-prime  text-prime font-semibold font-poppins text-fontadd">
     <tr>
-      {["Id", "First Name", "Last Name", "Username", "User Type", "Mobile","Location","Employee ID","Domain","Sub Domain"].map((header, index) => (
-        <td key={index} className="w-1/10 py-2 px-4">
+      {["Id", "Employee ID", "Employee Name", "Username", "User Type", "Mobile","Location"].map((header, index) => (
+        <td key={index} className="w-1/10 py-4 px-4">
           <div className="flex items-center justify-left gap-2">
                     <div className="header flex">
                       <span className="head">{header}</span>
@@ -479,17 +466,14 @@ const handleRowsPerPageChange = (e) => {
   <tbody>
     {currentTickets.map((userdet) => (
       <tr key={userdet.id} className="bg-box text-fontadd text-center font-medium">
-         <td className="border-t py-4 px-4">{(i++)+(offset)}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.firstname}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.lastname}</td>
+                  <td className="border-t py-4 px-4">{(i++)+(offset)}</td>
+                  <td className="border-t py-4 px-4" style={{ textAlign: 'center' }}>{userdet.employee_id}</td>
+                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.employee_name}</td>
                   <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.username}</td>
                   <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.typename}</td>
                   <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.mobile}</td>
                   <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.location}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'center' }}>{userdet.employee_id}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.domain}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.sub_domain}</td>
-      </tr>
+     </tr>
     ))}
   </tbody>
 </table>
