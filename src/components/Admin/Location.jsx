@@ -90,47 +90,51 @@ const Form = () => {
     setCurrentPage(selected);
   };
 
- const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
     const form = new FormData();
     for (const key in formData) {
-      form.append(key, formData[key]);
+        form.append(key, formData[key]);
     }
     if (attachment) {
-      form.append("attachment", attachment);
+        form.append("attachment", attachment);
     }
 
     try {
-      const response = await fetch(`${baseURL}/backend/location_add.php`, {
-        method: "POST",
-        body: form,
-      });
-      const result = await response.json();
-     
-      if (!response.ok) {
-        throw new Error(result.message || "Something went wrong");
-      }
+        const response = await fetch(`${baseURL}/backend/employee_add.php`, {
+            method: "POST",
+            body: form
+        });
 
-      // Handle response based on the message
-      if (result.message === 'Location already exists.') {
-        setSubmissionStatus({ success: false, message: result.message });
-        toast.error(result.message); // Display error message
-      } else if (result.message === 'Location added successfully.') {
-        setSubmissionStatus({ success: true, message: result.message });
-        toast.success(result.message); // Display success message
-        location.reload(); // Reload the page to reflect changes
-      } else {
-        throw new Error("Unexpected response message.");
-      }
+        // Check if response is ok and then parse JSON
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || "Something went wrong");
+        }
+        
+        const result = await response.json();
+
+        // Handle response based on the message
+        if (result.message === 'Location already exists.') {
+            setSubmissionStatus({ success: false, message: result.message });
+            toast.error(result.message); // Display error message
+        } else if (result.message === 'Location added successfully.') {
+            setSubmissionStatus({ success: true, message: result.message });
+            toast.success(result.message); // Display success message
+            // Optionally reload or update the UI
+            // location.reload(); // Uncomment this line if you want to reload the page
+        } else {
+            throw new Error("Unexpected response message.");
+        }
     } catch (error) {
-      setSubmissionStatus({
-        success: false,
-        message:
-          "There was a problem with your fetch operation: " + error.message,
-      });
-      toast.error("There was a problem with your fetch operation: " + error.message); // Display error message
+        setSubmissionStatus({
+            success: false,
+            message: "There was a problem with your fetch operation: " + error.message,
+        });
+        toast.error("There was a problem with your fetch operation: " + error.message); // Display error message
     }
-  };
+};
 
 
   const handleFilterChange = (e, field, type) => {
