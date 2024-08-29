@@ -13,5 +13,7 @@ include 'config.php';
 
     $conn->close();
    
+
+
 echo json_encode($users);
 ?>

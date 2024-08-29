@@ -1,159 +1,77 @@
-<?php 
-include 'config.php'; 
+<?php
+include 'config.php'; // Include your database connection settings
 
-// Fetch ticket types
-$sqlTicketTypes = "SELECT id, type FROM ticket_type";
-$resultTicketTypes = $conn->query($sqlTicketTypes);
+// Fetch active groups
+$sqlGroups = "SELECT id, `group` FROM asset_group WHERE is_active = 1";
+$resultGroups = $conn->query($sqlGroups);
 
-$ticketTypes = array();
+$groups = array();
 
-if ($resultTicketTypes->num_rows > 0) {
-  while($row = $resultTicketTypes->fetch_assoc()) {
-    $ticketTypes[] = array("id" => $row["id"], "type" => $row["type"]);
-  }
+if ($resultGroups->num_rows > 0) {
+    while ($row = $resultGroups->fetch_assoc()) {
+        $groups[] = array(
+            "id" => $row["id"],
+            "group" => $row["group"]
+        );
+    }
 }
 
-// Fetch sla
-$sqlTicketsla = "SELECT id, level, customer_id FROM sla";
-$resultTicketsla = $conn->query($sqlTicketsla);
+// Fetch active types
+$sqlTypes = "SELECT asset_type.type, asset_type.group_id, asset_group.group AS group_name FROM asset_type JOIN asset_group ON asset_type.group_id = asset_group.id WHERE asset_type.is_active = 1";
+$resultTypes = $conn->query($sqlTypes);
 
-$ticketsla = array();
+$types = array();
 
-if ($resultTicketsla->num_rows > 0) {
-  while($row = $resultTicketsla->fetch_assoc()) {
-    $ticketsla[] = array("id" => $row["id"], "name" => $row["level"], "customer_id" => $row["customer_id"]);
-  }
+if ($resultTypes->num_rows > 0) {
+    while ($row = $resultTypes->fetch_assoc()) {
+        $types[] = array(
+            "type" => $row["type"],
+            "group_id" => $row["group_id"],
+            "group" => $row["group_name"],
+        );
+    }
 }
 
-// noc
-$sqlTicketnoc = "SELECT id, name FROM ticket_noc";
-$resultTicketnoc = $conn->query($sqlTicketnoc);
-
-$ticketnoc = array();
-
-if ($resultTicketnoc->num_rows > 0) {
-  while($row = $resultTicketnoc->fetch_assoc()) {
-    $ticketnoc[] = array("id" => $row["id"], "name" => $row["name"]);
-  }
-}
-
-// service
-$sqlTicketServices = "SELECT id, name FROM ticket_service";
-$resultTicketServices = $conn->query($sqlTicketServices);
-
-$ticketServices = array();
-
-if ($resultTicketServices->num_rows > 0) {
-  while($row = $resultTicketServices->fetch_assoc()) {
-    $ticketServices[] = array("id" => $row["id"], "name" => $row["name"]);
-  }
-}
-
-// Fetch customers
-$sqlCustomers = "SELECT id, name, location, department, contact_person, mobile, email FROM customer";
-$resultCustomers = $conn->query($sqlCustomers);
-
-$customers = array();
-
-if ($resultCustomers->num_rows > 0) {
-  while($row = $resultCustomers->fetch_assoc()) {
-    $customers[] = array(
-      "id" => $row["id"], 
-      "name" => $row["name"], 
-      "location" => $row["location"], 
-      "department" => $row["department"], 
-      "contact_person" => $row["contact_person"], 
-      "mobile" => $row["mobile"], 
-      "email" => $row["email"]
-    );
-  }
-}
-
-// Fetch departments
-$sqlDepartments = "SELECT id, name FROM department";
-$resultDepartments = $conn->query($sqlDepartments);
-
-$departments = array();
-
-if ($resultDepartments->num_rows > 0) {
-  while($row = $resultDepartments->fetch_assoc()) {
-    $departments[] = array("id" => $row["id"], "name" => $row["name"]);
-  }
-}
-
-// Fetch domains
-$sqlDomains = "SELECT id, name FROM domain";
-$resultDomains = $conn->query($sqlDomains);
-
-$domains = array();
-
-if ($resultDomains->num_rows > 0) {
-  while($row = $resultDomains->fetch_assoc()) {
-    $domains[] = array("id" => $row["id"], "name" => $row["name"]);
-  }
-}
-
-// Fetch sub-domains
-$sqlSubDomains = "SELECT id, name, domain_id FROM sub_domain";
-$resultSubDomains = $conn->query($sqlSubDomains);
-
-$subDomains = array();
-
-if ($resultSubDomains->num_rows > 0) {
-  while($row = $resultSubDomains->fetch_assoc()) {
-    $subDomains[] = array("id" => $row["id"], "name" => $row["name"], "domain_id" => $row["domain_id"]);
-  }
-}
-
-// Fetch locations
-$sqlLocations = "SELECT id, name FROM location";
+$sqlLocations = "SELECT id, `name` FROM location WHERE is_active = 1";
 $resultLocations = $conn->query($sqlLocations);
 
 $locations = array();
 
 if ($resultLocations->num_rows > 0) {
-  while($row = $resultLocations->fetch_assoc()) {
-    $locations[] = array("id" => $row["id"], "name" => $row["name"]);
-  }
+    while ($row = $resultLocations->fetch_assoc()) {
+        $locations[] = array(
+            "id" => $row["id"],
+            "name" => $row["name"]
+        );
+    }
 }
 
-// Fetch access
-$sqlAccess = "SELECT id, name FROM access";
-$resultAccess = $conn->query($sqlAccess);
+$sqlIpdetails = "SELECT id, `ip_from`, `ip_to`, `location_id` FROM ip_details WHERE is_active = 1";
+$resultIpdetails = $conn->query($sqlIpdetails);
 
-$Accesses = array();
+$Ipdetails = array();
 
-if ($resultAccess->num_rows > 0) {
-  while($row = $resultAccess->fetch_assoc()) {
-    $Accesses[] = array("id" => $row["id"], "name" => $row["name"]);
-  }
+if ($resultIpdetails->num_rows > 0) {
+    while ($row = $resultIpdetails->fetch_assoc()) {
+        $Ipdetails[] = array(
+            "id" => $row["id"],
+            "ip_from" => $row["ip_from"],
+            "ip_to" => $row["ip_to"],
+            "location_id" => $row["location_id"]
+
+        );
+    }
 }
-
-$sqlSupport = "SELECT id, CONCAT(user.firstname, ' ', user.lastname) AS name FROM user WHERE usertype=5";
-$resultSupport = $conn->query($sqlSupport);
-
-$Support = array();
-
-if ($resultSupport->num_rows > 0) {
-  while($row = $resultSupport->fetch_assoc()) {
-    $Support[] = array("id" => $row["id"], "name" => $row["name"]);
-  }
-}
-
+// Return the data as JSON
 $response = array(
-  "ticketTypes" => $ticketTypes,
-  "ticketnoc" => $ticketnoc,
-  "ticketsla" => $ticketsla,
-  "ticketServices" => $ticketServices,
-  "customers" => $customers,
-  "departments" => $departments,
-  "domains" => $domains,
-  "subDomains" => $subDomains,
-  "locations" => $locations,
-  "Accesses" => $Accesses,
-  "Support" => $Support
+    "groups" => $groups,
+    "types" => $types,
+    "locations"=>$locations,
+    "Ipdetails"=>$Ipdetails
 );
 
-// Output JSON response
+header('Content-Type: application/json');
 echo json_encode($response);
+
+$conn->close();
 ?>

@@ -1,11 +1,10 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  faBars,
+  faKey,
   faBell,
-  faGear,
   faSearch,
-  faUser,
+  faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { UserContext } from "../UserContext/UserContext";
@@ -53,7 +52,11 @@ function Header() {
           >
             <input
               type="text"
-              className={`bg-transparent text-prime outline-none text-xs ml-3 transition-all duration-1000 `}
+              className={`bg-transparent text-prime outline-none text-xs ml-3 transition-all duration-300 transform ${
+                isInputVisible
+                  ? "scale-100 opacity-100 w-full"
+                  : "scale-0 opacity-0 w-0"
+              }`}
               placeholder="Search Your Asset"
               style={{ transformOrigin: "left center" }} // Optional: To control the origin of the scale effect
               autoFocus={isInputVisible}
@@ -67,13 +70,13 @@ function Header() {
         {/* Settings */}
         <div
           title="Change Password"
-          className="w-8 h-8 text-flo bg-box hover:bg-flo hover:text-box rounded-full shadow-inner  cursor-pointer flex items-center justify-center border-2"
+          className="w-8 h-8 text-flo bg-box hover:bg-flo hover:text-box rounded-full shadow-inner  cursor-pointer flex items-center justify-center"
           onClick={handleSettingsClick}
         >
-          <FontAwesomeIcon icon={faGear} />
+          <FontAwesomeIcon icon={faKey} />
         </div>
         {/* Notifications */}
-        <div className="relative shadow-inner text-flo w-8 h-8 bg-box  hover:bg-flo hover:text-box rounded-full flex items-center justify-center border-2">
+        <div className="relative shadow-inner text-flo w-8 h-8 bg-box  hover:bg-flo hover:text-box rounded-full flex items-center justify-center">
           <FontAwesomeIcon icon={faBell} />
           {/* <p className="absolute -top-1 -right-1 bg-flo text-black rounded-full w-4 h-4 flex items-center justify-center text-sm">
             3
@@ -81,11 +84,11 @@ function Header() {
         </div>
         {/* User */}
         <div
-          className="w-8 h-8 shadow-inner cursor-pointer text-flo bg-box hover:bg-flo hover:text-box rounded-full flex items-center justify-center border-2"
+          className="w-8 h-8 shadow-inner cursor-pointer text-flo bg-box hover:bg-flo hover:text-box rounded-full flex items-center justify-center"
           title="Log out"
           onClick={handleIconClick}
         >
-          <FontAwesomeIcon icon={faUser} />
+          <FontAwesomeIcon icon={faSignOutAlt} />
         </div>
       </div>
     </header>

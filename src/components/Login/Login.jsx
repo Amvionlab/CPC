@@ -29,11 +29,14 @@ const Login = ({ onLogin }) => {
           mobile: result.mobile,
           photo: result.photo,
           accessId: result.accessid,
-          approval: result.approval,
+          add: result.add,
           transfer: result.transfer,
           usertype: result.name,
-          asset: result.asset,
-          creation: result.creation
+          dashboard: result.dashboard,
+          alc: result.alc,
+          report: result.report,
+          setup: result.setup,
+          
         });
         onLogin();
         navigate("/dashboard");

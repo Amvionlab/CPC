@@ -11,9 +11,7 @@ import { Link, useParams } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
 
 const AssetType = () => {
-  const { allData } = useFetch(
-    "http://localhost/AMS/backend/fetchTicket_type.php"
-  );
+  const { allData } = useFetch("http://localhost/AMS/backend/fetchType.php");
   const { id } = useParams();
 
   const data = [

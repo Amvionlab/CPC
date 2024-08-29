@@ -10,6 +10,7 @@ import {
   Routes,
   Route,
   Navigate,
+  useNavigate,
 } from "react-router-dom";
 import "./App.css";
 import Header from "./components/Header/Header";
@@ -18,15 +19,18 @@ import Department from "./components/Admin/Department";
 import Customer from "./components/Admin/Customer";
 import Domain from "./components/Admin/Domain";
 import SubDomain from "./components/Admin/SubDomain";
-import Location from "./components/Admin/Location";
+import Location from "./components/Admin/Location"; // Location component
 import Sla from "./components/Admin/Sla";
 import Ticket_noc from "./components/Admin/Ticket_noc";
 import Access from "./components/Admin/Access";
 import Ticket_status from "./components/Admin/Ticket_status";
 import Ticket_service from "./components/Admin/Ticket_service";
 import Ticket_type from "./components/Admin/Ticket_type";
+import Type from "./components/Admin/Type";
+import Group from "./components/Admin/Group";  // Your custom Group component
+import IP_Address from "./components/Admin/IP_Address";
 import Login from "./components/Login/Login";
-import ChangePass from "./components/Login/Change_pass"; // Ensure correct import
+import ChangePass from "./components/Login/Change_pass";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { UserContext } from "../src/components/UserContext/UserContext";
@@ -36,6 +40,7 @@ import Management from "./components/Management/Management";
 import Setup from "./components/Setup/Setup";
 import AssetType from "./AssetType/AssetType";
 import TypeTable from "./TypeTable/TypeTable";
+import { Group as GroupIcon } from "@mui/icons-material";  // Renamed the MUI icon import
 
 const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour
 
@@ -103,22 +108,20 @@ function App() {
         <ToastContainer />
         {isAuthenticated ? (
           <>
-            
             <div className="main-content flex overflow-y-hidden">
-              {/* <Side open={open} setOpen={setOpen} /> */}
               <SideMenu />
               <div className="flex-1 md:overflow-y-auto pt-12 h-screen">
-              <Header />
+                <Header />
                 <TicketProvider>
                   <Routes>
                     <Route path="/password-change" element={<ChangePass />} />
-                    {user && user.creation === "1" && (
+                    {user && user.setup === "1" && (
                       <Route
                         path="*"
                         element={<Navigate to="/admin/access" />}
                       />
                     )}
-                    {user && user.creation === "0" && (
+                    {user && user.setup === "0" && (
                       <Route path="*" element={<Navigate to="/dashboard" />} />
                     )}
 
@@ -157,6 +160,11 @@ function App() {
                         element={<Ticket_noc />}
                       />
                       <Route path="/admin/subdomain" element={<SubDomain />} />
+                      <Route path="/Setup/location" element={<Location />} />
+                      <Route path="/Setup/group" element={<Group />} />
+                      <Route path="/Setup/type" element={<Type />} />
+                      <Route path="/Setup/ip_address" element={<IP_Address />} />
+
                     </>
                   </Routes>
                 </TicketProvider>

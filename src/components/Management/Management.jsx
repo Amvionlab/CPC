@@ -23,7 +23,7 @@ function Management() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost/AMS/backend/fetchTicket_group.php"
+          "http://localhost/AMS/backend/fetchGroup.php"
         );
         setType(response.data);
       } catch (error) {
@@ -32,6 +32,7 @@ function Management() {
     };
     fetchData();
   }, []);
+  console.log(type);
 
   return (
     <div className="flex p-3 flex-col w-full font-poppins bg-second">
