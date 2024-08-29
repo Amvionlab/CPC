@@ -293,7 +293,7 @@ const Form = () => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
+                    className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
                   />
                   <button
                   type="submit"
