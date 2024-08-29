@@ -297,7 +297,7 @@ const Form = () => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
+                    className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
                   />
                   <button
                   type="submit"
@@ -316,8 +316,32 @@ const Form = () => {
         )}
        
       <div className="max-w-1/2 m-2 bg-box p-4 rounded-lg font-mont">
-       <div className="flex justify-end flex-wrap space-x-2 mt-4">
-          <button
+     
+        {/* Table displaying fetched user data */}
+        <div className="ticket-table mt-4">
+        <h3 className="text-2xl font-bold text-prime mb-4 flex justify-between items-center">
+  <span>
+    Location Data
+    <button
+      onClick={() => setShowForm(!showForm)}
+      className="ml-4 bg-second hover:bg-prime hover:text-box font-mont font-bold text-sm text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
+    >
+      {showForm ? "Close" : "+ Add Location"}
+    </button>
+  </span>
+  <span className="text-xs flex items-center gap-2">
+    <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
+      Rows per page:
+    </label>
+    <input
+      type="number"
+      id="rowsPerPage"
+      placeholder={ticketsPerPage}
+      onChange={handleRowsPerPageChange}
+      className="w-16 px-2 py-2 border-2 rounded text-gray-900 ml-2 mr-2"
+      min="0"
+    />
+    <button
             onClick={exportCSV}
             className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
           >
@@ -335,27 +359,8 @@ const Form = () => {
           >
             PDF
           </button>
-        </div>
-
-        {/* Table displaying fetched user data */}
-        <div className="ticket-table mt-8 ">
-          <h2 className="text-2xl font-bold text-prime mb-4"><span>Location Data </span><span className="items-end"><button
-          onClick={() => setShowForm(!showForm)}
-          className="ml-2 bg-second hover:bg-prime hover:text-box font-mont font-bold text-sm text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
-        >
-          {showForm ? "Close" : "+ Add Location"}
-        </button></span></h2>
-        <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
-            Rows per page :
-          </label>
-          <input
-            type="number"
-            id="rowsPerPage"
-            placeholder={ticketsPerPage}
-            onChange={handleRowsPerPageChange}
-            className="w-16 px-2 py-2 border-2 rounded text-gray-900 ml-2"
-            min="0"
-          />
+  </span>
+</h3> 
        
 
         <table className=" min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">

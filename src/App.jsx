@@ -119,7 +119,7 @@ function App() {
                     {user && user.setup === "1" && (
                       <Route
                         path="*"
-                        element={<Navigate to="/admin/access" />}
+                        element={<Navigate to="/setup/access" />}
                       />
                     )}
                     {user && user.setup === "0" && (
@@ -127,9 +127,9 @@ function App() {
                     )}
 
                     <>
-                      <Route path="/admin/user" element={<User />} />
+                      <Route path="/setup/user" element={<User />} />
                       <Route path="/admin/customer" element={<Customer />} />
-                      <Route path="/admin/access" element={<Access />} />
+                      <Route path="/setup/access" element={<Access />} />
                       <Route path="/management" element={<Management />} />
                       <Route path="/setup" element={<Setup />} />
                       <Route path="/:id/type" element={<AssetType />} />

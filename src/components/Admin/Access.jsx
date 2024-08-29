@@ -75,7 +75,7 @@ const Form = () => {
     <div className="bg-second max-h-5/6 w-full text-xs mx-auto p-2 pr-6 lg:overflow-y-hidden h-auto ticket-scroll">
       <div className=" m-2 bg-box p-5 w-full rounded-lg font-medium">
         {/* Table displaying fetched user data */}
-        <div className="ticket-table mt-8">
+        <div className="ticket-table mt-4">
           <h2 className="text-2xl font-bold text-prime mb-5">
             <span>Access Matrix </span>
           </h2>
