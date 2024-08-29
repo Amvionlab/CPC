@@ -22,7 +22,7 @@ function Setup() {
     { title: "Group", sub: "Asset Group Name", icon: <DevicesIcon />, path: "/setup/group" },
     { title: "Type", sub: "Asset Type Name, Group Name", icon: <CategoryIcon />, path: "/setup/type" },
     { title: "Location", sub: "Location Name", icon: <PinDropIcon />, path: "/setup/location" },
-    { title: "IP Details", sub: "Location Name, IP details ( range ) ", icon: <LanguageIcon />, path: "/setup/location" },
+    { title: "IP Details", sub: "Location Name, IP details ( range ) ", icon: <LanguageIcon />, path: "/setup/ip_address" },
     { title: "Template", sub: "Template for Asset Types", icon: <TemplateIcon />, path: "/setup/location" },
     { title: "Asset Add", sub: "Single Asset Add", icon: <AddBoxIcon />, path: "/setup/location" },
     { title: "Asset Import", sub: "Multiple Asset Import", icon: <FileUploadIcon />, path: "/setup/location" },
