@@ -4,7 +4,7 @@ import {
   faKey,
   faBell,
   faSearch,
-  faSignOutAlt
+  faSignOutAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { UserContext } from "../UserContext/UserContext";
@@ -30,45 +30,53 @@ function Header() {
   const { user } = useContext(UserContext);
 
   return (
-    <header className="fixed bg-box top-0 right-0 h-[8vh] shadow-xs w-full flex justify-between items-center">
+    <header className="border-b-2  fixed shadow-gray-300 bg-box top-0 right-0 h-[8vh] w-full flex justify-between items-center">
       {/* Desktop Logo and Search */}
       <div className="hidden sm:flex items-center">
-      <div
-        className={`hidden sm:flex lg:flex absolute left-52 text-prime  p-2 rounded-full items-center justify-between transition-all duration-300 ${
-          isInputVisible ? 'w-[15vw] scale-80' : 'w-10 scale-80'
-        }`}
-      >
-        <FontAwesomeIcon
-          className="text-xl text-prime cursor-pointer mr-2"
-          icon={faSearch}
-          onClick={() => setInputVisible(!isInputVisible)}
-        />
-        <div className={isInputVisible ? "p-1 rounded-full shadow-inner bg-second" : "bg-transparent"}>
-        <input
-  type="text"
-  className={`bg-transparent text-prime outline-none text-xs ml-3 transition-all duration-300 transform ${
-    isInputVisible ? 'scale-100 opacity-100 w-full' : 'scale-0 opacity-0 w-0'
-  }`}
-  placeholder="Search Your Asset"
-  style={{ transformOrigin: 'left center' }} // Optional: To control the origin of the scale effect
-  autoFocus={isInputVisible}
-/>
-</div>
+        <div
+          className={`hidden sm:flex lg:flex absolute left-52 text-prime  p-2 rounded-full items-center justify-between transition-all duration-300 ${
+            isInputVisible ? "w-[15vw] scale-80" : "w-10 scale-80"
+          }`}
+        >
+          <FontAwesomeIcon
+            className="text-xl text-prime cursor-pointer mr-2"
+            icon={faSearch}
+            onClick={() => setInputVisible(!isInputVisible)}
+          />
+          <div
+            className={
+              isInputVisible
+                ? "p-1 rounded-full shadow-inner bg-box"
+                : "bg-transparent"
+            }
+          >
+            <input
+              type="text"
+              className={`bg-transparent text-prime outline-none text-xs ml-3 transition-all duration-300 transform ${
+                isInputVisible
+                  ? "scale-100 opacity-100 w-full"
+                  : "scale-0 opacity-0 w-0"
+              }`}
+              placeholder="Search Your Asset"
+              style={{ transformOrigin: "left center" }} // Optional: To control the origin of the scale effect
+              autoFocus={isInputVisible}
+            />
+          </div>
+        </div>
       </div>
-    </div>
 
       {/* Desktop Icons for Settings, Notifications, and User */}
       <div className="text-white text-sm sm:flex gap-3 mr-2 my-auto hidden">
         {/* Settings */}
         <div
           title="Change Password"
-          className="w-8 h-8 text-flo bg-second hover:bg-flo hover:text-box rounded-full shadow-inner  cursor-pointer flex items-center justify-center"
+          className="w-8 h-8 text-flo bg-box hover:bg-flo hover:text-box rounded-full shadow-inner  cursor-pointer flex items-center justify-center"
           onClick={handleSettingsClick}
         >
           <FontAwesomeIcon icon={faKey} />
         </div>
         {/* Notifications */}
-        <div className="relative shadow-inner text-flo w-8 h-8 bg-second  hover:bg-flo hover:text-box rounded-full flex items-center justify-center">
+        <div className="relative shadow-inner text-flo w-8 h-8 bg-box  hover:bg-flo hover:text-box rounded-full flex items-center justify-center">
           <FontAwesomeIcon icon={faBell} />
           {/* <p className="absolute -top-1 -right-1 bg-flo text-black rounded-full w-4 h-4 flex items-center justify-center text-sm">
             3
@@ -76,7 +84,7 @@ function Header() {
         </div>
         {/* User */}
         <div
-          className="w-8 h-8 shadow-inner cursor-pointer text-flo bg-second hover:bg-flo hover:text-box rounded-full flex items-center justify-center"
+          className="w-8 h-8 shadow-inner cursor-pointer text-flo bg-box hover:bg-flo hover:text-box rounded-full flex items-center justify-center"
           title="Log out"
           onClick={handleIconClick}
         >
