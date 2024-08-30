@@ -534,7 +534,7 @@ const handleRowsPerPageChange = (e) => {
             </span>
           </h3>
         
-
+          <div className="overflow-x-auto ">
           <table className="min-w-full border bg-second rounded-lg overflow-scroll filter-table mt-5">
             <thead className="bg-second border-2 border-prime text-prime font-semibold font-poppins text-fontadd">
     <tr>
@@ -593,6 +593,7 @@ const handleRowsPerPageChange = (e) => {
     ))}
   </tbody>
 </table>
+</div>
         </div>
          {/* Pagination Controls */}
          <div className="pagination mt-4 flex justify-center">

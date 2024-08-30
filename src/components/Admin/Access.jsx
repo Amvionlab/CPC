@@ -79,6 +79,7 @@ const Form = () => {
           <h2 className="text-2xl font-bold text-prime mb-5">
             <span>Access Matrix </span>
           </h2>
+          <div className="overflow-x-auto ">
           <table className="min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
             <thead className="bg-second border-2 border-prime  text-prime font-semibold font-poppins text-fontadd">
               <tr>
@@ -176,6 +177,7 @@ const Form = () => {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </div>

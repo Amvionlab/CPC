@@ -220,7 +220,7 @@ const Form = () => {
               <button onClick={exportPDF} className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none">PDF</button>
             </span>
           </h3>
-
+          <div className="overflow-x-auto ">
           <table className="min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
             <thead className="bg-second border-2 border-prime text-prime font-semibold font-poppins text-fontadd">
               <tr>
@@ -277,6 +277,7 @@ const Form = () => {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
 
         <div className="pagination mt-4 flex justify-center font-semibold">
