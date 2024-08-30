@@ -11,7 +11,7 @@ import { UserContext } from '../UserContext/UserContext';
 
 const Form = () => {
   const [formData, setFormData] = useState({
-    location: "",
+    username: "",
     employee_id: "",
     password: ''
   });
@@ -31,6 +31,7 @@ const Form = () => {
 
   const [showForm, setShowForm] = useState(false);
   const [access, setAccess] = useState([]);
+  const [employee, setEmployee] = useState([]);
 
   useEffect(() => {
     const generatePassword = () => {
@@ -60,6 +61,16 @@ const Form = () => {
       }
     };
 
+    const fetchEmployee = async () => {
+      try {
+        const response = await fetch(`${baseURL}/backend/fetchEmployees.php`);
+        const data = await response.json();
+        setEmployee(data);
+      } catch (error) {
+        console.error("Error fetching access:", error);
+      }
+    };
+
     const fetchUsers = async () => {
       try {
         const response = await fetch(`${baseURL}/backend/fetchUsers.php`);
@@ -72,6 +83,7 @@ const Form = () => {
 
     fetchAccess();
     fetchUsers();
+    fetchEmployee();
   }, []);
 
   const navigate = useNavigate();
@@ -97,27 +109,39 @@ const Form = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     document.body.classList.add('cursor-wait', 'pointer-events-none');
+    
+    // Create a new FormData object
     const form = new FormData();
     for (const key in formData) {
-      form.append(key, formData[key]);
+        // Append each form data key-value pair to the FormData object
+        form.append(key, formData[key]);
+    }
+
+    // Log the form values before submission
+    console.log("Form Values:");
+    for (const [key, value] of form.entries()) {
+        console.log(`${key}: ${value}`);
     }
 
     try {
-      const response = await fetch(`${baseURL}/backend/user_add.php`, {
-        method: "POST",
-        body: form,
-      });
-      const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result.message || "Something went wrong");
-      }
-      toast.success("User added");
-      document.body.classList.remove('cursor-wait', 'pointer-events-none');
-      window.location.reload();
+        const response = await fetch(`${baseURL}/backend/user_add.php`, {
+            method: "POST",
+            body: form,
+        });
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.message || "Something went wrong");
+        }
+        toast.success("User added");
+        document.body.classList.remove('cursor-wait', 'pointer-events-none');
+        window.location.reload();
     } catch (error) {
-      console.error("Error submitting form:", error);
+        console.error("Error submitting form:", error);
+        toast.error("Error adding user. " + error.message);
+        document.body.classList.remove('cursor-wait', 'pointer-events-none');
     }
-  };
+};
+
 
   const pageCount = Math.ceil(filteredUsers.length / ticketsPerPage);
 
@@ -235,7 +259,36 @@ const Form = () => {
                 </div>
               </div>
 
+              
+              
               <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 ml-10 pr-10 mb-0">
+
+              <div className="flex items-center mb-2 mr-4">
+                  <label className="text-sm font-semibold text-prime mr-2 w-32">
+                  Employee Name<span className="text-red-600 text-md font-bold">*</span>
+                  </label>
+                  <select
+                    name="employee_id"
+                    value={formData.employee_id}
+                    onChange={handleChange}
+                    className="selectbox flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none focus:border-bgGray focus:ring-bgGray focus:shadow-prime focus:shadow-sm"
+                  >
+                    <option value="" className="custom-option">
+                      Select Employee
+                    </option>
+                    {employee.map((employee) => (
+                      <option
+                        key={employee.id}
+                        value={employee.id}
+                        className="custom-option"
+                        required
+                      >
+                        {employee.firstname}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">
                     Username<span className="text-red-600 text-md font-bold">*</span>
@@ -417,3 +470,5 @@ const Form = () => {
 };
 
 export default Form;
+
+
