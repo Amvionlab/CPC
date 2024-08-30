@@ -34,14 +34,15 @@ const AssetType = () => {
           </Link>
           /Asset Type
         </div>
-        <div className="grid grid-cols-2 gap-4  text-xl mt-5 w-full">
+        
+        <div className="flex gap-6 flex-wrap">
           {filteredData.map((item, i) => (
             <Link
-              to={`/${id}/${item.type
+              to={`/${item.id}/${item.type
                 .replace(/\s+/g, "")
                 .toUpperCase()}/typetable`}
             >
-             <div className="m-2 group transform transition-transform duration-300 hover:scale-105 bg-second shadow-md rounded-lg p-4 flex items-center justify-center cursor-pointer">
+              <div className="m-2 w-40 group transform transition-transform duration-300 hover:scale-105 bg-second shadow-md rounded-lg p-4 flex items-center justify-center cursor-pointer">
             <p className="font-medium text-base text-gray-700 text-center">
                   {item.type}
                 </p>

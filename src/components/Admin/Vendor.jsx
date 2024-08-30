@@ -11,23 +11,21 @@ import html2canvas from 'html2canvas';
 import { UserContext } from '../UserContext/UserContext';
 import { ConstructionOutlined } from "@mui/icons-material";
 
-const Form = () => {
-  const [formData, setFormData] = useState({
-      firstname: '',
-      lastname: '',
-      empid: '',
-      dept: '',
-      designation: '',
-      authority: '',
+    const Form = () => {
+    const [formData, setFormData] = useState({
+      vendor: '',
+      vendorid: '',
+      gst: '',
+      contact: '',
+      email: '',
+      mobile: '',
       location: '',
+      address: '',
       state: '',
       country: '',
-      build: '',
-      block: '',
-      floor: '',
-      email: '',
-      mobile: ''
-  });
+      attachment: null, // For file upload
+    });
+
   const [message, setMessage] = useState('');
   const { user } = useContext(UserContext);
   const [ticketsPerPage, setTicketsPerPage] = useState(10); // default to 10 rows per page
@@ -73,11 +71,11 @@ const Form = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
-        ...prevState,
-        [name]: value
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
     }));
-};
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -122,7 +120,7 @@ const handleRowsPerPageChange = (e) => {
     }
 
     try {
-        const response = await fetch(`${baseURL}/backend/employee_add.php`, {
+        const response = await fetch(`${baseURL}/backend/vendor_add.php`, {
             method: "POST",
             body: form,
         });
@@ -137,10 +135,10 @@ const handleRowsPerPageChange = (e) => {
         }
 
         // Handle response based on the message
-        if (result.message === 'Employee Already Exists') {
+        if (result.message === 'Vendor Already Exists') {
             setSubmissionStatus({ success: false, message: result.message });
             toast.error(result.message); // Display error message
-        } else if (result.message === 'Employee added successfully.') {
+        } else if (result.message === 'Vendor added successfully.') {
             setSubmissionStatus({ success: true, message: result.message });
             toast.success(result.message); // Display success message
             location.reload(); // Reload the page to reflect changes
