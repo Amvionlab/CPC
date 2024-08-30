@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $floor = $_POST['floor'] ?? '';
     $email = $_POST['email'] ?? '';
     $mobile = $_POST['mobile'] ?? '';
-
+    $is_active = '1';
     // Handle optional file upload
     $attachmentPath = '';
     if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Check if Employee ID already exists
-    $checkQuery = "SELECT * FROM employee_details WHERE employee_id = ?";
+    $checkQuery = "SELECT * FROM employee WHERE employee_id = ?";
     $stmt = $conn->prepare($checkQuery);
     if ($stmt === false) {
         echo json_encode(['success' => false, 'message' => 'Prepare failed: ' . $conn->error]);
@@ -64,9 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['success' => false, 'message' => 'Employee Already Exists']);
     } else {
         // Insert new employee data
-        $insertQuery = "INSERT INTO employee_details 
-                        (firstname, lastname, employee_id, department, designation, authority_id, location, state, country, building, block, floor, email, mobile, attachment_path, post_date, is_active)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), 1)";
+        $insertQuery = "INSERT INTO employee 
+                        (firstname, lastname, employee_id, department, designation, authority_id, location, state, country, building, block, floor, email, mobile, photo, is_active)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($insertQuery);
         if ($stmt === false) {
             echo json_encode(['success' => false, 'message' => 'Prepare failed: ' . $conn->error]);
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Bind parameters, including the attachment path
-        $stmt->bind_param("ssssssssssssss", $firstname, $lastname, $empid, $dept, $designation, $authority, $location, $state, $country, $build, $block, $floor, $email, $mobile, $attachmentPath);
+        $stmt->bind_param("ssssssssssssssss", $firstname, $lastname, $empid, $dept, $designation, $authority, $location, $state, $country, $build, $block, $floor, $email, $mobile, $attachmentPath, $is_active);
         
         if ($stmt->execute()) {
             echo json_encode(['success' => true, 'message' => 'Employee added successfully.']);
