@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $response['message'] = 'Vendor Already Exists';
     } else {
         // Insert data into the database
-        $sql = "INSERT INTO vendor_details (vendor_name, vendor_id, gst, location, contact_person, mobile_no, email, address, attachment_path, post_date, is_active) 
+        $sql = "INSERT INTO vendor_details (vendor_name, vendor_id, gst, location, contact_person, mobile_no, email, address,state, country, attachment, post_date, is_active) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), 1)";
         
         $stmt = $conn->prepare($sql);

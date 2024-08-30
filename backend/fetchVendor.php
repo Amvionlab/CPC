@@ -1,7 +1,7 @@
 <?php
 include 'config.php';
 // Function to fetch users from database
-$sql = "SELECT * FROM employee";
+$sql = "SELECT * FROM vendor";
 
     $result = $conn->query($sql);
 

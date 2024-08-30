@@ -63,7 +63,7 @@ if ($resultIpdetails->num_rows > 0) {
     }
 }
 //Employee
-$sqlEmpdetails = "SELECT `id`,'firstname' , `lastname`, `employee_id`, `gender`, `department`, `designation`, `authority_id`, `location`, `mobile`, `email`, `state`, `country`, `building`, `block`, `floor` FROM employee_details WHERE is_active = 1";
+$sqlEmpdetails = "SELECT `id`,'firstname' , `lastname`, `employee_id`, `gender`, `department`, `designation`, `authority_id`, `location`, `mobile`, `email`, `state`, `country`, `building`, `block`, `floor` FROM employee WHERE is_active = 1";
 $resultEmpdetails = $conn->query($sqlEmpdetails);
 
 $Empdetails = array();
