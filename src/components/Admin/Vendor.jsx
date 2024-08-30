@@ -49,24 +49,7 @@ import { ConstructionOutlined } from "@mui/icons-material";
   const [Access, setAccess] = useState([]);
   const [locations, setLocations] = useState([]);
 
-  useEffect(() => {
-    const fetchLocations = async () => {
-      try {
-        const response = await fetch(`${baseURL}/backend/dropdown.php`);
-        const data = await response.json();
-        if (data.locations && Array.isArray(data.locations)) {
-          setLocations(data.locations);
-        } else {
-          console.error("Unexpected data format:", data);
-        }
-      } catch (error) {
-        console.error("Error fetching locations:", error);
-      }
-    };
-  
-    fetchLocations();
-  }, []);
-  
+   
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -92,7 +75,21 @@ import { ConstructionOutlined } from "@mui/icons-material";
       );
     }
   };
-  
+  useEffect(() => {
+   
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch(`${baseURL}/backend/fetchVendor.php`);
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
 const handleRowsPerPageChange = (e) => {
   const value = parseInt(e.target.value, 10); // Parse the input value as an integer
   if (!isNaN(value) && value >= 1) {
@@ -292,8 +289,8 @@ const handleRowsPerPageChange = (e) => {
     <div className="bg-second max-h-5/6 max-w-4/6 text-xs mx-auto p-1 lg:overflow-y-hidden h-auto ticket-scroll">
       
       {showForm && (
-        <div className="max-w-5xl m-2 mb-4 bg-box p-3 rounded-lg font-mont " >
-          <div className="ticket-table mt-2">
+        <div className="max-w-full mt-3 m-2 mb-4 p-2 bg-box rounded-lg font-mont " >
+        <div className="ticket-table mt-2">
             <form onSubmit={handleSubmit} className="space-y-4 text-label">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
                 <div className="font-mont font-semibold text-2xl mb-4">
@@ -314,7 +311,7 @@ const handleRowsPerPageChange = (e) => {
                     value={formData.vendor}
                     onChange={handleChange}
                     required
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
+                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
                   />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
@@ -328,7 +325,7 @@ const handleRowsPerPageChange = (e) => {
                     value={formData.vendorid}
                     onChange={handleChange}
                     required
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
+                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
                   />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
@@ -342,7 +339,7 @@ const handleRowsPerPageChange = (e) => {
                     value={formData.gst}
                     onChange={handleChange}
                     required
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
+                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
                   />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
@@ -356,7 +353,7 @@ const handleRowsPerPageChange = (e) => {
                     value={formData.contact}
                     onChange={handleChange}
                     required
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
+                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
                   />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
@@ -369,7 +366,7 @@ const handleRowsPerPageChange = (e) => {
                     placeholder="Enter Email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
+                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
                   />
                 </div>
                 
@@ -383,28 +380,21 @@ const handleRowsPerPageChange = (e) => {
                     placeholder="Enter Mobile"
                     value={formData.mobile}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
+                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
                   />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
                 <label className="text-sm font-semibold text-prime mr-2 w-32">
                     Location
                 </label>
-                <select
+                <input
+                    type="text"
                     name="location"
+                    placeholder="Enter Location"
                     value={formData.location}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
-                >
-                    <option value="">Select Location</option>
-                    {locations
-                    .filter(location => location.name) // Ensure that only locations with a name are shown
-                    .map((location) => (
-                        <option key={location.id} value={location.id}>
-                        {location.name}
-                        </option>
-                    ))}
-                </select>
+                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
+                  />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">
@@ -416,7 +406,7 @@ const handleRowsPerPageChange = (e) => {
                     placeholder="Enter Address"
                     value={formData.address}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
+                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
                   />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
@@ -430,7 +420,7 @@ const handleRowsPerPageChange = (e) => {
                     value={formData.state}
                     onChange={handleChange}
                     required
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
+                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
                   />
                 </div>
                 
@@ -444,7 +434,7 @@ const handleRowsPerPageChange = (e) => {
                     placeholder="Enter Country"
                     value={formData.country}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
+                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
                   />
                 </div>                  
               </div>
@@ -499,57 +489,60 @@ const handleRowsPerPageChange = (e) => {
           </div>
         )}
        
-      <div className="max-w-5xl m-2 bg-box p-3 rounded-lg font-mont">
-       <div className="flex justify-end flex-wrap space-x-2 mt-4">
-          <button
-            onClick={exportCSV}
-            className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
-          >
-            CSV
-          </button>
-          <button
-            onClick={exportExcel}
-            className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
-          >
-            Excel
-          </button>
-          <button
-            onClick={exportPDF}
-            className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
-          >
-            PDF
-          </button>
-        </div>
-
-        {/* Table displaying fetched user data */}
-        <div className="ticket-table mt-8">
-          <h2 className="text-2xl font-bold text-prime mb-4"><span>Vendor Data </span><span className="items-end"><button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-prime font-mont font-semibold text-sm text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
-        >
-          {showForm ? "Close" : "+ Add Vendor"}
-        </button></span></h2>
-        <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
-            Rows per page:
-          </label>
-          <input
-            type="number"
-            id="rowsPerPage"
-            placeholder={ticketsPerPage}
-            onChange={handleRowsPerPageChange}
-            className="w-16 px-1 py-1 border rounded text-gray-900"
-            min="0"
-          />
+       <div className="max-w-1/2 m-2 bg-box p-5 rounded-lg font-mont">
+        <div className="ticket-table mt-4">
+        <h3 className="text-2xl font-bold text-prime mb-4 flex justify-between items-center">
+            <span>
+              Vendor Data
+              <button
+                onClick={() => setShowForm(!showForm)}
+                className="ml-4 bg-second hover:bg-prime hover:text-box font-mont font-bold text-sm text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
+              >
+                {showForm ? "Close" : "+ Add Vendor"}
+              </button>
+            </span>
+            <span className="text-xs flex items-center gap-2">
+              <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
+                Rows per page:
+              </label>
+              <input
+                type="number"
+                id="rowsPerPage"
+                placeholder={ticketsPerPage}
+                onChange={handleRowsPerPageChange}
+                className="w-16 px-2 py-2 border-2 rounded text-gray-900 ml-2 mr-2"
+                min="0"
+              />
+              <button
+                onClick={exportCSV}
+                className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
+              >
+                CSV
+              </button>
+              <button
+                onClick={exportExcel}
+                className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
+              >
+                Excel
+              </button>
+              <button
+                onClick={exportPDF}
+                className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
+              >
+                PDF
+              </button>
+            </span>
+          </h3>
         
 
-        <table className=" min-w-full bg-second rounded-lg overflow-hidden filter-table">
-  <thead className="bg-prime text-white">
+          <table className="min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
+            <thead className="bg-second border-2 border-prime text-prime font-semibold font-poppins text-fontadd">
     <tr>
-      {["Id", "Vendor Name", "Vendor ID", "Vendor GST", "Contact Person", "Email","Mobile","Location","Address"].map((header, index) => (
-        <td key={index} className="w-1/10 py-2 px-4">
+      {["Id", "Vendor Name", "Vendor ID", "GST", "Contact Person", "Email","Mobile","Location","Address"].map((header, index) => (
+        <td key={index} className="w-1/9 py-4 px-4">
           <div className="flex items-center justify-left gap-2">
                     <div className="header flex">
-                      <span className="head">{header}</span>
+                      <span className="head no-wrap">{header}</span>
                       <span><FaFilter
                         className="cursor-pointer ml-1 mt-0.5"
                         onClick={() => setShowFilter(prevState => ({
@@ -586,17 +579,16 @@ const handleRowsPerPageChange = (e) => {
   </thead>
   <tbody>
     {currentTickets.map((userdet) => (
-      <tr key={userdet.id} className="hover:bg-gray-100">
+      <tr key={userdet.id} className="bg-box text-fontadd text-center font-medium">
          <td className="border-t py-4 px-4">{(i++)+(offset)}</td>
                   <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.vendor_name}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.lastname}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.username}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.typename}</td>
+                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.vendor_id}</td>
+                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.gst}</td>
+                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.contact_person}</td>                  
+                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.email}</td>
                   <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.mobile}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.location}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'center' }}>{userdet.employee_id}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.domain}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.sub_domain}</td>
+                  <td className="border-t py-4 px-4" style={{ textAlign: 'center' }}>{userdet.location}</td>
+                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.address}</td>
       </tr>
     ))}
   </tbody>
