@@ -111,6 +111,7 @@ const handleRowsPerPageChange = (e) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const form = new FormData();
     for (const key in formData) {
         form.append(key, formData[key]);
@@ -125,23 +126,20 @@ const handleRowsPerPageChange = (e) => {
             body: form,
         });
 
-        // Check the raw response for debugging
-        const result = await response.json();
-
-        console.log("Response:", result); // Log the response to check its format
-
         if (!response.ok) {
-            throw new Error(result.message || "Something went wrong");
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        // Handle response based on the message
+        const result = await response.json();
+        console.log("Response:", result); // Log the response to check its format
+
         if (result.message === 'Vendor Already Exists') {
             setSubmissionStatus({ success: false, message: result.message });
-            toast.error(result.message); // Display error message
+            toast.error(result.message);
         } else if (result.message === 'Vendor added successfully.') {
             setSubmissionStatus({ success: true, message: result.message });
-            toast.success(result.message); // Display success message
-            location.reload(); // Reload the page to reflect changes
+            toast.success(result.message);
+            location.reload();
         } else {
             throw new Error("Unexpected response message.");
         }
@@ -150,7 +148,7 @@ const handleRowsPerPageChange = (e) => {
             success: false,
             message: "There was a problem with your fetch operation: " + error.message,
         });
-        toast.error("There was a problem with your fetch operation: " + error.message); // Display error message
+        toast.error("There was a problem with your fetch operation: " + error.message);
     }
 };
 
@@ -547,7 +545,7 @@ const handleRowsPerPageChange = (e) => {
         <table className=" min-w-full bg-second rounded-lg overflow-hidden filter-table">
   <thead className="bg-prime text-white">
     <tr>
-      {["Id", "First Name", "Last Name", "Username", "User Type", "Mobile","Location","Employee ID","Domain","Sub Domain"].map((header, index) => (
+      {["Id", "Vendor Name", "Vendor ID", "Vendor GST", "Contact Person", "Email","Mobile","Location","Address"].map((header, index) => (
         <td key={index} className="w-1/10 py-2 px-4">
           <div className="flex items-center justify-left gap-2">
                     <div className="header flex">
@@ -590,7 +588,7 @@ const handleRowsPerPageChange = (e) => {
     {currentTickets.map((userdet) => (
       <tr key={userdet.id} className="hover:bg-gray-100">
          <td className="border-t py-4 px-4">{(i++)+(offset)}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.firstname}</td>
+                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.vendor_name}</td>
                   <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.lastname}</td>
                   <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.username}</td>
                   <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.typename}</td>

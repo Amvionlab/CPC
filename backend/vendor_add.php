@@ -6,17 +6,21 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+header('Content-Type: application/json'); // Set header for JSON response
+
+$response = ['status' => 'error', 'message' => 'Invalid request'];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $vendor_name = $_POST['vendor'];
-    $vendor_id = $_POST['vendorid'];
-    $gst = $_POST['gst'];
-    $location = $_POST['location'];
-    $contact_person = $_POST['contact'];
-    $mobile_no = $_POST['mobile'] ?? ''; // Optional
-    $email = $_POST['email'] ?? ''; // Optional
-    $address = $_POST['address'] ?? ''; // Optional
-    $state = $_POST['state'];
-    $country = $_POST['country'] ?? ''; // Optional
+    $vendor_name = $_POST['vendor'] ?? '';
+    $vendor_id = $_POST['vendorid'] ?? '';
+    $gst = $_POST['gst'] ?? '';
+    $location = $_POST['location'] ?? '';
+    $contact_person = $_POST['contact'] ?? '';
+    $mobile_no = $_POST['mobile'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $address = $_POST['address'] ?? '';
+    $state = $_POST['state'] ?? '';
+    $country = $_POST['country'] ?? '';
 
     // Handle file upload
     $attachment_path = '';
@@ -29,27 +33,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (move_uploaded_file($_FILES['attachment']['tmp_name'], $target_file)) {
             $attachment_path = $target_file;
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'File upload failed.']);
+            $response['message'] = 'File upload failed.';
+            echo json_encode($response);
             exit;
         }
     }
 
-    // Insert data into the database
-    $sql = "INSERT INTO vendor_details (vendor_name, vendor_id, gst, location, contact_person, mobile_no, email, address, attachment_path, post_date, is_active) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), 1)";
-    
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('sssssssss', $vendor_name, $vendor_id, $gst, $location, $contact_person, $mobile_no, $email, $address, $attachment_path);
-    
-    if ($stmt->execute()) {
-        echo json_encode(['status' => 'success', 'message' => 'Vendor details added successfully.']);
+    // Check if the vendor already exists
+    $check_sql = "SELECT COUNT(*) AS count FROM vendor_details WHERE vendor_id = ?";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bind_param('s', $vendor_id);
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
+    $row = $check_result->fetch_assoc();
+
+    if ($row['count'] > 0) {
+        $response['message'] = 'Vendor Already Exists';
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Failed to add vendor details.']);
+        // Insert data into the database
+        $sql = "INSERT INTO vendor_details (vendor_name, vendor_id, gst, location, contact_person, mobile_no, email, address, attachment_path, post_date, is_active) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), 1)";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('sssssssss', $vendor_name, $vendor_id, $gst, $location, $contact_person, $mobile_no, $email, $address, $attachment_path);
+        
+        if ($stmt->execute()) {
+            $response['status'] = 'success';
+            $response['message'] = 'Vendor added successfully.';
+        } else {
+            $response['message'] = 'Failed to add vendor details.';
+        }
+
+        $stmt->close();
     }
 
-    $stmt->close();
+    $check_stmt->close();
     $conn->close();
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
+    $response['message'] = 'Invalid request method.';
 }
+
+echo json_encode($response);
 ?>
