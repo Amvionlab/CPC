@@ -29,7 +29,7 @@ function Setup() {
     { title: "Employee", sub: "Employee's Name and Details", icon: <PeopleIcon />, path: "/setup/employee" },
     { title: "Vendor", sub: "Vendor's Name and Details", icon: <BusinessIcon />, path: "/setup/vendor" },
     { title: "User", sub: "Software Users", icon: <PersonIcon />, path: "/setup/user" },
-    { title: "Email Config", sub: "Location Name", icon: <EmailIcon />, path: "/setup/smtp" },
+    { title: "Email Config", sub: "Email Configuration and Setup", icon: <EmailIcon />, path: "/setup/smtp" },
   ];
 
   return (
