@@ -623,7 +623,7 @@ const handleRowsPerPageChange = (e) => {
         <table className="min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
             <thead className="bg-second border-2 border-prime text-prime font-semibold font-poppins text-fontadd">
             <tr>
-      {["Id", "First Name", "Last Name", "Mobile", "Email", "Location","Employee ID","Gender","Department","Designation"].map((header, index) => (
+      {["Id", "First Name", "Last Name", "Mobile", "Email", "Location","Employee ID","Department","Designation"].map((header, index) => (
         <td key={index} className="w-1/10 py-2 px-4">
           <div className="flex items-center justify-left gap-2">
                     <div className="header flex">
@@ -672,7 +672,6 @@ const handleRowsPerPageChange = (e) => {
                   <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.email}</td>
                   <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.location}</td>
                   <td className="border-t py-4 px-4" style={{ textAlign: 'center' }}>{userdet.employee_id}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.gender}</td>
                   <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.department}</td>
                   <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.designation}</td>
       </tr>

@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $address = $_POST['address'] ?? '';
     $state = $_POST['state'] ?? '';
     $country = $_POST['country'] ?? '';
-
+    $is_active = '1';
     // Handle file upload
     $attachment_path = '';
     if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Check if the vendor already exists
-    $check_sql = "SELECT COUNT(*) AS count FROM vendor_details WHERE vendor_id = ?";
+    $check_sql = "SELECT COUNT(*) AS count FROM vendor WHERE vendor_id = ?";
     $check_stmt = $conn->prepare($check_sql);
     $check_stmt->bind_param('s', $vendor_id);
     $check_stmt->execute();
@@ -51,11 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $response['message'] = 'Vendor Already Exists';
     } else {
         // Insert data into the database
-        $sql = "INSERT INTO vendor_details (vendor_name, vendor_id, gst, location, contact_person, mobile_no, email, address,state, country, attachment, post_date, is_active) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), 1)";
+        $sql = "INSERT INTO vendor (vendor_name, vendor_id, gst, location, contact_person, mobile, email, address,state, country, attachment, is_active) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('sssssssss', $vendor_name, $vendor_id, $gst, $location, $contact_person, $mobile_no, $email, $address, $attachment_path);
+        $stmt->bind_param('sssssssssss', $vendor_name, $vendor_id, $gst, $location, $contact_person, $mobile_no, $email, $address, $state, $country, $attachment_path);
         
         if ($stmt->execute()) {
             $response['status'] = 'success';
