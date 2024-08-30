@@ -575,114 +575,118 @@ const handleRowsPerPageChange = (e) => {
         )}
        
        <div className="max-w-1/2 m-2 bg-box p-5 rounded-lg font-mont">
-        <div className="ticket-table mt-4">
-          <h3 className="text-2xl font-bold text-prime mb-4 flex justify-between items-center">
+    <div className="ticket-table mt-4">
+        <h3 className="text-2xl font-bold text-prime mb-4 flex justify-between items-center">
             <span>
-              Employee Data
-              <button
-                onClick={() => setShowForm(!showForm)}
-                className="ml-4 bg-second hover:bg-prime hover:text-box font-mont font-bold text-sm text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
-              >
-                {showForm ? "Close" : "+ Add Employee"}
-              </button>
+                Employee Data
+                <button
+                    onClick={() => setShowForm(!showForm)}
+                    className="ml-4 bg-second hover:bg-prime hover:text-box font-mont font-bold text-sm text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
+                >
+                    {showForm ? "Close" : "+ Add Employee"}
+                </button>
             </span>
             <span className="text-xs flex items-center gap-2">
-              <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
-                Rows per page:
-              </label>
-              <input
-                type="number"
-                id="rowsPerPage"
-                placeholder={ticketsPerPage}
-                onChange={handleRowsPerPageChange}
-                className="w-16 px-2 py-2 border-2 rounded text-gray-900 ml-2 mr-2"
-                min="0"
-              />
-              <button
-                onClick={exportCSV}
-                className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
-              >
-                CSV
-              </button>
-              <button
-                onClick={exportExcel}
-                className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
-              >
-                Excel
-              </button>
-              <button
-                onClick={exportPDF}
-                className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
-              >
-                PDF
-              </button>
+                <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
+                    Rows per page:
+                </label>
+                <input
+                    type="number"
+                    id="rowsPerPage"
+                    placeholder={ticketsPerPage}
+                    onChange={handleRowsPerPageChange}
+                    className="w-16 px-2 py-2 border-2 rounded text-gray-900 ml-2 mr-2"
+                    min="0"
+                />
+                <button
+                    onClick={exportCSV}
+                    className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
+                >
+                    CSV
+                </button>
+                <button
+                    onClick={exportExcel}
+                    className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
+                >
+                    Excel
+                </button>
+                <button
+                    onClick={exportPDF}
+                    className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
+                >
+                    PDF
+                </button>
             </span>
-          </h3>
+        </h3>
 
-       
-        <table className="min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
-            <thead className="bg-second border-2 border-prime text-prime font-semibold font-poppins text-fontadd">
-            <tr>
-      {["Id", "First Name", "Last Name", "Mobile", "Email", "Location","Employee ID","Gender","Department","Designation"].map((header, index) => (
-        <td key={index} className="w-1/10 py-2 px-4">
-          <div className="flex items-center justify-left gap-2">
-                    <div className="header flex">
-                      <span className="head">{header}</span>
-                      <span><FaFilter
-                        className="cursor-pointer ml-1 mt-0.5"
-                        onClick={() => setShowFilter(prevState => ({
-                          ...prevState,
-                          [header.toLowerCase().replace(" ", "")]: !prevState[header.toLowerCase().replace(" ", "")]
-                        }))}
-                      /></span>
-                    </div>
-                    </div>
-        {showFilter[header.toLowerCase().replace(" ", "")] && (
-          <div className="mt-2 bg-prime p-2 rounded shadow-md filter">
-            <select
-              onChange={(e) => handleFilterChange(e, header.toLowerCase().replace(" ", ""), e.target.value)}
-              className="mb-2 p-1 border text-prime rounded w-full"
-            >
-              <option value="contain">Contains</option>
-              <option value="not contain">Does Not Contain</option>
-              <option value="equal to">Equal To</option>
-              <option value="more than">More Than</option>
-              <option value="less than">Less Than</option>
-            </select>
-            <input
-              type="text"
-              placeholder="Enter value"
-              onChange={(e) => handleFilterChange(e, header.toLowerCase().replace(" ", ""), filters[header.toLowerCase().replace(" ", "")]?.type || "contain")}
-              className="p-1 border rounded text-prime w-full"
-            />
-          </div>
-        )}
-
-        </td>
-      ))}
-    </tr>
-  </thead>
-  <tbody>
-    {currentTickets.map((userdet) => (
-      <tr key={userdet.id} className="bg-box text-fontadd text-center font-medium">
-         <td className="border-t py-4 px-4">{(i++)+(offset)}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.firstname}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.lastname}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.mobile}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.email}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.location}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'center' }}>{userdet.employee_id}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.gender}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.department}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.designation}</td>
-      </tr>
-    ))}
-  </tbody>
-</table>
+        {/* Scrollable Table Container */}
+        <div className="overflow-x-auto ">
+            <table className="min-w-full border bg-second rounded-lg filter-table">
+                <thead className="bg-second border-2 border-prime text-prime font-semibold font-poppins text-fontadd text-nowrap">
+                    <tr>
+                        {["Id", "First Name", "Last Name", "Mobile", "Email", "Location", "Employee ID", "Gender", "Department", "Designation"].map((header, index) => (
+                            <td key={index} className="w-1/10 py-4 px-4">
+                                <div className="flex items-center justify-left gap-2">
+                                    <div className="header flex">
+                                        <span className="head">{header}</span>
+                                        <span>
+                                            <FaFilter
+                                                className="cursor-pointer ml-1 mt-0.5"
+                                                onClick={() => setShowFilter(prevState => ({
+                                                    ...prevState,
+                                                    [header.toLowerCase().replace(" ", "")]: !prevState[header.toLowerCase().replace(" ", "")]
+                                                }))}
+                                            />
+                                        </span>
+                                    </div>
+                                </div>
+                                {showFilter[header.toLowerCase().replace(" ", "")] && (
+                                    <div className="mt-2 bg-prime p-2 rounded shadow-md filter">
+                                        <select
+                                            onChange={(e) => handleFilterChange(e, header.toLowerCase().replace(" ", ""), e.target.value)}
+                                            className="mb-2 p-1 border text-prime rounded w-full"
+                                        >
+                                            <option value="contain">Contains</option>
+                                            <option value="not contain">Does Not Contain</option>
+                                            <option value="equal to">Equal To</option>
+                                            <option value="more than">More Than</option>
+                                            <option value="less than">Less Than</option>
+                                        </select>
+                                        <input
+                                            type="text"
+                                            placeholder="Enter value"
+                                            onChange={(e) => handleFilterChange(e, header.toLowerCase().replace(" ", ""), filters[header.toLowerCase().replace(" ", "")]?.type || "contain")}
+                                            className="p-1 border rounded text-prime w-full"
+                                        />
+                                    </div>
+                                )}
+                            </td>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {currentTickets.map((userdet) => (
+                        <tr key={userdet.id} className="bg-box text-fontadd text-center font-medium">
+                            <td className="border-t py-4 px-4">{userdet.id}</td>
+                            <td className="border-t py-4 px-4">{userdet.firstname}</td>
+                            <td className="border-t py-4 px-4">{userdet.lastname}</td>
+                            <td className="border-t py-4 px-4">{userdet.mobile}</td>
+                            <td className="border-t py-4 px-4">{userdet.email}</td>
+                            <td className="border-t py-4 px-4">{userdet.location}</td>
+                            <td className="border-t py-4 px-4">{userdet.employee_id}</td>
+                            <td className="border-t py-4 px-4">{userdet.gender}</td>
+                            <td className="border-t py-4 px-4">{userdet.department}</td>
+                            <td className="border-t py-4 px-4">{userdet.designation}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
-         {/* Pagination Controls */}
-         <div className="pagination mt-4 flex justify-center">
-          <ReactPaginate
+    </div>
+    
+    {/* Pagination Controls */}
+    <div className="pagination mt-4 flex justify-center">
+        <ReactPaginate
             previousLabel={"Previous"}
             nextLabel={"Next"}
             breakLabel={"..."}
@@ -697,9 +701,10 @@ const handleRowsPerPageChange = (e) => {
             nextClassName={"pagination-next"}
             breakClassName={"pagination-break"}
             activeClassName={"pagination-active"}
-          />
-          </div>
-      </div>
+        />
+    </div>
+</div>
+
     </div>
   );
 };
