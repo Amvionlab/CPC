@@ -535,12 +535,12 @@ const handleRowsPerPageChange = (e) => {
           </h3>
         
 
-          <table className="min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
+          <table className="min-w-full border bg-second rounded-lg overflow-scroll filter-table mt-5">
             <thead className="bg-second border-2 border-prime text-prime font-semibold font-poppins text-fontadd">
     <tr>
       {["Id", "Vendor Name", "Vendor ID", "GST", "Contact Person", "Email","Mobile","Location","Address"].map((header, index) => (
         <td key={index} className="w-1/9 py-4 px-4">
-          <div className="flex items-center justify-left gap-2">
+          <div className="flex items-center justify-left gap-2 text-nowrap">
                     <div className="header flex">
                       <span className="head no-wrap">{header}</span>
                       <span><FaFilter
