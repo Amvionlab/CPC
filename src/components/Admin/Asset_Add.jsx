@@ -29,7 +29,8 @@ const Form = () => {
         last_amc: "",
         procure_by: "",
         warranty_upto: "",
-        group: "" 
+        group: "",
+        type: ""
         
     });
 
@@ -56,6 +57,7 @@ const Form = () => {
   const [Access, setAccess] = useState([]);
   const [locations, setLocations] = useState([]);
   const [groups, setGroups] = useState([]);
+  const [types, setTypes] = useState([]);
  
   useEffect(() => {
     const fetchLocations = async () => {
@@ -93,6 +95,26 @@ const Form = () => {
 
     fetchGroups();
 }, []);
+
+useEffect(() => {
+    const fetchDropdownData = async () => {
+        try {
+            const response = await fetch(`${baseURL}/backend/dropdown.php`);
+            const data = await response.json();
+            if (data.groups) {
+                setGroups(data.groups);
+            }
+            if (data.types) {
+                setTypes(data.types);
+            }
+        } catch (error) {
+            console.error('Error fetching dropdown data:', error);
+        }
+    };
+
+    fetchDropdownData();
+}, []);
+
  
   const navigate = useNavigate();
 
@@ -177,6 +199,8 @@ const handleRowsPerPageChange = (e) => {
 };
 
   const pageCount = Math.ceil(filteredUsers.length / ticketsPerPage);
+
+  const filteredTypes = types.filter(type => type.group_id === formData.group);
 
   const handleFilterChange = (e, field, type) => {
     const value = e.target.value.toLowerCase(); // convert filter value to lowercase
@@ -347,26 +371,26 @@ const handleRowsPerPageChange = (e) => {
                 </select>
             </div>
 
-                <div className="flex items-center mb-2 mr-4">
+            <div className="flex items-center mb-2 mr-4">
                 <label className="text-sm font-semibold text-prime mr-2 w-32">
                     Type
                 </label>
                 <select
-                    name="location"
-                    value={formData.location}
+                    name="type"
+                    value={formData.type}
                     onChange={handleChange}
                     className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
                 >
-                    <option value="">Select Location</option>
-                    {locations
-                    .filter(location => location.name) // Ensure that only locations with a name are shown
-                    .map((location) => (
-                        <option key={location.id} value={location.name}>
-                        {location.name}
+                    <option value="">Select Type</option>
+                    {filteredTypes
+                    .map((type) => (
+                        <option key={type.type} value={type.type}>
+                            {type.type}
                         </option>
                     ))}
-                </select>
+                    </select>
                 </div>
+
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">
                     Name<span className="text-red-600 text-md font-bold">*</span>
