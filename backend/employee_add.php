@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle optional file upload
     $attachmentPath = '';
     if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = 'C:/xampp/htdocs/AMS/src/photo/'; // Ensure this path is correct
+        $uploadDir = '/src/photo/'; // Ensure this path is correct
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true); // Create directory if it doesn't exist
         }

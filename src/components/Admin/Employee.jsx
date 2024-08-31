@@ -419,7 +419,7 @@ const handleRowsPerPageChange = (e) => {
                     {locations
                     .filter(location => location.name) // Ensure that only locations with a name are shown
                     .map((location) => (
-                        <option key={location.id} value={location.id}>
+                        <option key={location.id} value={location.name}>
                         {location.name}
                         </option>
                     ))}
@@ -624,7 +624,7 @@ const handleRowsPerPageChange = (e) => {
             <table className="min-w-full border bg-second rounded-lg filter-table">
                 <thead className="bg-second border-2 border-prime text-prime font-semibold font-poppins text-fontadd text-nowrap">
                     <tr>
-                        {["Id", "First Name", "Last Name", "Mobile", "Email", "Location", "Employee ID", "Gender", "Department", "Designation"].map((header, index) => (
+                        {["Id", "First Name", "Last Name", "Mobile", "Email", "Location", "Employee ID", "Department", "Designation"].map((header, index) => (
                             <td key={index} className="w-1/10 py-4 px-4">
                                 <div className="flex items-center justify-left gap-2">
                                     <div className="header flex">
@@ -674,7 +674,6 @@ const handleRowsPerPageChange = (e) => {
                             <td className="border-t py-4 px-4">{userdet.email}</td>
                             <td className="border-t py-4 px-4">{userdet.location}</td>
                             <td className="border-t py-4 px-4">{userdet.employee_id}</td>
-                            <td className="border-t py-4 px-4">{userdet.gender}</td>
                             <td className="border-t py-4 px-4">{userdet.department}</td>
                             <td className="border-t py-4 px-4">{userdet.designation}</td>
                         </tr>

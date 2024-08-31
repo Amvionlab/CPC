@@ -52,10 +52,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         // Insert data into the database
         $sql = "INSERT INTO vendor (vendor_name, vendor_id, gst, location, contact_person, mobile, email, address,state, country, attachment, is_active) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?)";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param('sssssssssss', $vendor_name, $vendor_id, $gst, $location, $contact_person, $mobile_no, $email, $address, $state, $country, $attachment_path);
+        $stmt->bind_param('ssssssssssss', $vendor_name, $vendor_id, $gst, $location, $contact_person, $mobile_no, $email, $address, $state, $country, $attachment_path, $is_active);
         
         if ($stmt->execute()) {
             $response['status'] = 'success';

@@ -26,6 +26,7 @@ import Access from "./components/Admin/Access";
 import Ticket_status from "./components/Admin/Ticket_status";
 import Ticket_service from "./components/Admin/Ticket_service";
 import Ticket_type from "./components/Admin/Ticket_type";
+import Template from "./components/Admin/Template";
 import Type from "./components/Admin/Type";
 import Group from "./components/Admin/Group";  // Your custom Group component
 import IP_Address from "./components/Admin/IP_Address";
@@ -170,7 +171,7 @@ function App() {
                       <Route path="/Setup/employee" element={<Employee />} />
                       <Route path="/Setup/vendor" element={<Vendor />} />
                       <Route path="/Setup/smtp" element={<Smtp />} />
-
+                      <Route path="/Setup/template" element={<Template />} />
                     </>
                   </Routes>
                 </TicketProvider>
