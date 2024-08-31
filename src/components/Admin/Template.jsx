@@ -70,7 +70,7 @@ const Form = () => {
     const name = tempColumnName;
 
     try {
-        const typeResponse = await fetch(`${baseURL}/backend/fetchTicket_type.php`);
+        const typeResponse = await fetch(`${baseURL}/backend/fetchType.php`);
         if (!typeResponse.ok) throw new Error('Failed to fetch type');
         const { type } = await typeResponse.json();
 
@@ -78,7 +78,7 @@ const Form = () => {
         if (!columnsResponse.ok) throw new Error('Failed to fetch columns');
         const { columns } = await columnsResponse.json();
 
-        alert(`Type: ${type}\nOld Name: ${oldName}\nNew Name: ${name}`);
+        //alert(`Type: ${type}\nOld Name: ${oldName}\nNew Name: ${name}`);
 
         const response = await fetch(`${baseURL}/backend/updateColumn.php`, {
             method: "POST",
@@ -116,20 +116,6 @@ const handleTemplateSelection = (selectedType) => {
   setColumnType(selectedType);
 };
 
-const fetchTicketStatus = async (typeId) => {
-  try {
-      const response = await fetch(`${baseURL}/backend/fetchTicket_status.php?type_id=${typeId}`);
-      const result = await response.json();
-      if (!response.ok) {
-          throw new Error(result.message || "Something went wrong");
-      }
-      // Process the result
-      console.log(result.data);
-      // Handle the data (e.g., set state)
-  } catch (error) {
-      console.error("Error fetching ticket status:", error);
-  }
-};
 
 const handleSaveNewColumn = async () => {
   try {
@@ -233,7 +219,7 @@ const handleDelete = async (index) => {
   useEffect(() => {
     const fetchTypes = async () => {
       try {
-        const response = await fetch(`${baseURL}/backend/fetchTicket_type.php`);
+        const response = await fetch(`${baseURL}/backend/fetchType.php`);
         const data = await response.json();
         setUsers(data);
         setFilteredUsers(data);
@@ -253,24 +239,34 @@ const handleDelete = async (index) => {
   useEffect(() => {
     if (!selectedType) return; // Skip if no type is selected
   
-    const fetchColumns = async () => {
-      try {
-        // Fetch columns for the selected type
-        const templateResponse = await axios.get(`${baseURL}/backend/template.php?type=${selectedType}`);
-        const columns = templateResponse.data.columns || [];
-        setDialogContent(columns);
-  
-        // Fetch columns from asset_template.php
-        const assetTemplateResponse = await axios.get(`${baseURL}/backend/asset_template.php`);
-        const templateColumns = assetTemplateResponse.data.template_columns || [];
-        setTemplateColumns(templateColumns);
-      } catch (error) {
-        console.error("Error fetching columns:", error);
-      }
-    };
-  
-    fetchColumns();
-  }, [selectedType]);
+      const fetchColumns = async () => {
+        try {
+          // Fetch columns for the selected type using fetch
+          const templateResponse = await fetch(`${baseURL}/backend/template.php?type=${selectedType}`);
+          if (!templateResponse.ok) {
+            throw new Error(`Failed to fetch template columns: ${templateResponse.statusText}`);
+          }
+          const templateData = await templateResponse.json();
+          const columns = templateData.columns || [];
+          setDialogContent(columns);
+    
+          // Fetch columns from asset_template.php using fetch
+          const assetTemplateResponse = await fetch(`${baseURL}/backend/asset_template.php`);
+          if (!assetTemplateResponse.ok) {
+            throw new Error(`Failed to fetch asset template columns: ${assetTemplateResponse.statusText}`);
+          }
+          const assetTemplateData = await assetTemplateResponse.json();
+          const templateColumns = assetTemplateData.template_columns || [];
+          setTemplateColumns(templateColumns);
+    
+        } catch (error) {
+          console.error("Error fetching columns:", error);
+        }
+      };
+    
+      fetchColumns();
+    }, [selectedType]);
+    
 
   useEffect(() => {
     const loadColumns = async () => {
@@ -538,96 +534,52 @@ const handleDelete = async (index) => {
   return (
     <div className="bg-second max-h-5/6 max-w-4/6 text-xs mx-auto p-1 lg:overflow-y-hidden h-auto ticket-scroll">
       
-      {showForm && (
-        <div className="max-w-5xl m-2 mb-4 bg-box p-3 rounded-lg font-mont " >
-          <div className="ticket-table mt-2">
-            <form onSubmit={handleSubmit} className="space-y-4 text-label">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-                <div className="font-mont font-semibold text-2xl mb-4">
-                  Asset Type Details:
-                </div>
-              </div>
+       <div className="max-w-1/2 m-2 bg-box p-5 rounded-lg font-mont">
+        <div className="ticket-table mt-4">
+        <h3 className="text-2xl font-bold text-prime mb-4 flex justify-between items-center">
+            <span>
+              Asset Template
+            </span>
+            <span className="text-xs flex items-center gap-2">
+              <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
+                Rows per page:
+              </label>
+              <input
+                type="number"
+                id="rowsPerPage"
+                placeholder={ticketsPerPage}
+                onChange={handleRowsPerPageChange}
+                className="w-16 px-2 py-2 border-2 rounded text-gray-900 ml-2 mr-2"
+                min="0"
+              />
+              <button
+                onClick={exportCSV}
+                className="bg-flo font-mont font-semibold text-sm text-box py-1 px-4 rounded-md shadow-md focus:outline-none"
+              >
+                CSV
+              </button>
+              <button
+                onClick={exportExcel}
+                className="bg-flo font-mont font-semibold text-sm text-box py-1 px-4 rounded-md shadow-md focus:outline-none"
+              >
+                Excel
+              </button>
+              <button
+                onClick={exportPDF}
+                className="bg-flo font-mont font-semibold text-sm text-box py-1 px-4 rounded-md shadow-md focus:outline-none"
+              >
+                PDF
+              </button>
+            </span>
+          </h3>
 
-              {/* Additional Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    name="type"
-                    placeholder="Enter Asset Type Name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="flex-grow text-xs bg-second border p-1 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
-                  />
-                  <button
-                  type="submit"
-                  className="ml-5 bg-prime font-mont font-semibold text-md text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
-                >
-                  Submit
-                </button>
-                </div>
-                
-                
-              </div>
-             
-            </form>
-          </div>
-          </div>
-        )}
-       
-      <div className="max-w-5xl m-2 bg-box p-3 rounded-lg font-mont">
-       <div className="flex justify-end flex-wrap space-x-2 mt-4">
-          <button
-            onClick={exportCSV}
-            className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
-          >
-            CSV
-          </button>
-          <button
-            onClick={exportExcel}
-            className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
-          >
-            Excel
-          </button>
-          <button
-            onClick={exportPDF}
-            className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
-          >
-            PDF
-          </button>
-        </div>
-
-        {/* Table displaying fetched user data */}
-        <div className="ticket-table mt-8">
-          <h2 className="text-2xl font-bold text-prime mb-4"><span>Asset Type Data </span><span className="items-end"><button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-prime font-mont font-semibold text-sm text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
-        >
-          {showForm ? "Close" : "+ Add Asset Type"}
-        </button></span></h2>
-        <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
-            Rows per page:
-          </label>
-          <input
-            type="number"
-            id="rowsPerPage"
-            placeholder={ticketsPerPage}
-            onChange={handleRowsPerPageChange}
-            className="w-16 px-1 py-1 border rounded text-gray-900"
-            min="0"
-          />
-        
-
-        <table className=" min-w-full bg-second rounded-lg overflow-hidden filter-table">
-  <thead className="bg-prime text-white">
+        <table className="min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
+            <thead className="bg-second border-2 border-prime text-prime font-semibold font-poppins text-fontadd">
+           
     <tr>
-      {["Id", "type", "Tag", "Group", "Action"].map((header, index) => (
-        <td key={index} className="w-1/4 py-2 px-4">
-          <div className="flex items-center justify-left">
+      {["Id", "Type", "Group", "Action"].map((header, index) => (
+        <td key={index} className="w-1/4 py-4 px-4">
+          <div className="flex items-center justify-center">
           <div className="header flex">
             <span>{header}</span>
             <FaFilter
@@ -668,15 +620,18 @@ const handleDelete = async (index) => {
   {filteredUsers
               .slice(currentPage * ticketsPerPage, (currentPage + 1) * ticketsPerPage)
               .map((user, index) => (
-                <tr key={user.id}>
-                  <td>{i++}</td>
-                  <td>{user.type}</td>
-  <button
-    className="bg-prime text-white py-1 px-4 rounded-md shadow-md"
-    onClick={() => handleTemplateClick(user.type)}
-  >
-    Template
-  </button>
+                <tr key={user.id} className="bg-box text-fontadd text-center font-medium">
+                  <td className="border-t py-3 px-4">{i++}</td>
+                  <td className="border-t py-3 px-4">{user.type}</td>
+                  <td className="border-t py-3 px-4">{user.group}</td>
+                  <td className="border-t py-3 px-4">
+                  <button
+  className="bg-second text-prime py-2 px-4 font-semibold rounded-lg transition-transform duration-200 ease-in-out transform hover:scale-110 hover:bg-prime hover:text-box hover:shadow-md active:scale-95 focus:outline-none"
+  onClick={() => handleTemplateClick(user.type)}
+>
+  Template
+</button>
+</td>
       </tr>
     ))}
   </tbody>
@@ -704,194 +659,122 @@ const handleDelete = async (index) => {
       </div>
     
       {showDialog && (
-  <div className="dialog-overlay">
-    <div className="dialog">
-      <h3>Template Columns</h3>
-      <button className="close-button" onClick={() => setShowDialog(false)}>X</button>
-      <button className="add-button" onClick={handleAddButtonClick}>Add</button>
-      <div className="dialog-content">
-        <table className="dialog-table">
-          <tbody>
-            {dialogContent.map((column, index) => (
-              <tr key={index}>
-                <th>
-                  {editingIndex === index ? (
-                    <input
-                      type="text"
-                      value={tempColumnName}
-                      onChange={handleChange}
-                      autoFocus
-                    />
-                  ) : (
-                    <span>{column}</span>
-                  )}
-                </th>
-                <td>
-                  <div className="button-group">
-                    {editingIndex === index ? (
-                      <>
-                        <button className="save-button" onClick={handleSave}>Save</button>
-                        <button className="cancel-button" onClick={handleCancel}>Cancel</button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          className="edit-button"
-                          onClick={() => templateColumns.includes(column)
-                            ? toast.success("Default values cannot be Edited")
-                            : handleEdit(index)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="delete-button"
-                          onClick={() => templateColumns.includes(column)
-                            ? toast.success("Default values cannot be Deleted")
-                            : handleDelete(index)}
-                        >
-                          Delete
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {isInputVisible && (
-              <tr>
-                <th>
-                  <input
-                    type="text"
-                    value={newColumnName}
-                    onChange={(e) => setNewColumnName(e.target.value)}
-                    autoFocus
-                    placeholder="Enter column name (VARCHAR)"
-                  />
-                </th>
-                <td>
-                  <div className="button-group">
-                    <button className="save-button" onClick={handleSaveNewColumn}>Save</button>
-                    <button className="cancel-button" onClick={() => setIsInputVisible(false)}>Cancel</button>
-                  </div>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div>
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-60 flex justify-center items-center z-10">
+          <div className="bg-white w-11/12 md:w-1/3 lg:w-1/3 rounded-lg shadow-lg max-h-full overflow-hidden">
+            {/* Header */}
+            <div className="flex justify-between items-center p-3 border-b">
+  <h4 className="text-lg font-semibold">Template Columns</h4>
+  <div className="flex space-x-8 items-center">
+    <button
+      className=" bg-prime transition-transform duration-200 ease-in-out transform hover:scale-110 text-box font-mont font-bold text-x py-1 px-4 rounded-md shadow-md border-prime border-2 focus:outline-none"
+      onClick={handleAddButtonClick}
+    >
+      Add +
+    </button>
+    <button title="close"
+      className="text-xs font-bold w-4 h-4 p-2 flex items-center justify-center rounded-full border-2 border-red-600 bg-red-600 text-white transition-transform duration-200 ease-in-out transform hover:scale-110"
+      onClick={() => setShowDialog(false)}
+    >
+      X
+    </button>
   </div>
-)}
+</div>
 
-<style jsx>{`
-  .dialog-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .dialog {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 80%;
-    max-width: 1000px;
-    position: relative;
-    max-height: 80%;
-    display: flex;
-    flex-direction: column;
-  }
-  .close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    border: none;
-    background: transparent;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  .dialog-content {
-    flex: 1;
-    overflow-y: auto;
-  }
-  .dialog-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  .dialog-table th, .dialog-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  .dialog-table th {
-    background-color: #f4f4f4;
-  }
-  .button-group {
-    display: flex;
-    gap: 8px; /* Adds spacing between buttons */
-  }
-  .edit-button {
-  background-color: #2196F3; /* Original blue background */
-  border: none;
-  color: white;
-  padding: 5px 10px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.3s ease; /* Smooth transition on hover */
-}
 
-.edit-button:hover {
-  background-color: #1976D2; /* Darker blue on hover */
-}
+            {/* Content */}
+            <div className="overflow-y-auto p-4" style={{ maxHeight: '80vh' }}>
+            <table className="min-w-full border-collapse">
+  <tbody>
+    {dialogContent.map((column, index) => (
+      <tr key={index} className="hover:bg-gray-100 transition-colors duration-150">
+        <th className="border-t border-l border-gray-200 px-4 py-3 text-left font-medium w-4/5">
+          {editingIndex === index ? (
+            <input
+              type="text"
+              value={tempColumnName}
+              onChange={handleChange}
+              autoFocus
+              className="border rounded px-2 py-2 w-1/2 focus:outline-none focus:border-blue-500"
+            />
+          ) : (
+            <span>{column}</span>
+          )}
+        </th>
+        <td className="border-t border-r border-gray-200 px-3 py-2 w-2/4">
+          <div className="flex justify-end space-x-3">
+            {editingIndex === index ? (
+              <>
+                <button
+                  className="border-green-600 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-green-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
+                  onClick={handleSave}
+                >
+                  Save
+                </button>
+                <button
+                  className="border-gray-800 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-gray-800 transition-transform duration-200 ease-in-out transform hover:scale-110"
+                  onClick={handleCancel}
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  className="border-blue-600 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-blue-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
+                  onClick={() => templateColumns.includes(column) ? toast.success("Default values cannot be Edited") : handleEdit(index)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="border-red-600 border-2 hover:text-white font-bold text-prime py-1 px-3 rounded hover:bg-red-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
+                  onClick={() => templateColumns.includes(column) ? toast.success("Default values cannot be Deleted") : handleDelete(index)}
+                >
+                  Delete
+                </button>
+              </>
+            )}
+          </div>
+        </td>
+      </tr>
+    ))}
 
-  .delete-button {
-  background-color: #ff4d4d; /* Red background */
-  color: white; /* White text */
-  border: none; /* Remove default border */
-  padding: 8px 16px; /* Padding for the button */
-  border-radius: 4px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor on hover */
-  font-size: 14px; /* Font size */
-  transition: background-color 0.3s ease; /* Smooth transition on hover */
-}
+    {isInputVisible && (
+      <tr>
+        <th className="border-t border-l border-b border-gray-200 px-4 py-3">
+          <input
+            type="text"
+            value={newColumnName}
+            onChange={(e) => setNewColumnName(e.target.value)}
+            autoFocus
+            placeholder="Enter column "
+            className="border rounded placeholder:font-normal px-2 py-2 w-full focus:outline-none focus:border-blue-500"
+          />
+        </th>
+        <td className="border-t border-b border-r border-gray-200 px-4 py-3">
+          <div className="flex justify-end space-x-2">
+            <button
+              className="border-green-600 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-green-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
+              onClick={handleSaveNewColumn}
+            >
+              Save
+            </button>
+            <button
+               className="border-gray-800 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-gray-800 transition-transform duration-200 ease-in-out transform hover:scale-110"
+               onClick={() => setIsInputVisible(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </td>
+      </tr>
+    )}
+  </tbody>
+</table>
 
-.delete-button:hover {
-  background-color: #e60000; /* Darker red on hover */
-}
-
-  .add-button {
-  position: absolute;
-  top: 10px;
-  right: 50px; /* Adjust this value to align with the 'X' button */
-  background-color: #2196F3;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 4px;
-}
-  .save-button {
-    background-color: #4CAF50; /* Blue background for the save button */
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-`}</style>
+            </div>
+          </div>
+        </div>
+      )}
 
   </div>
 );
@@ -899,3 +782,8 @@ const handleDelete = async (index) => {
 
 
 export default Form;
+
+
+
+      
+    

@@ -3,7 +3,7 @@ include 'config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['type'])) {
     $type = $conn->real_escape_string($_GET['type']);
-    $tableName = 'asset_' . $type;
+    $tableName = 'asset_' . strtolower($type);
 
     $sql = "SHOW COLUMNS FROM $tableName";
     $result = $conn->query($sql);
