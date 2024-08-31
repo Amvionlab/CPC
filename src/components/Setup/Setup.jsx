@@ -24,7 +24,7 @@ function Setup() {
     { title: "Location", sub: "Location Name", icon: <PinDropIcon />, path: "/setup/location" },
     { title: "IP Details", sub: "Location Name, IP details ( range ) ", icon: <LanguageIcon />, path: "/setup/ip_address" },
     { title: "Template", sub: "Template for Asset Types", icon: <TemplateIcon />, path: "/setup/template" },
-    { title: "Asset Add", sub: "Single Asset Add", icon: <AddBoxIcon />, path: "/setup/asset-add" },
+    { title: "Asset Add", sub: "Single Asset Add", icon: <AddBoxIcon />, path: "/setup/asset_add" },
     { title: "Asset Import", sub: "Multiple Asset Import", icon: <FileUploadIcon />, path: "/setup/asset-import" },
     { title: "Employee", sub: "Employee's Name and Details", icon: <PeopleIcon />, path: "/setup/employee" },
     { title: "Vendor", sub: "Vendor's Name and Details", icon: <BusinessIcon />, path: "/setup/vendor" },
