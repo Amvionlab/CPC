@@ -686,8 +686,8 @@ const handleDelete = async (index) => {
             <table className="min-w-full border-collapse">
   <tbody>
     {dialogContent.map((column, index) => (
-      <tr key={index} className="hover:bg-gray-100 transition-colors duration-150">
-        <th className="border-t border-l border-gray-200 px-4 py-3 text-left font-medium w-4/5">
+      <tr key={index} className="hover:bg-blue-50  rounded-lg bg-second transition-colors duration-150 ">
+        <th className="border-t border-l border-box border-2 px-4 py-3 rounded-lg text-left font-medium w-4/5">
           {editingIndex === index ? (
             <input
               type="text"
@@ -700,7 +700,7 @@ const handleDelete = async (index) => {
             <span>{column}</span>
           )}
         </th>
-        <td className="border-t border-r border-gray-200 px-3 py-2 w-2/4">
+        <td className="border-t border-r rounded-lg  border-box border-2 px-3 py-2 w-2/4">
           <div className="flex justify-end space-x-3">
             {editingIndex === index ? (
               <>
@@ -739,8 +739,8 @@ const handleDelete = async (index) => {
     ))}
 
     {isInputVisible && (
-      <tr>
-        <th className="border-t border-l border-b border-gray-200 px-4 py-3">
+      <tr className="rounded-lg">
+        <th className="border-t border-l border-b rounded-lg border-gray-200 px-4 py-3">
           <input
             type="text"
             value={newColumnName}
@@ -750,7 +750,7 @@ const handleDelete = async (index) => {
             className="border rounded placeholder:font-normal px-2 py-2 w-full focus:outline-none focus:border-blue-500"
           />
         </th>
-        <td className="border-t border-b border-r border-gray-200 px-4 py-3">
+        <td className="border-t border-b border-r rounded-lg border-gray-200 px-4 py-3">
           <div className="flex justify-end space-x-2">
             <button
               className="border-green-600 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-green-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
