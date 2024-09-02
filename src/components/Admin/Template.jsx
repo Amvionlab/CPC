@@ -666,7 +666,7 @@ const handleDelete = async (index) => {
   <h4 className="text-lg font-semibold">Template Columns</h4>
   <div className="flex space-x-8 items-center">
     <button
-      className=" bg-prime transition-transform duration-200 ease-in-out transform hover:scale-110 text-box font-mont font-bold text-x py-1 px-4 rounded-md shadow-md border-prime border-2 focus:outline-none"
+      className=" bg-prime transition-transform duration-200 ease-in-out transform hover:scale-110 text-box font-mont font-bold text-x py-2 px-3 rounded-md shadow-md border-prime border-2 focus:outline-none"
       onClick={handleAddButtonClick}
     >
       Add +
@@ -687,7 +687,7 @@ const handleDelete = async (index) => {
   <tbody>
     {dialogContent.map((column, index) => (
       <tr key={index} className="hover:bg-blue-50  rounded-lg bg-second transition-colors duration-150 ">
-        <th className="border-t border-l border-box border-2 px-4 py-3 rounded-lg text-left font-medium w-4/5">
+        <th className="border-t text-sm border-l border-box border-2 px-4 py-3 rounded-lg text-left font-medium w-4/5">
           {editingIndex === index ? (
             <input
               type="text"
