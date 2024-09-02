@@ -44,8 +44,6 @@ import Management from "./components/Management/Management";
 import Setup from "./components/Setup/Setup";
 import AssetType from "./AssetType/AssetType";
 import TypeTable from "./TypeTable/TypeTable";
-import { Group as GroupIcon } from "@mui/icons-material";  // Renamed the MUI icon import
-
 const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour
 
 function App() {
@@ -135,9 +133,9 @@ function App() {
                       <Route path="/setup/access" element={<Access />} />
                       <Route path="/management" element={<Management />} />
                       <Route path="/setup" element={<Setup />} />
-                      <Route path="/:id/type" element={<AssetType />} />
+                      <Route path="/management/:group" element={<AssetType />} />
                       <Route
-                        path="/:id/:type/typetable"
+                        path="/management/:group/:type"
                         element={<TypeTable />}
                       />
                       <Route

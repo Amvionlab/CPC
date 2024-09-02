@@ -5,7 +5,6 @@ import { baseURL } from '../../config.js';
 import { FaFilter } from "react-icons/fa";
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
-import axios from 'axios';
 
 import ReactPaginate from 'react-paginate';
 import html2canvas from 'html2canvas';
@@ -25,6 +24,7 @@ const Form = () => {
 
   const [users, setUsers] = useState([]);
   const [table, setTable] = useState([]);
+  const [type_id, setTypeid] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [attachment, setAttachment] = useState(null);
   const [submissionStatus, setSubmissionStatus] = useState(null);
@@ -117,7 +117,7 @@ const handleSaveNewColumn = async () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ table: table, name: sanitizedColumnName }),
+      body: JSON.stringify({ table: table, name: sanitizedColumnName, type_id:type_id }),
     });
 
     console.log('Response status:', response.status);
@@ -380,10 +380,12 @@ const handleDelete = async (index) => {
     setFilteredUsers(filtered);
   }, [filters, users]);
 
-  const handleTemplateClick = async (type) => {
+  const handleTemplateClick = async (type,type_id) => {
     try {
       // Set the table type to dynamically change the table
       setTable(type);
+      alert(type_id)
+      setTypeid(type_id);
   
       // Fetch the columns for the selected type from template.php
       const response = await fetch(`${baseURL}/backend/template.php?type=${type}`);
@@ -605,7 +607,7 @@ const handleDelete = async (index) => {
                   <td className="border-t py-1 px-4">
                   <button
   className="bg-second text-prime py-2 px-4 font-semibold rounded-lg transition-transform duration-200 ease-in-out transform hover:scale-110 hover:bg-prime hover:text-box hover:shadow-md active:scale-95 focus:outline-none"
-  onClick={() => handleTemplateClick(user.type)}
+  onClick={() => handleTemplateClick(user.type,user.id)}
 >
   Template
 </button>

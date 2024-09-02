@@ -17,6 +17,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import useFetch from "../hooks/useFetch";
+import { baseURL } from '../config.js';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -47,12 +48,12 @@ function getStyles(name, personName, theme) {
 }
 
 function TypeTable() {
-  const { type, id } = useParams();
+  const { type,group } = useParams();
+  //alert(type);
 
-  const { allData } = useFetch(
-    `http://localhost/AMS/backend/fetchTableFields.php`
-  );
 
+  const { allData } = useFetch(`${baseURL}/backend/fetchTableFields.php`);
+  
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -97,10 +98,11 @@ function TypeTable() {
 
   // Filter active columns based on type_id
   const columnsToShow = allData.active_columns.filter(
-    (column) => column.type_id === id
+    (column) => column.type === type
   );
+
   const inActiveColumns = allData.inactive_columns.filter(
-    (column) => column.type_id === id
+    (column) => column.type === type
   );
 
   return (
@@ -108,7 +110,7 @@ function TypeTable() {
       <div className="w-full bg-white p-4 rounded-md">
         <div className="w-full flex justify-between items-center text-base font-medium mb-5">
           <div className="flex">
-            <Link to={`/${id}/type`} className="text-red-500 hover:underline">
+            <Link to={`/management/${group}/${type}`} className="text-red-500 hover:underline">
               Asset Type
             </Link>
             <p>/{type}</p>
