@@ -5,7 +5,6 @@ import { baseURL } from '../../config.js';
 import { FaFilter } from "react-icons/fa";
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
-import axios from 'axios';
 
 import ReactPaginate from 'react-paginate';
 import html2canvas from 'html2canvas';
@@ -25,10 +24,10 @@ const Form = () => {
 
   const [users, setUsers] = useState([]);
   const [table, setTable] = useState([]);
+  const [type_id, setTypeid] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [attachment, setAttachment] = useState(null);
   const [submissionStatus, setSubmissionStatus] = useState(null);
-  const [attachmentError, setAttachmentError] = useState("");
   const [filters, setFilters] = useState({});
   const [showFilter, setShowFilter] = useState({
     id: false,
@@ -70,44 +69,27 @@ const Form = () => {
     const name = tempColumnName;
 
     try {
-        const typeResponse = await fetch(`${baseURL}/backend/fetchType.php`);
-        if (!typeResponse.ok) throw new Error('Failed to fetch type');
-        const { type } = await typeResponse.json();
+      //alert(`Type: ${table}\nOld Name: ${oldName}\nNew Name: ${name}`);
 
-        const columnsResponse = await fetch(`${baseURL}/backend/template.php`);
-        if (!columnsResponse.ok) throw new Error('Failed to fetch columns');
-        const { columns } = await columnsResponse.json();
+      const response = await fetch(`${baseURL}/backend/updateColumn.php`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ table: table, oldName, name }),
+      });
 
-        //alert(`Type: ${type}\nOld Name: ${oldName}\nNew Name: ${name}`);
-
-        const response = await fetch(`${baseURL}/backend/updateColumn.php`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ table: type, oldName, name }),
-        });
-
-        if (response.ok) {
-            const addColumnResponse = await fetch(`${baseURL}/backend/addColumn.php`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ type, column_name: name }),
-            });
-
-            if (addColumnResponse.ok) {
-                setDialogContent(updatedContent);
-                toast.success("Column added and updated successfully");
-            } else {
-                throw new Error('Failed to add new column');
-            }
-        } else {
-            throw new Error("Failed to update column name");
-        }
+      if (response.ok) {
+        toast.success("Column Updated");
+        // Re-fetch columns after successful update
+        fetchColumns();
+      } else {
+        throw new Error("Failed to update column name");
+      }
     } catch (error) {
-        console.error("Error:", error);
-        toast.error("Error saving the column");
+      console.error("Error:", error);
+      toast.error("Error saving the column");
     }
     setEditingIndex(null);
-};
+  };
 
 const handleAdd = () => {
   setAddingNewColumn(true);
@@ -121,7 +103,7 @@ const handleSaveNewColumn = async () => {
   try {
     // Sanitize the new column name
     let sanitizedColumnName = newColumnName.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
-    alert(`Type: ${table}\nNew Column Name: ${sanitizedColumnName}`);
+    //alert(`Type: ${table}\nNew Column Name: ${sanitizedColumnName}`);
 
     const columnsResponse = await fetch(`${baseURL}/backend/template.php`);
     if (!columnsResponse.ok) {
@@ -135,7 +117,7 @@ const handleSaveNewColumn = async () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ table: table, name: sanitizedColumnName }),
+      body: JSON.stringify({ table: table, name: sanitizedColumnName, type_id:type_id }),
     });
 
     console.log('Response status:', response.status);
@@ -159,14 +141,14 @@ const handleSaveNewColumn = async () => {
 };
 
 const handleClose = () => {
-  setNewColumnName(''); // Reset input value
-  setIsInputVisible(false); // Hide input field
+  setNewColumnName(''); 
+  setIsInputVisible(false); 
 };
 
 const handleDelete = async (index) => {
   const columnToDelete = dialogContent[index];
 
-  // Confirm deletion
+  // Confirm deletion with a browser dialog
   if (window.confirm(`Are you sure you want to delete the column "${columnToDelete}"?`)) {
     try {
       const response = await fetch(`${baseURL}/backend/deleteColumn.php`, {
@@ -175,25 +157,25 @@ const handleDelete = async (index) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          table: table, // Assuming `selectedType` is the current type
+          table: table, // Adjust as required based on your type reference
           name: columnToDelete,
         }),
       });
 
       const result = await response.json();
-
+      
       if (response.ok) {
         // Handle successful deletion
         const newDialogContent = dialogContent.filter((_, i) => i !== index);
         setDialogContent(newDialogContent);
-        alert(result.message);
+        toast.success(result.message || 'Column deleted successfully.');
       } else {
-        // Handle errors
-        alert(result.message || 'Failed to delete the column. Please try again.');
+        // Handle errors from server
+        toast.error(result.message || 'Failed to delete the column. Please try again.');
       }
     } catch (error) {
       console.error('Error deleting column:', error);
-      alert('Failed to delete the column. Please try again.');
+      toast.error('Failed to delete the column. Please try again.');
     }
   }
 };
@@ -236,37 +218,33 @@ const handleDelete = async (index) => {
     fetchTypes();
   }, [baseURL]);
   
+  const fetchColumns = async () => {
+    try {
+      const templateResponse = await fetch(`${baseURL}/backend/template.php?type=${table}`);
+      if (!templateResponse.ok) {
+        throw new Error(`Failed to fetch template columns: ${templateResponse.statusText}`);
+      }
+      const templateData = await templateResponse.json();
+      setDialogContent(templateData.columns || []);
+
+      const assetTemplateResponse = await fetch(`${baseURL}/backend/asset_template.php`);
+      if (!assetTemplateResponse.ok) {
+        throw new Error(`Failed to fetch asset template columns: ${assetTemplateResponse.statusText}`);
+      }
+      const assetTemplateData = await assetTemplateResponse.json();
+      setTemplateColumns(assetTemplateData.template_columns || []);
+
+    } catch (error) {
+      console.error("Error fetching columns:", error);
+    }
+  };
+
+  // useEffect to fetch columns initially or when a dependency changes
   useEffect(() => {
-    if (!selectedType) return; // Skip if no type is selected
-  
-      const fetchColumns = async () => {
-        try {
-          // Fetch columns for the selected type using fetch
-          const templateResponse = await fetch(`${baseURL}/backend/template.php?type=${selectedType}`);
-          if (!templateResponse.ok) {
-            throw new Error(`Failed to fetch template columns: ${templateResponse.statusText}`);
-          }
-          const templateData = await templateResponse.json();
-          const columns = templateData.columns || [];
-          setDialogContent(columns);
-    
-          // Fetch columns from asset_template.php using fetch
-          const assetTemplateResponse = await fetch(`${baseURL}/backend/asset_template.php`);
-          if (!assetTemplateResponse.ok) {
-            throw new Error(`Failed to fetch asset template columns: ${assetTemplateResponse.statusText}`);
-          }
-          const assetTemplateData = await assetTemplateResponse.json();
-          const templateColumns = assetTemplateData.template_columns || [];
-          setTemplateColumns(templateColumns);
-    
-        } catch (error) {
-          console.error("Error fetching columns:", error);
-        }
-      };
-    
-      fetchColumns();
-    }, [selectedType]);
-    
+    if (!table) return;
+    fetchColumns();
+  }, [table]);
+
 
   useEffect(() => {
     const loadColumns = async () => {
@@ -402,10 +380,12 @@ const handleDelete = async (index) => {
     setFilteredUsers(filtered);
   }, [filters, users]);
 
-  const handleTemplateClick = async (type) => {
+  const handleTemplateClick = async (type,type_id) => {
     try {
       // Set the table type to dynamically change the table
       setTable(type);
+      alert(type_id)
+      setTypeid(type_id);
   
       // Fetch the columns for the selected type from template.php
       const response = await fetch(`${baseURL}/backend/template.php?type=${type}`);
@@ -621,13 +601,13 @@ const handleDelete = async (index) => {
               .slice(currentPage * ticketsPerPage, (currentPage + 1) * ticketsPerPage)
               .map((user, index) => (
                 <tr key={user.id} className="bg-box text-fontadd text-center font-medium">
-                  <td className="border-t py-3 px-4">{i++}</td>
-                  <td className="border-t py-3 px-4">{user.type}</td>
-                  <td className="border-t py-3 px-4">{user.group}</td>
-                  <td className="border-t py-3 px-4">
+                  <td className="border-t py-1 px-4">{i++}</td>
+                  <td className="border-t py-1 px-4">{user.type}</td>
+                  <td className="border-t py-1 px-4">{user.group}</td>
+                  <td className="border-t py-1 px-4">
                   <button
   className="bg-second text-prime py-2 px-4 font-semibold rounded-lg transition-transform duration-200 ease-in-out transform hover:scale-110 hover:bg-prime hover:text-box hover:shadow-md active:scale-95 focus:outline-none"
-  onClick={() => handleTemplateClick(user.type)}
+  onClick={() => handleTemplateClick(user.type,user.id)}
 >
   Template
 </button>
@@ -687,7 +667,7 @@ const handleDelete = async (index) => {
   <tbody>
     {dialogContent.map((column, index) => (
       <tr key={index} className="hover:bg-blue-50  rounded-lg bg-second transition-colors duration-150 ">
-        <th className="border-t text-sm border-l border-box border-2 px-4 py-3 rounded-lg text-left font-medium w-4/5">
+        <th className="border-t text-sm border-l border-box border-2 px-4 py-2 rounded-lg text-left font-medium w-4/5">
           {editingIndex === index ? (
             <input
               type="text"

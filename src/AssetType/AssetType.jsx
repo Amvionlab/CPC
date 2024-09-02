@@ -1,18 +1,14 @@
-import {
-  faBell,
-  faChevronDown,
-  faComment,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import { PieChart } from "@mui/x-charts";
-import axios from "axios";
+import { baseURL } from '../config.js';
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
 
 const AssetType = () => {
-  const { allData } = useFetch("http://localhost/AMS/backend/fetchType.php");
-  const { id } = useParams();
+  const { allData } = useFetch(`${baseURL}/backend/fetchType.php`);
+  
+  const { group } = useParams();
 
   const data = [
     { id: 0, value: 10, label: "Series A" },
@@ -20,7 +16,7 @@ const AssetType = () => {
     { id: 2, value: 20, label: "Series C" },
   ];
 
-  const filteredData = allData.filter((data) => data.group_id == id);
+  const filteredData = allData.filter((data) => data.group == group);
 
   return (
     <div className="lg:flex flex-col p-4 gap-4 w-full h-screen font-poppins lg:grid-cols-2 grid-cols-1 bg-slate-200">
@@ -28,7 +24,7 @@ const AssetType = () => {
         <div className="text-base font-medium">
           <Link
             className="text-red-600 hover:underline"
-            to={`/${id}/management`}
+            to={`/management/${group}`}
           >
             Asset Group
           </Link>
@@ -36,11 +32,9 @@ const AssetType = () => {
         </div>
         
         <div className="flex gap-6 flex-wrap">
-          {filteredData.map((item, i) => (
+          {filteredData.map((item) => (
             <Link
-              to={`/${item.id}/${item.type
-                .replace(/\s+/g, "")
-                .toUpperCase()}/typetable`}
+              to={`/management/${item.group}/${item.type}`}
             >
               <div className="m-2 w-40 group transform transition-transform duration-300 hover:scale-105 bg-second shadow-md rounded-lg p-4 flex items-center justify-center cursor-pointer">
             <p className="font-medium text-base text-gray-700 text-center">
