@@ -17,7 +17,7 @@ if ($resultGroups->num_rows > 0) {
 }
 
 // Fetch active types
-$sqlTypes = "SELECT asset_type.type, asset_type.group_id, asset_group.group AS group_name FROM asset_type JOIN asset_group ON asset_type.group_id = asset_group.id WHERE asset_type.is_active = 1";
+$sqlTypes = "SELECT asset_type.type, asset_type.tag, asset_type.group_id, asset_group.group AS group_name FROM asset_type JOIN asset_group ON asset_type.group_id = asset_group.id WHERE asset_type.is_active = 1";
 $resultTypes = $conn->query($sqlTypes);
 
 $types = array();
@@ -28,6 +28,7 @@ if ($resultTypes->num_rows > 0) {
             "type" => $row["type"],
             "group_id" => $row["group_id"],
             "group" => $row["group_name"],
+            "tag" => $row["tag"],
         );
     }
 }

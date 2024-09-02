@@ -10,7 +10,7 @@ import html2canvas from 'html2canvas';
 import { UserContext } from '../UserContext/UserContext.jsx';
 
 const Form = () => {
-  const [formData, setFormData] = useState({ name: "", dropdown: "" });
+  const [formData, setFormData] = useState({ name: "", dropdown: "",tag:"" });
   const { user } = useContext(UserContext);
   
   const [ticketsPerPage, setTicketsPerPage] = useState(10);
@@ -58,6 +58,7 @@ const Form = () => {
     const form = new FormData();
     form.append('name', formData.name);
     form.append('dropdown', formData.dropdown);
+    form.append('tag', formData.tag);
 
     try {
       const response = await fetch(`${baseURL}/backend/type_add.php`, {
@@ -70,12 +71,15 @@ const Form = () => {
       if (result.message === 'Type already exists.') {
         setSubmissionStatus({ success: false, message: result.message });
         toast.error(result.message);
-      } else if (result.message === 'Type added successfully.') {
+      } 
+      else if (result.success) {
         setSubmissionStatus({ success: true, message: result.message });
         toast.success(result.message);
+        // Consider a smarter navigation or state update rather than a full reload
         window.location.reload();
       } else {
-        throw new Error('Unexpected response message.');
+        setSubmissionStatus({ success: false, message: result.message });
+        toast.error(result.message);
       }
     } catch (error) {
       setSubmissionStatus({ success: false, message: error.message });
@@ -161,7 +165,7 @@ const Form = () => {
                 </div>
                
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
+              <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-x-10 ml-10 pr-10 mb-0">
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">Type</label>
                   <input
@@ -173,25 +177,40 @@ const Form = () => {
                     required
                     className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
                   />
+                  </div>
+
+                  <div className="flex items-center mb-2 mr-4">
+                  <label className="text-sm font-semibold text-prime mr-2 w-32">Tag</label>
+                  <input
+                    type="text"
+                    name="tag"
+                    placeholder="Enter Tag"
+                    value={formData.tag}
+                    onChange={handleChange}
+                    required
+                    className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                  />
+                  </div>
+                  <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime ml-12 mr-2 w-32">Group</label>
                   <select
                     name="dropdown"
                     value={formData.dropdown}
                     onChange={handleChange}
                     required
-                    className="ml-4 flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    className="ml-4 w-48 flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
                   >
                     <option value="" disabled>Select Group</option>
                     {groups.map((group) => (
                       <option key={group.id} value={group.id} className="custom-option">{group.group}</option>
                     ))}
                   </select>
-                  
+                  </div>
+                  <div className="flex items-center mb-2 mr-4">
                   <button type="submit" className="bg-prime ml-12 font-mont font-semibold text-md text-white py-2 px-8 rounded-md shadow-md focus:outline-none">
                     Submit
                   </button>
-               
-                </div>
+               </div>
               </div>
             </form>
           </div>
@@ -229,7 +248,7 @@ const Form = () => {
           <table className="min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
             <thead className="bg-second border-2 border-prime text-prime font-semibold font-poppins text-fontadd">
               <tr>
-                {["Id", "Type", "Group"].map((header, index) => (
+                {["Id", "Type", "Tag", "Group"].map((header, index) => (
                   <td key={index} className="w-1/6 py-4 px-4">
                     <div className="flex items-center justify-center">
                       <div className="header flex">
@@ -272,6 +291,7 @@ const Form = () => {
                 <tr key={user.id} className="bg-white text-fontadd text-center font-medium">
                   <td className="border-t py-4 px-4">{index + 1 + offset}</td>
                   <td className="border-t py-4 px-4">{user.type}</td>
+                  <td className="border-t py-4 px-4">{user.tag}</td>
                   <td className="border-t py-4 px-4">{user.group}</td>
                 </tr>
               ))}
