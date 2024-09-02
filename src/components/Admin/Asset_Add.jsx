@@ -12,27 +12,26 @@ import { UserContext } from '../UserContext/UserContext';
 import { ConstructionOutlined } from "@mui/icons-material";
 
 const Form = () => {
-    const [formData, setFormData] = useState({
-        name: "",
-        manufacturer: "",
-        model: "",
-        serial_number: "",
-        location: "",
-        user_name: "",
-        asset_value: "",
-        vendor_name: "",
-        purchase_date: "",
-        po_number: "",
-        amc_from: "",
-        amc_to: "",
-        amc_interval: "",
-        last_amc: "",
-        procure_by: "",
-        warranty_upto: "",
-        group: "",
-        type: ""
-        
-    });
+  const [formData, setFormData] = useState({
+    name: "",
+    manufacturer: "",
+    model: "",
+    serial_number: "",
+    location: "",
+    user_name: "",
+    asset_value: "",
+    vendor_name: "",
+    purchase_date: "",
+    po_number: "",
+    amc_from: "",
+    amc_to: "",
+    amc_interval: "",
+    last_amc: "",
+    procure_by: "",
+    warranty_upto: "",
+    type: "",
+    group: "",
+  });
 
   const [message, setMessage] = useState('');
   const { user } = useContext(UserContext);
@@ -58,6 +57,9 @@ const Form = () => {
   const [locations, setLocations] = useState([]);
   const [groups, setGroups] = useState([]);
   const [types, setTypes] = useState([]);
+  const [extraFields, setExtraFields] = useState([]);
+  const [dynamicFields, setDynamicFields] = useState([]);
+
  
   useEffect(() => {
     const fetchLocations = async () => {
@@ -115,32 +117,48 @@ useEffect(() => {
     fetchDropdownData();
 }, []);
 
+useEffect(() => {
+  if (formData.type) {
+    const fetchDynamicFields = async () => {
+      try {
+          const response = await fetch(`${baseURL}/backend/get_extra_columns.php`, {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/x-www-form-urlencoded",
+              },
+              body: new URLSearchParams({ type: formData.type }),
+          });
+  
+          if (!response.ok) {
+              // If the response is not OK, log the response text for debugging
+              const text = await response.text();
+              throw new Error("Network response was not ok: " + text);
+          }
+  
+          // Attempt to parse JSON
+          const result = await response.json();
+  
+          if (result.message) {
+              // Handle errors from PHP script
+              throw new Error(result.message);
+          }
+  
+          setDynamicFields(result.fields || []);
+      } catch (error) {
+          console.error("Error fetching dynamic fields:", error);
+          toast.error("Error fetching dynamic fields: " + error.message);
+      }
+  };
+      fetchDynamicFields();
+  }
+}, [formData.type]);
  
   const navigate = useNavigate();
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData(prevData => ({
-        ...prevData,
-        [name]: value
-    }));
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
 };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    const allowedExtensions = ["pdf", "jpg", "jpeg", "png"];
-    const fileExtension = file ? file.name.split(".").pop().toLowerCase() : "";
-
-    if (file && allowedExtensions.includes(fileExtension)) {
-      setAttachment(file);
-      setAttachmentError("");
-    } else {
-      setAttachment(null);
-      setAttachmentError(
-        "Invalid file type. Only PDF, JPG, JPEG, and PNG files are allowed."
-      );
-    }
-  };
  
 const handleRowsPerPageChange = (e) => {
   const value = parseInt(e.target.value, 10); // Parse the input value as an integer
@@ -160,10 +178,11 @@ const handleRowsPerPageChange = (e) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const form = new FormData();
-    for (const key in formData) {
+    Object.keys(formData).forEach(key => {
         form.append(key, formData[key]);
-    }
+    });
 
     try {
         const response = await fetch(`${baseURL}/backend/asset_add.php`, {
@@ -173,28 +192,39 @@ const handleRowsPerPageChange = (e) => {
 
         const result = await response.json();
 
-        console.log("Response:", result); // Log the response to check its format
-
         if (!response.ok) {
             throw new Error(result.message || "Something went wrong");
         }
 
         if (result.message === "Asset Already Exists") {
-            setSubmissionStatus({ success: false, message: result.message });
-            toast.error(result.message); // Display error message
+            toast.error(result.message);
         } else if (result.message === "Asset added successfully.") {
-            setSubmissionStatus({ success: true, message: result.message });
-            toast.success(result.message); // Display success message
-            location.reload(); // Reload the page to reflect changes
+            setFormData({
+                name: "",
+                manufacturer: "",
+                model: "",
+                serial_number: "",
+                location: "",
+                user_name: "",
+                asset_value: "",
+                vendor_name: "",
+                purchase_date: "",
+                po_number: "",
+                amc_from: "",
+                amc_to: "",
+                amc_interval: "",
+                last_amc: "",
+                procure_by: "",
+                warranty_upto: "",
+                type: "",
+                group: ""
+            });
+            toast.success(result.message);
         } else {
             throw new Error("Unexpected response message.");
         }
     } catch (error) {
-        setSubmissionStatus({
-            success: false,
-            message: "There was a problem with your fetch operation: " + error.message,
-        });
-        toast.error("There was a problem with your fetch operation: " + error.message); // Display error message
+        toast.error("There was a problem with your fetch operation: " + error.message);
     }
 };
 
@@ -341,290 +371,108 @@ const handleRowsPerPageChange = (e) => {
      
         <div className="max-w-full mt-3 m-2 mb-4 p-2 bg-box rounded-lg font-mont " >
           <div className="ticket-table mt-2">
-            <form onSubmit={handleSubmit} className="space-y-4 text-label">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
+          <form onSubmit={handleSubmit} className="space-y-4 text-label">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
                 <div className="font-mont font-semibold text-2xl mb-4">
-                  Asset Details:
+                    Asset Details:
                 </div>
-              </div>
-
-              {/* Additional Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-              <div className="flex items-center mb-2 mr-4">
-                <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Group
-                </label>
-                <select
-                    name="group"
-                    value={formData.group}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                >
-                    <option value="">Select Group</option>
-                    {groups
-                    .filter(group => group.group) // Ensure that only groups with a name are shown
-                    .map((group) => (
-                        <option key={group.id} value={group.id}>
-                            {group.group}
-                        </option>
-                    ))}
-                </select>
             </div>
 
-            <div className="flex items-center mb-2 mr-4">
-                <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Type
-                </label>
-                <select
-                    name="type"
-                    value={formData.type}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                >
-                    <option value="">Select Type</option>
-                    {filteredTypes
-                    .map((type) => (
-                        <option key={type.type} value={type.type}>
-                            {type.type}
-                        </option>
-                    ))}
+            {/* Group and Type Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
+                <div className="flex items-center mb-2 mr-4">
+                    <label className="text-sm font-semibold text-prime mr-2 w-32">
+                        Group
+                    </label>
+                    <select
+                        name="group"
+                        value={formData.group}
+                        onChange={handleChange}
+                        className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    >
+                        <option value="">Select Group</option>
+                        {groups
+                            .filter(group => group.group)
+                            .map(group => (
+                                <option key={group.id} value={group.id}>
+                                    {group.group}
+                                </option>
+                            ))}
                     </select>
                 </div>
 
                 <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Name<span className="text-red-600 text-md font-bold">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Enter Name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
+                    <label className="text-sm font-semibold text-prime mr-2 w-32">
+                        Type
+                    </label>
+                    <select
+                        name="type"
+                        value={formData.type}
+                        onChange={handleChange}
+                        className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    >
+                        <option value="">Select Type</option>
+                        {filteredTypes
+                            .map(type => (
+                                <option key={type.type} value={type.type}>
+                                    {type.type}
+                                </option>
+                            ))}
+                    </select>
                 </div>
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Manufacturer <span className="text-red-600 text-md font-bold">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="manufacturer"
-                    placeholder="Enter Manufacturer Name"
-                    value={formData.manufacturer}
-                    onChange={handleChange}
-                    required
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
-                </div>
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Model <span className="text-red-600 text-md font-bold">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="model"
-                    placeholder="Enter Model Name"
-                    value={formData.model}
-                    onChange={handleChange}
-                    required
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
-                </div>
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Serial Number<span className="text-red-600 text-md font-bold">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    name="serial_number"
-                    placeholder="Enter Serial No"
-                    value={formData.serial_number}
-                    onChange={handleChange}
-                    required
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
-                </div>
-                <div className="flex items-center mb-2 mr-4">
-                <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Location
-                </label>
-                <select
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                >
-                    <option value="">Select Location</option>
-                    {locations
-                    .filter(location => location.name) // Ensure that only locations with a name are shown
-                    .map((location) => (
-                        <option key={location.id} value={location.name}>
-                        {location.name}
-                        </option>
+            </div>
+
+            {/* Static Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
+                {Object.keys(formData)
+                    .filter(key => !['group', 'type'].includes(key))
+                    .map(key => (
+                        <div className="flex items-center mb-2 mr-4" key={key}>
+                            <label className="text-sm font-semibold text-prime mr-2 w-32">
+                                {key.charAt(0).toUpperCase() + key.slice(1).replace('_', ' ')}
+                            </label>
+                            <input
+                                type={key === 'serial_number' || key === 'asset_value' ? 'number' : 'text'}
+                                name={key}
+                                placeholder={`Enter ${key.replace('_', ' ')}`}
+                                value={formData[key]}
+                                onChange={handleChange}
+                                className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                            />
+                        </div>
                     ))}
-                </select>
-                </div>
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    User Name
-                  </label>
-                  <input
-                    type="text"
-                    name="user_name"
-                    placeholder="Enter User Name"
-                    value={formData.user_name}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
-                </div>
-                <div className="flex items-center mb-2 mr-4">
+            </div>
+
+            {/* Dynamic Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
+            {dynamicFields.map((field, index) => (
+            <div key={field.name || index} className="flex items-center mb-2 mr-4">
                 <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Asset Value
+                    {field.label}
                 </label>
                 <input
-                    type="number"
-                    name="asset_value"
-                    placeholder="Enter Asset Value"
-                    value={formData.asset_value}
+                    type={field.type || 'text'}
+                    name={field.name}
+                    placeholder={`Enter ${field.label}`}
+                    value={formData[field.name] || ''}
                     onChange={handleChange}
                     className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
                 />
-                </div>
+            </div>
+        ))}
 
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Vendor Name<span className="text-red-600 text-md font-bold">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="vendor_name"
-                    placeholder="Enter Vendor Name"
-                    value={formData.vendor_name}
-                    onChange={handleChange}
-                    required
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
-                </div>
-               
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Purchase Date
-                  </label>
-                  <input
-                    type="text"
-                    name="purchase_date"
-                    placeholder="Enter Purchase Date"
-                    value={formData.purchase_date}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
-                </div>
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    PO Number
-                  </label>
-                  <input
-                    type="text"
-                    name="po_number"
-                    placeholder="Enter PO Number"
-                    value={formData.po_number}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
-                </div>
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    AMC From
-                  </label>
-                  <input
-                    type="text"
-                    name="amc_from"
-                    placeholder="Enter Amc From Date"
-                    value={formData.amc_from}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
-                </div>
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    AMC To
-                  </label>
-                  <input
-                    type="text"
-                    name="amc_to"
-                    placeholder="Enter AMC To Date"
-                    value={formData.amc_to}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
-                </div>  
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    AMC Interval
-                  </label>
-                  <input
-                    type="text"
-                    name="amc_interval"
-                    placeholder="Enter AMC Interval Date"
-                    value={formData.amc_interval}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
-                </div> 
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Last AMC
-                  </label>
-                  <input
-                    type="text"
-                    name="last_amc"
-                    placeholder="Enter Last AMC Date"
-                    value={formData.last_amc}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
-                </div>
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Procure By
-                  </label>
-                  <input
-                    type="text"
-                    name="procure_by"
-                    placeholder="Enter Procure By Date"
-                    value={formData.procure_by}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
-                </div>  
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Warranty Upto
-                  </label>
-                  <input
-                    type="text"
-                    name="warranty_upto"
-                    placeholder="Enter Warranty Upto Date"
-                    value={formData.warranty_upto}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
-                </div>  
-                
-              </div>
-              <div className="flex justify-center">
+            </div>
+
+            <div className="flex justify-center">
                 <button
-                  type="submit"
-                  className="mt-1 bg-prime font-mont font-semibold text-lg text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
+                    type="submit"
+                    className="mt-1 bg-prime font-mont font-semibold text-lg text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
                 >
-                  Submit
+                    Submit
                 </button>
-              </div>
-            </form>
-          </div>
+            </div>
+        </form>
+    </div>
           </div>
    
 </div>
