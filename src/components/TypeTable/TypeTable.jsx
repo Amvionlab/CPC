@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
@@ -16,7 +16,6 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import useFetch from "../../hooks/useFetch";
 import { baseURL } from '../../config.js';
 
 const ITEM_HEIGHT = 48;
@@ -30,64 +29,87 @@ const MenuProps = {
   },
 };
 
-function getStyles(name, personName, theme) {
+function getStyles(name, selectedColumns, theme) {
   return {
     fontWeight:
-      personName.indexOf(name) === -1
+      selectedColumns.indexOf(name) === -1
         ? theme.typography.fontWeightRegular
         : theme.typography.fontWeightMedium,
     backgroundColor:
-      personName.indexOf(name) === -1
+      selectedColumns.indexOf(name) === -1
         ? theme.palette.background.paper
         : theme.palette.primary.light,
     color:
-      personName.indexOf(name) === -1
+      selectedColumns.indexOf(name) === -1
         ? theme.palette.text.primary
         : theme.palette.primary.contrastText,
   };
 }
 
 function TypeTable() {
-  const { type,group } = useParams();
-  //alert(type);
-
-
-  const { allData } = useFetch(`${baseURL}/backend/fetchTableFields.php`);
-  
+  const { type, group } = useParams();
+  const theme = useTheme();
+  const [allData, setAllData] = useState(null); // State to hold fetched data
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedColumns, setSelectedColumns] = useState([]);
 
-  const theme = useTheme();
-  const [personName, setPersonName] = useState([]);
-  const [columnIndex, setColunmIndex] = useState(8);
+  // Use useEffect to fetch data when the component mounts or the type changes
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
+      const data = await response.json();
+      setAllData(data);
+    };
+
+    fetchData();
+  }, [type]); // The effect runs when the component mounts or when 'type' changes
 
   const handleChange = (event) => {
     const {
       target: { value },
     } = event;
 
-    const newPersonName = typeof value === "string" ? value.split(",") : value;
-
-    // Check if the new selection is adding or removing columns
-    if (newPersonName.length > personName.length) {
-      setColunmIndex((prevIndex) => prevIndex + 1);
-    } else {
-      setColunmIndex((prevIndex) => prevIndex - 1);
+    const id = value; // Get the ID of the selected column
+    // Update selected columns if not already selected
+    if (!selectedColumns.includes(id)) {
+      setSelectedColumns([...selectedColumns, id]);
+      updateColumnStatus(id); // Call the function to update the column status
     }
-
-    setPersonName(newPersonName);
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+  const updateColumnStatus = (columnId) => {
+    alert(columnId);
+
+    // Create a URL with the id parameter
+    const url = new URL(`${baseURL}/backend/updateColumnStatus.php`);
+    url.searchParams.append('id', columnId); // Append the column ID as a query parameter
+
+    fetch(url, {
+      method: 'POST', 
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        console.log(`Column with ID ${columnId} activated successfully.`);
+        // Reload data to reflect updates
+        return fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
+      } else {
+        console.error("Error activating column: ", data.message);
+      }
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      setAllData(data); // Update the state with the new data after activation
+    })
+    .catch((error) => {
+      console.error("There was an error during the fetch:", error);
+    });
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-
-  // Check if allData is available and contains the necessary properties
   if (!allData || !allData.active_columns) {
     return (
       <p className="text-center text-red-600">
@@ -96,7 +118,6 @@ function TypeTable() {
     );
   }
 
-  // Filter active columns based on type_id
   const columnsToShow = allData.active_columns.filter(
     (column) => column.type === type
   );
@@ -122,16 +143,16 @@ function TypeTable() {
                 labelId="demo-multiple-name-label"
                 id="demo-multiple-name"
                 multiple
-                value={personName}
+                value={selectedColumns}
                 onChange={handleChange}
                 input={<OutlinedInput label="Add Column" />}
                 MenuProps={MenuProps}
               >
                 {inActiveColumns.map((column) => (
                   <MenuItem
-                    key={column}
-                    value={column}
-                    style={getStyles(column.column_name, personName, theme)}
+                    key={column.id}
+                    value={column.id}
+                    style={getStyles(column.id, selectedColumns, theme)}
                   >
                     {column.column_name}
                   </MenuItem>
@@ -145,7 +166,7 @@ function TypeTable() {
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
-                  {columnsToShow.slice(0, columnIndex).map((column, index) => (
+                  {columnsToShow.map((column, index) => (
                     <TableCell
                       className="capitalize"
                       key={index}
@@ -159,18 +180,11 @@ function TypeTable() {
               </TableHead>
               <TableBody>
                 <TableRow hover role="checkbox" tabIndex={-1}>
-                  {columnsToShow
-                    .slice(0, columnIndex)
-                    .map((column, colIndex) => (
-                      <TableCell
-                        className="capitalize"
-                        // key={colIndex}
-                        align="center"
-                      >
-                        {/* {row[column.column_name] || "-"} */}
-                        {"-"}
-                      </TableCell>
-                    ))}
+                  {columnsToShow.map((column, colIndex) => (
+                    <TableCell className="capitalize" align="center" key={colIndex}>
+                      {"-"} {/* Change this to render actual data */}
+                    </TableCell>
+                  ))}
                 </TableRow>
               </TableBody>
             </Table>
@@ -178,11 +192,14 @@ function TypeTable() {
           <TablePagination
             rowsPerPageOptions={[10, 25, 100]}
             component="div"
-            count={allData.length}
+            count={allData.active_columns.length} 
             rowsPerPage={rowsPerPage}
             page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
+            onPageChange={(event, newPage) => setPage(newPage)}
+            onRowsPerPageChange={(event) => {
+              setRowsPerPage(+event.target.value);
+              setPage(0);
+            }}
           />
         </Paper>
       </div>
