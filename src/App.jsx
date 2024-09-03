@@ -42,8 +42,8 @@ import { TicketProvider } from "../src/components/UserContext/TicketContext";
 import SideMenu from "./components/sideMenu/SideMenu";
 import Management from "./components/Management/Management";
 import Setup from "./components/Setup/Setup";
-import AssetType from "./AssetType/AssetType";
-import TypeTable from "./TypeTable/TypeTable";
+import AssetType from "./components/AssetType/AssetType";
+import TypeTable from "./components/TypeTable/TypeTable";
 const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour
 
 function App() {

@@ -1,9 +1,9 @@
 
 import { PieChart } from "@mui/x-charts";
-import { baseURL } from '../config.js';
+import { baseURL } from '../../config.js';
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import useFetch from "../hooks/useFetch";
+import useFetch from "../../hooks/useFetch";
 
 const AssetType = () => {
   const { allData } = useFetch(`${baseURL}/backend/fetchType.php`);

@@ -16,8 +16,8 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import useFetch from "../hooks/useFetch";
-import { baseURL } from '../config.js';
+import useFetch from "../../hooks/useFetch";
+import { baseURL } from '../../config.js';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

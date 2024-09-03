@@ -50,9 +50,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
 
-            // Create a new table using secure query construction
-            $createTableSql = "CREATE TABLE asset_" . $conn->real_escape_string($typename) . " AS SELECT * FROM asset_template";
-            if ($conn->query($createTableSql) === TRUE) {
+            $result = $conn->query("SHOW CREATE TABLE asset_template");
+$row = $result->fetch_assoc();
+$createTableSql = $row['Create Table']; // This gets the full CREATE TABLE SQL
+
+// Modify $createTableSql to replace 'asset_template' with 'asset_' plus the escaped $typename
+$newTableName = 'asset_' . $conn->real_escape_string($typename);
+$createTableSql = str_replace('CREATE TABLE `asset_template`', 'CREATE TABLE `' . $newTableName . '`', $createTableSql);
+if ($conn->query($createTableSql) === TRUE) {
                 $response = ['success' => true, 'message' => 'Associated table and table fields created successfully.'];
             } else {
                 $response = ['success' => false, 'message' => 'Error creating table: ' . $conn->error];
