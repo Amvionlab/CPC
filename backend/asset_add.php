@@ -33,13 +33,17 @@ $table_name = 'asset_' . strtolower($type);
 // Fetch default columns from asset_template
 $template_columns = [];
 $template_result = $conn->query("SHOW COLUMNS FROM asset_template");
+if (!$template_result) {
+    echo json_encode(['message' => 'Error fetching template columns']);
+    exit;
+}
 while ($row = $template_result->fetch_assoc()) {
     $template_columns[] = $row['Field'];
 }
 
 // Fetch columns from the dynamically selected table
 $type_columns = [];
-$type_result = $conn->query("SHOW COLUMNS FROM $table_name");
+$type_result = $conn->query("SHOW COLUMNS FROM `$table_name`");
 if (!$type_result) {
     echo json_encode(['message' => 'Error fetching columns from type-specific table']);
     exit;
@@ -60,7 +64,7 @@ foreach ($extra_columns as $column) {
 }
 
 // Check if asset already exists in the dynamically selected table
-$sql = "SELECT * FROM $table_name WHERE manufacturer = ? AND model = ? AND serial_number = ?";
+$sql = "SELECT * FROM `$table_name` WHERE manufacturer = ? AND model = ? AND serial_number = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("sss", $manufacturer, $model, $serial_number);
 $stmt->execute();
@@ -86,15 +90,45 @@ if ($result->num_rows > 0) {
         $procure_by, $warranty_upto, date('Y-m-d H:i:s'), 1
     ], array_values($extra_data));
 
-    $sql = "INSERT INTO $table_name ($column_names) VALUES ($placeholders)";
+    $sql = "INSERT INTO `$table_name` ($column_names) VALUES ($placeholders)";
     $stmt = $conn->prepare($sql);
+    
+    if (!$stmt) {
+        echo json_encode(['message' => 'Error preparing insert statement']);
+        exit;
+    }
     
     // Dynamically determine the parameter types based on the provided data
     $types = str_repeat('s', count($values)); // Assuming all are strings; modify as needed for other types
     $stmt->bind_param($types, ...$values);
 
     if ($stmt->execute()) {
-        echo json_encode(["message" => "Asset added successfully."]);
+        $inserted_id = $stmt->insert_id;
+
+        // Fetch the tag for the selected type
+        $tag_sql = "SELECT tag FROM asset_type WHERE type = ?";
+        $tag_stmt = $conn->prepare($tag_sql);
+        $tag_stmt->bind_param("s", $type);
+        $tag_stmt->execute();
+        $tag_result = $tag_stmt->get_result();
+
+        if ($tag_result && $tag_row = $tag_result->fetch_assoc()) {
+            $tag = $tag_row['tag'];
+            $tagged_value = $tag . str_pad($inserted_id, 4, '0', STR_PAD_LEFT);
+
+            // Update the type-specific table with the tag
+            $update_sql = "UPDATE `$table_name` SET tag = ? WHERE id = ?";
+            $update_stmt = $conn->prepare($update_sql);
+            $update_stmt->bind_param("si", $tagged_value, $inserted_id);
+
+            if ($update_stmt->execute()) {
+                echo json_encode(["message" => "Asset added successfully with tag."]);
+            } else {
+                echo json_encode(["message" => "Error updating tag: " . $update_stmt->error]);
+            }
+        } else {
+            echo json_encode(["message" => "Error fetching tag for type"]);
+        }
     } else {
         echo json_encode(["message" => "Error adding asset: " . $stmt->error]);
     }

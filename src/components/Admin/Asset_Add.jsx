@@ -53,7 +53,6 @@ const Form = () => {
     id: false,
     name : false,
     lastname: false,
- 
   });
 
   const [showForm, setShowForm] = useState(false);
@@ -97,7 +96,7 @@ const Form = () => {
     };
 
     fetchGroups();
-}, []);
+}, [formData.group,formData.type]);
 
 useEffect(() => {
     const fetchDropdownData = async () => {
@@ -153,15 +152,29 @@ useEffect(() => {
   }
 }, [formData.type]);
 
- 
   const navigate = useNavigate();
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData(prevData => ({
-        ...prevData,
-        [name]: value
-    }));
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // Check if the "group" field is being changed
+    if (name === 'group') {
+        // Reset the form to its initial state, excluding the group field
+        setFormData({
+            group: value, // Keep the newly selected group
+            type: '', // Reset type
+            // Add any default fields that should not be reset here
+        });
+
+        // Update the dynamicFields based on the new group selection
+        setDynamicFields([]); // Reset dynamic fields to an empty array or default columns if needed
+    } else {
+        // Update the form data for other fields normally
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    }
 };
 
   const handleFileChange = (e) => {
@@ -220,7 +233,7 @@ const handleRowsPerPageChange = (e) => {
         if (result.message === "Asset Already Exists") {
             setSubmissionStatus({ success: false, message: result.message });
             toast.error(result.message); // Display error message
-        } else if (result.message === "Asset added successfully.") {
+        } else if (result.message === "Asset added successfully with tag.") {
             setSubmissionStatus({ success: true, message: result.message });
             toast.success(result.message); // Display success message
             location.reload(); // Reload the page to reflect changes
@@ -389,25 +402,25 @@ const handleRowsPerPageChange = (e) => {
               {/* Additional Fields */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
               <div className="flex items-center mb-2 mr-4">
-                <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Group
-                </label>
-                <select
-                    name="group"
-                    value={formData.group}
-                    onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                >
-                    <option value="">Select Group</option>
-                    {groups
-                    .filter(group => group.group) // Ensure that only groups with a name are shown
-                    .map((group) => (
-                        <option key={group.id} value={group.id}>
-                            {group.group}
-                        </option>
-                    ))}
-                </select>
-            </div>
+    <label className="text-sm font-semibold text-prime mr-2 w-32">
+        Group
+    </label>
+    <select
+        name="group"
+        value={formData.group}
+        onChange={handleChange}  // Attach the updated handleChange function here
+        className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+    >
+        <option value="">Select Group</option>
+        {groups
+        .filter(group => group.group) // Ensure that only groups with a name are shown
+        .map((group) => (
+            <option key={group.id} value={group.id}>
+                {group.group}
+            </option>
+        ))}
+    </select>
+</div>
 
             <div className="flex items-center mb-2 mr-4">
                 <label className="text-sm font-semibold text-prime mr-2 w-32">
@@ -654,24 +667,22 @@ const handleRowsPerPageChange = (e) => {
                 
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-            {dynamicFields.map((field, index) => (
-    <div key={field || index} className="flex items-center mb-2 mr-4">
-        <label className="text-sm font-semibold text-prime mr-2 w-32">
-            {field.replace('_', ' ')}
-        </label>
-        <input
-            type={'text'}
-            name={field}
-            placeholder={`Enter ${field.replace('_', ' ')}`}
-            value={formData[field]} // Updated to use bracket notation
-            onChange={handleChange}
-            className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-        />
-    </div>
-))}
-
-
-            </div>
+    {dynamicFields.map((field, index) => (
+        <div key={field || index} className="flex items-center mb-2 mr-4">
+            <label className="text-sm font-semibold text-prime mr-2 w-32">
+                {field.replace('_', ' ')}
+            </label>
+            <input
+                type="text"
+                name={field}
+                placeholder={`Enter ${field.replace('_', ' ')}`}
+                value={formData[field]}
+                onChange={handleChange}
+                className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+            />
+        </div>
+    ))}
+</div>
               <div className="flex justify-center">
                 <button
                   type="submit"
