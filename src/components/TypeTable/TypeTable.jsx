@@ -1,89 +1,76 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { faTriangleExclamation, faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { useTheme } from "@mui/material/styles";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
+import Button from "@mui/material/Button"; // Button for adding/removing columns
+import Menu from "@mui/material/Menu"; // Dropdown for adding/removing columns
+import MenuItem from "@mui/material/MenuItem"; // Dropdown items
 import { baseURL } from '../../config.js';
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
-
-function getStyles(name, selectedColumns, theme) {
-  return {
-    fontWeight:
-      selectedColumns.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-    backgroundColor:
-      selectedColumns.indexOf(name) === -1
-        ? theme.palette.background.paper
-        : theme.palette.primary.light,
-    color:
-      selectedColumns.indexOf(name) === -1
-        ? theme.palette.text.primary
-        : theme.palette.primary.contrastText,
-  };
-}
-
+// TypeTable Component
 function TypeTable() {
   const { type, group } = useParams();
-  const theme = useTheme();
-  const [allData, setAllData] = useState(null); // State to hold fetched data
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [selectedColumns, setSelectedColumns] = useState([]);
+  const [allData, setAllData] = useState(null);
+  const [inactiveColumns, setInactiveColumns] = useState([]);
+  const [anchorElAdd, setAnchorElAdd] = useState(null); // Anchor for add dropdown
+  const [anchorElRemove, setAnchorElRemove] = useState(null); // Anchor for remove dropdown
 
-  // Use useEffect to fetch data when the component mounts or the type changes
+  // Fetch data when component mounts or when 'type' changes
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
       const data = await response.json();
       setAllData(data);
+      setInactiveColumns(data.inactive_columns || []); // Initialize inactive columns
     };
 
     fetchData();
-  }, [type]); // The effect runs when the component mounts or when 'type' changes
+  }, [type]);
 
-  const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
+  const handleAddColumn = (columnId) => {
+    const url = new URL(`${baseURL}/backend/updateColumnStatus.php`);
+    url.searchParams.append('id', columnId);
+    url.searchParams.append('act', "add"); // Adding the action type
 
-    const id = value; // Get the ID of the selected column
-    // Update selected columns if not already selected
-    if (!selectedColumns.includes(id)) {
-      setSelectedColumns([...selectedColumns, id]);
-      updateColumnStatus(id); // Call the function to update the column status
-    }
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        console.log(`Column with ID ${columnId} activated successfully.`);
+        // Refresh data after addition
+        return fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
+      } else {
+        console.error("Error activating column: ", data.message);
+      }
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      setAllData(data);
+      setInactiveColumns(data.inactive_columns || []);
+      setAnchorElAdd(null); // Close the dropdown after action
+    })
+    .catch((error) => {
+      console.error("There was an error during the fetch:", error);
+    });
   };
 
-  const updateColumnStatus = (columnId) => {
-    alert(columnId);
-
-    // Create a URL with the id parameter
+  const handleRemoveColumn = (columnId) => {
+    //alert(columnId)
     const url = new URL(`${baseURL}/backend/updateColumnStatus.php`);
-    url.searchParams.append('id', columnId); // Append the column ID as a query parameter
+    url.searchParams.append('id', columnId);
+    url.searchParams.append('act', "remove"); // Adding the action type for removal
 
     fetch(url, {
       method: 'POST', 
@@ -94,20 +81,38 @@ function TypeTable() {
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
-        console.log(`Column with ID ${columnId} activated successfully.`);
-        // Reload data to reflect updates
+        console.log(`Column with ID ${columnId} deactivated successfully.`);
+        // Refresh data after removal
         return fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
       } else {
-        console.error("Error activating column: ", data.message);
+        console.error("Error deactivating column: ", data.message);
       }
     })
     .then((response) => response.json())
     .then((data) => {
-      setAllData(data); // Update the state with the new data after activation
+      setAllData(data);
+      setInactiveColumns(data.inactive_columns || []);
+      setAnchorElRemove(null); // Close the dropdown after action
     })
     .catch((error) => {
       console.error("There was an error during the fetch:", error);
     });
+  };
+
+  const handleClickAdd = (event) => {
+    setAnchorElAdd(event.currentTarget); // Set the anchor for the add dropdown
+  };
+
+  const handleClickRemove = (event) => {
+    setAnchorElRemove(event.currentTarget); // Set the anchor for the remove dropdown
+  };
+
+  const handleCloseAdd = () => {
+    setAnchorElAdd(null); // Close the add dropdown
+  };
+
+  const handleCloseRemove = () => {
+    setAnchorElRemove(null); // Close the remove dropdown
   };
 
   if (!allData || !allData.active_columns) {
@@ -118,13 +123,7 @@ function TypeTable() {
     );
   }
 
-  const columnsToShow = allData.active_columns.filter(
-    (column) => column.type === type
-  );
-
-  const inActiveColumns = allData.inactive_columns.filter(
-    (column) => column.type === type
-  );
+  const columnsToShow = allData.active_columns.filter(column => column.type === type);
 
   return (
     <div className="relative lg:flex p-4 gap-4 w-full h-screen font-poppins lg:grid-cols-2 grid-cols-1 bg-slate-200">
@@ -137,30 +136,28 @@ function TypeTable() {
             <p>/{type}</p>
           </div>
           <div>
-            <FormControl sx={{ m: 1, width: 300 }}>
-              <InputLabel id="demo-multiple-name-label">Add Column</InputLabel>
-              <Select
-                labelId="demo-multiple-name-label"
-                id="demo-multiple-name"
-                multiple
-                value={selectedColumns}
-                onChange={handleChange}
-                input={<OutlinedInput label="Add Column" />}
-                MenuProps={MenuProps}
-              >
-                {inActiveColumns.map((column) => (
-                  <MenuItem
-                    key={column.id}
-                    value={column.id}
-                    style={getStyles(column.id, selectedColumns, theme)}
-                  >
-                    {column.column_name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+            <Button 
+              onClick={handleClickAdd} 
+              variant="contained" 
+              color="primary"
+              size="small"
+              startIcon={<FontAwesomeIcon icon={faPlus} />}
+            >
+              Add Column
+            </Button>
+            <Button 
+              onClick={handleClickRemove} 
+              variant="contained" 
+              color="secondary"
+              size="small"
+              style={{ marginLeft: '8px' }} // Additional margin for spacing
+              startIcon={<FontAwesomeIcon icon={faMinus} />}
+            >
+              Remove Column
+            </Button>
           </div>
         </div>
+
         <Paper sx={{ width: "100%", overflow: "hidden" }}>
           <TableContainer sx={{ maxHeight: 440 }}>
             <Table stickyHeader aria-label="sticky table">
@@ -182,26 +179,46 @@ function TypeTable() {
                 <TableRow hover role="checkbox" tabIndex={-1}>
                   {columnsToShow.map((column, colIndex) => (
                     <TableCell className="capitalize" align="center" key={colIndex}>
-                      {"-"} {/* Change this to render actual data */}
+                      {"-"} {/* Change to render actual data */}
                     </TableCell>
                   ))}
                 </TableRow>
               </TableBody>
             </Table>
           </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[10, 25, 100]}
-            component="div"
-            count={allData.active_columns.length} 
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={(event, newPage) => setPage(newPage)}
-            onRowsPerPageChange={(event) => {
-              setRowsPerPage(+event.target.value);
-              setPage(0);
-            }}
-          />
         </Paper>
+
+        {/* Dropdown for inactive columns */}
+        <Menu
+          anchorEl={anchorElAdd}
+          open={Boolean(anchorElAdd)}
+          onClose={handleCloseAdd}
+        >
+          {inactiveColumns.map((column) => (
+            <MenuItem 
+              key={column.id}
+              onClick={() => handleAddColumn(column.id)}
+            >
+              {column.column_name}
+            </MenuItem>
+          ))}
+        </Menu>
+
+        {/* Dropdown for active columns to remove */}
+        <Menu
+          anchorEl={anchorElRemove}
+          open={Boolean(anchorElRemove)}
+          onClose={handleCloseRemove}
+        >
+          {columnsToShow.map((column) => (
+            <MenuItem 
+              key={column.id}
+              onClick={() => handleRemoveColumn(column.id)}
+            >
+              {column.column_name}
+            </MenuItem>
+          ))}
+        </Menu>
       </div>
     </div>
   );
