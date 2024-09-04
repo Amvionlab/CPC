@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     }
 
     // Fetch active columns that match the specified type
-    $activeQuery = "SELECT table_fields.column_name, table_fields.type_id, asset_type.type AS type 
+    $activeQuery = "SELECT table_fields.id, table_fields.column_name, table_fields.type_id, asset_type.type AS type 
                     FROM table_fields 
                     JOIN asset_type ON asset_type.id = table_fields.type_id 
                     WHERE table_fields.is_active = 1 AND asset_type.type = ?";

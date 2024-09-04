@@ -29,12 +29,13 @@ function Setup() {
     { title: "Employee", sub: "Employee's Name and Details", icon: <PeopleIcon />, path: "/setup/employee" },
     { title: "Vendor", sub: "Vendor's Name and Details", icon: <BusinessIcon />, path: "/setup/vendor" },
     { title: "User", sub: "Software Users", icon: <PersonIcon />, path: "/setup/user" },
-    { title: "Email Config", sub: "Email Configuration and Setup", icon: <EmailIcon />, path: "/setup/smtp" }
+    { title: "Email Config", sub: "Email Configuration and Setup", icon: <EmailIcon />, path: "/setup/smtp" },
+  
   ];
 
   return (
     <div className="w-full h-full relative">
-      <div className="h-full p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 bg-transparent">
+      <div className="h-full p-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 bg-transparent">
         {buttons.map((item, index) => (
           <div
             key={index}
