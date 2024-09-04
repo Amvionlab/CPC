@@ -37,7 +37,7 @@ const AssetType = () => {
         <div className="grid grid-cols-2 gap-4  text-xl mt-5 w-full">
           {filteredData.map((item, i) => (
             <Link
-              to={`/${id}/${item.type
+              to={`/${item.id}/${item.type
                 .replace(/\s+/g, "")
                 .toUpperCase()}/typetable`}
             >
