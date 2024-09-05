@@ -277,35 +277,48 @@ function TypeTable() {
           
         
 
-        <Menu
-          anchorEl={anchorElAdd}
-          open={Boolean(anchorElAdd)}
-          onClose={handleCloseAdd}
-        >
-          {inactiveColumns.map((column) => (
-            <MenuItem
-              key={column.id}
-              onClick={() => handleAddColumn(column.id)}
-            >
-              {column.column_name}
-            </MenuItem>
-          ))}
-        </Menu>
+          <Menu
+  anchorEl={anchorElAdd}
+  open={Boolean(anchorElAdd)}
+  onClose={handleCloseAdd}
+>
+  {inactiveColumns.length > 0 ? (
+    inactiveColumns.map((column) => (
+      <MenuItem
+        key={column.id}
+        onClick={() => handleAddColumn(column.id)}
+      >
+        {column.column_name}
+      </MenuItem>
+    ))
+  ) : (
+    <MenuItem disabled>
+      Nothing
+    </MenuItem>
+  )}
+</Menu>
 
-        <Menu
-          anchorEl={anchorElRemove}
-          open={Boolean(anchorElRemove)}
-          onClose={handleCloseRemove}
-        >
-          {columnsToShow.map((column) => (
-            <MenuItem
-              key={column.id}
-              onClick={() => handleRemoveColumn(column.id)}
-            >
-              {column.column_name}
-            </MenuItem>
-          ))}
-        </Menu>
+<Menu
+  anchorEl={anchorElRemove}
+  open={Boolean(anchorElRemove)}
+  onClose={handleCloseRemove}
+>
+  {columnsToShow.length > 0 ? (
+    columnsToShow.map((column) => (
+      <MenuItem
+        key={column.id}
+        onClick={() => handleRemoveColumn(column.id)}
+      >
+        {column.column_name}
+      </MenuItem>
+    ))
+  ) : (
+    <MenuItem disabled>
+      Nothing
+    </MenuItem>
+  )}
+</Menu>
+
       </div>
     </div>
   );
