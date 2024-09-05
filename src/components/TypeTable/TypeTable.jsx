@@ -13,20 +13,19 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Button from "@mui/material/Button"; // Button for adding/removing columns
-import Menu from "@mui/material/Menu"; // Dropdown for adding/removing columns
-import MenuItem from "@mui/material/MenuItem"; // Dropdown items
+import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import { baseURL } from "../../config.js";
 
-// TypeTable Component
 function TypeTable() {
   const { type, group } = useParams();
   const [allData, setAllData] = useState(null);
   const [inactiveColumns, setInactiveColumns] = useState([]);
-  const [anchorElAdd, setAnchorElAdd] = useState(null); // Anchor for add dropdown
-  const [anchorElRemove, setAnchorElRemove] = useState(null); // Anchor for remove dropdown
+  const [typeData, setTypeData] = useState([]); // State for type data
+  const [anchorElAdd, setAnchorElAdd] = useState(null);
+  const [anchorElRemove, setAnchorElRemove] = useState(null);
 
-  // Fetch data when component mounts or when 'type' changes
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
@@ -34,16 +33,28 @@ function TypeTable() {
       );
       const data = await response.json();
       setAllData(data);
-      setInactiveColumns(data.inactive_columns || []); // Initialize inactive columns
+      setInactiveColumns(data.inactive_columns || []);
     };
 
     fetchData();
   }, [type]);
 
+  useEffect(() => {
+    const fetchTypeData = async () => {
+      const response = await fetch(
+        `${baseURL}/backend/fetchTypedata.php?type=${type}`
+      );
+      const data = await response.json();
+      setTypeData(data); // Store the fetched type data
+    };
+
+    fetchTypeData();
+  }, [type]);
+
   const handleAddColumn = (columnId) => {
     const url = new URL(`${baseURL}/backend/updateColumnStatus.php`);
     url.searchParams.append("id", columnId);
-    url.searchParams.append("act", "add"); // Adding the action type
+    url.searchParams.append("act", "add");
 
     fetch(url, {
       method: "POST",
@@ -54,29 +65,22 @@ function TypeTable() {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          console.log(`Column with ID ${columnId} activated successfully.`);
-          // Refresh data after addition
           return fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
-        } else {
-          console.error("Error activating column: ", data.message);
         }
       })
       .then((response) => response.json())
       .then((data) => {
         setAllData(data);
         setInactiveColumns(data.inactive_columns || []);
-        setAnchorElAdd(null); // Close the dropdown after action
+        setAnchorElAdd(null);
       })
-      .catch((error) => {
-        console.error("There was an error during the fetch:", error);
-      });
+      .catch((error) => console.error("There was an error:", error));
   };
 
   const handleRemoveColumn = (columnId) => {
-    //alert(columnId)
     const url = new URL(`${baseURL}/backend/updateColumnStatus.php`);
     url.searchParams.append("id", columnId);
-    url.searchParams.append("act", "remove"); // Adding the action type for removal
+    url.searchParams.append("act", "remove");
 
     fetch(url, {
       method: "POST",
@@ -87,38 +91,32 @@ function TypeTable() {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          console.log(`Column with ID ${columnId} deactivated successfully.`);
-          // Refresh data after removal
           return fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
-        } else {
-          console.error("Error deactivating column: ", data.message);
         }
       })
       .then((response) => response.json())
       .then((data) => {
         setAllData(data);
         setInactiveColumns(data.inactive_columns || []);
-        setAnchorElRemove(null); // Close the dropdown after action
+        setAnchorElRemove(null);
       })
-      .catch((error) => {
-        console.error("There was an error during the fetch:", error);
-      });
+      .catch((error) => console.error("There was an error:", error));
   };
 
   const handleClickAdd = (event) => {
-    setAnchorElAdd(event.currentTarget); // Set the anchor for the add dropdown
+    setAnchorElAdd(event.currentTarget);
   };
 
   const handleClickRemove = (event) => {
-    setAnchorElRemove(event.currentTarget); // Set the anchor for the remove dropdown
+    setAnchorElRemove(event.currentTarget);
   };
 
   const handleCloseAdd = () => {
-    setAnchorElAdd(null); // Close the add dropdown
+    setAnchorElAdd(null);
   };
 
   const handleCloseRemove = () => {
-    setAnchorElRemove(null); // Close the remove dropdown
+    setAnchorElRemove(null);
   };
 
   if (!allData || !allData.active_columns) {
@@ -167,6 +165,9 @@ function TypeTable() {
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
+                  <TableCell align="center" style={{ minWidth: 50, fontWeight: "bold" }}>
+                    ID
+                  </TableCell>
                   {columnsToShow.map((column, index) => (
                     <TableCell
                       className="capitalize"
@@ -179,24 +180,26 @@ function TypeTable() {
                   ))}
                 </TableRow>
               </TableHead>
+
               <TableBody>
-                <TableRow hover role="checkbox" tabIndex={-1}>
-                  {columnsToShow.map((column, colIndex) => (
-                    <TableCell
-                      className="capitalize"
-                      align="center"
-                      key={colIndex}
-                    >
-                      {"-"} {/* Change to render actual data */}
+                {typeData.map((row, rowIndex) => (
+                  <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
+                    <TableCell className="capitalize" align="center">
+                      {rowIndex + 1}
                     </TableCell>
-                  ))}
-                </TableRow>
+                    {columnsToShow.map((column, colIndex) => (
+                      <TableCell className="capitalize" align="center" key={colIndex}>
+                        {row[column.column_name] || "-"}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
               </TableBody>
+
             </Table>
           </TableContainer>
         </Paper>
 
-        {/* Dropdown for inactive columns */}
         <Menu
           anchorEl={anchorElAdd}
           open={Boolean(anchorElAdd)}
@@ -212,7 +215,6 @@ function TypeTable() {
           ))}
         </Menu>
 
-        {/* Dropdown for active columns to remove */}
         <Menu
           anchorEl={anchorElRemove}
           open={Boolean(anchorElRemove)}
