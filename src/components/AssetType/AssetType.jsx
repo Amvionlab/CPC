@@ -1,13 +1,12 @@
-
 import { PieChart } from "@mui/x-charts";
-import { baseURL } from '../../config.js';
+import { baseURL } from "../../config.js";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
 
 const AssetType = () => {
   const { allData } = useFetch(`${baseURL}/backend/fetchType.php`);
-  
+
   const { group } = useParams();
 
   const data = [
@@ -30,14 +29,12 @@ const AssetType = () => {
           </Link>
           /Asset Type
         </div>
-        
+
         <div className="flex gap-6 flex-wrap">
           {filteredData.map((item) => (
-            <Link
-              to={`/management/${item.group}/${item.type}`}
-            >
+            <Link to={`/management/${item.group}/${item.type}`}>
               <div className="m-2 w-40 group transform transition-transform duration-300 hover:scale-105 bg-second shadow-md rounded-lg p-4 flex items-center justify-center cursor-pointer">
-            <p className="font-medium text-base text-gray-700 text-center">
+                <p className="font-medium text-base text-gray-700 text-center">
                   {item.type}
                 </p>
               </div>

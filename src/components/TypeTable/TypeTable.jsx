@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTriangleExclamation, faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTriangleExclamation,
+  faPlus,
+  faMinus,
+} from "@fortawesome/free-solid-svg-icons";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -12,7 +16,7 @@ import TableRow from "@mui/material/TableRow";
 import Button from "@mui/material/Button"; // Button for adding/removing columns
 import Menu from "@mui/material/Menu"; // Dropdown for adding/removing columns
 import MenuItem from "@mui/material/MenuItem"; // Dropdown items
-import { baseURL } from '../../config.js';
+import { baseURL } from "../../config.js";
 
 // TypeTable Component
 function TypeTable() {
@@ -25,7 +29,9 @@ function TypeTable() {
   // Fetch data when component mounts or when 'type' changes
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
+      const response = await fetch(
+        `${baseURL}/backend/fetchTableFields.php?type=${type}`
+      );
       const data = await response.json();
       setAllData(data);
       setInactiveColumns(data.inactive_columns || []); // Initialize inactive columns
@@ -36,67 +42,67 @@ function TypeTable() {
 
   const handleAddColumn = (columnId) => {
     const url = new URL(`${baseURL}/backend/updateColumnStatus.php`);
-    url.searchParams.append('id', columnId);
-    url.searchParams.append('act', "add"); // Adding the action type
+    url.searchParams.append("id", columnId);
+    url.searchParams.append("act", "add"); // Adding the action type
 
     fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        "Content-Type": "application/x-www-form-urlencoded",
       },
     })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        console.log(`Column with ID ${columnId} activated successfully.`);
-        // Refresh data after addition
-        return fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
-      } else {
-        console.error("Error activating column: ", data.message);
-      }
-    })
-    .then((response) => response.json())
-    .then((data) => {
-      setAllData(data);
-      setInactiveColumns(data.inactive_columns || []);
-      setAnchorElAdd(null); // Close the dropdown after action
-    })
-    .catch((error) => {
-      console.error("There was an error during the fetch:", error);
-    });
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log(`Column with ID ${columnId} activated successfully.`);
+          // Refresh data after addition
+          return fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
+        } else {
+          console.error("Error activating column: ", data.message);
+        }
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        setAllData(data);
+        setInactiveColumns(data.inactive_columns || []);
+        setAnchorElAdd(null); // Close the dropdown after action
+      })
+      .catch((error) => {
+        console.error("There was an error during the fetch:", error);
+      });
   };
 
   const handleRemoveColumn = (columnId) => {
     //alert(columnId)
     const url = new URL(`${baseURL}/backend/updateColumnStatus.php`);
-    url.searchParams.append('id', columnId);
-    url.searchParams.append('act', "remove"); // Adding the action type for removal
+    url.searchParams.append("id", columnId);
+    url.searchParams.append("act", "remove"); // Adding the action type for removal
 
     fetch(url, {
-      method: 'POST', 
+      method: "POST",
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        "Content-Type": "application/x-www-form-urlencoded",
       },
     })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        console.log(`Column with ID ${columnId} deactivated successfully.`);
-        // Refresh data after removal
-        return fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
-      } else {
-        console.error("Error deactivating column: ", data.message);
-      }
-    })
-    .then((response) => response.json())
-    .then((data) => {
-      setAllData(data);
-      setInactiveColumns(data.inactive_columns || []);
-      setAnchorElRemove(null); // Close the dropdown after action
-    })
-    .catch((error) => {
-      console.error("There was an error during the fetch:", error);
-    });
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log(`Column with ID ${columnId} deactivated successfully.`);
+          // Refresh data after removal
+          return fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
+        } else {
+          console.error("Error deactivating column: ", data.message);
+        }
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        setAllData(data);
+        setInactiveColumns(data.inactive_columns || []);
+        setAnchorElRemove(null); // Close the dropdown after action
+      })
+      .catch((error) => {
+        console.error("There was an error during the fetch:", error);
+      });
   };
 
   const handleClickAdd = (event) => {
@@ -123,38 +129,36 @@ function TypeTable() {
     );
   }
 
-  const columnsToShow = allData.active_columns.filter(column => column.type === type);
+  const columnsToShow = allData.active_columns.filter(
+    (column) => column.type === type
+  );
 
   return (
     <div className="relative lg:flex p-4 gap-4 w-full h-screen font-poppins lg:grid-cols-2 grid-cols-1 bg-slate-200">
       <div className="w-full bg-white p-4 rounded-md">
         <div className="w-full flex justify-between items-center text-base font-medium mb-5">
           <div className="flex">
-            <Link to={`/management/${group}/${type}`} className="text-red-500 hover:underline">
+            <Link
+              to={`/management/${group}/${type}`}
+              className="text-red-500 hover:underline"
+            >
               Asset Type
             </Link>
             <p>/{type}</p>
           </div>
-          <div>
-            <Button 
-              onClick={handleClickAdd} 
-              variant="contained" 
-              color="primary"
-              size="small"
-              startIcon={<FontAwesomeIcon icon={faPlus} />}
-            >
-              Add Column
-            </Button>
-            <Button 
-              onClick={handleClickRemove} 
-              variant="contained" 
-              color="secondary"
-              size="small"
-              style={{ marginLeft: '8px' }} // Additional margin for spacing
-              startIcon={<FontAwesomeIcon icon={faMinus} />}
-            >
-              Remove Column
-            </Button>
+          <div className="flex gap-2">
+            <button onClick={handleClickAdd}>
+              <div className="px-2 py-1 rounded-full bg-gradient-to-b from-prime via-slate-700 to-slate-600">
+                <FontAwesomeIcon icon={faPlus} color="white" />
+              </div>
+            </button>
+            <div className="flex">
+              <button onClick={handleClickRemove}>
+                <div className="px-2 py-1 rounded-full bg-gradient-to-tr from-red-600 via-red-700 to-red-900">
+                  <FontAwesomeIcon icon={faMinus} color="white" />
+                </div>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -178,7 +182,11 @@ function TypeTable() {
               <TableBody>
                 <TableRow hover role="checkbox" tabIndex={-1}>
                   {columnsToShow.map((column, colIndex) => (
-                    <TableCell className="capitalize" align="center" key={colIndex}>
+                    <TableCell
+                      className="capitalize"
+                      align="center"
+                      key={colIndex}
+                    >
                       {"-"} {/* Change to render actual data */}
                     </TableCell>
                   ))}
@@ -195,7 +203,7 @@ function TypeTable() {
           onClose={handleCloseAdd}
         >
           {inactiveColumns.map((column) => (
-            <MenuItem 
+            <MenuItem
               key={column.id}
               onClick={() => handleAddColumn(column.id)}
             >
@@ -211,7 +219,7 @@ function TypeTable() {
           onClose={handleCloseRemove}
         >
           {columnsToShow.map((column) => (
-            <MenuItem 
+            <MenuItem
               key={column.id}
               onClick={() => handleRemoveColumn(column.id)}
             >
