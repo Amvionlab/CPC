@@ -201,16 +201,17 @@ function TypeTable() {
   return (
     <div className="lg:flex p-1 gap-4 w-full h-full lg:grid-cols-2 grid-cols-1 bg-slate-200">
       <div className="w-full bg-white p-1 rounded-md h-full flex flex-col">
-        <div className="w-full h-9 flex text-sm justify-between items-center font-semibold mb-3">
-          <div className="flex capitalize">
-            <Link
-              to={`/management/${group}/${type}`}
-              className="text-prime hover:underline capitalize "
-            >
-              ASSET TYP
-            </Link>
-            <p>E / {type}</p>
-          </div>
+        <div className="w-full border-b h-9 flex text-sm justify-between items-center font-semibold mb-2">
+        <div className="flex capitalize">
+    <Link
+        to={`/management/${group}`}
+        className="text-flo hover:underline capitalize"
+    >
+        {group}
+    </Link>
+    <p>&nbsp; / {type}</p> {/* Space before the slash */}
+</div>
+
           <div className="flex gap-1">
             <TablePagination
               className="compact-pagination"
