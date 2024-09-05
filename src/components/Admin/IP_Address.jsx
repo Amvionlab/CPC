@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import { baseURL } from '../../config.js';
 import { FaFilter } from "react-icons/fa";
 import * as XLSX from 'xlsx';
@@ -15,96 +14,46 @@ const Form = () => {
     from_ip: '',
     to_ip: ''
   });
-
-  const [locations, setLocations] = useState([]); 
   const { user } = useContext(UserContext);
-  console.log('DashBoard context value:', user);
-  const [ticketsPerPage, setTicketsPerPage] = useState(10); // default to 10 rows per page
-  const [currentPage, setCurrentPage] = useState(0);
-  let i=1;
-
-  const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  const [attachment, setAttachment] = useState(null);
-  const [submissionStatus, setSubmissionStatus] = useState(null);
-  const [filters, setFilters] = useState({});
-  const [showFilter, setShowFilter] = useState({
-    id: false,
-    name: false,
-  });
-
-  const [showForm, setShowForm] = useState(false);
-     
-  useEffect(() => {
-    const fetchLocations = async () => {
-      try {
-        const response = await fetch(`${baseURL}/backend/dropdown.php`);
-        const data = await response.json();
-        setLocations(data.locations);
-      } catch (error) {
-        console.error('Error fetching locations:', error);
-      }
-    };
-
-    fetchLocations();
-  }, [baseURL]);
-
+  const [locations, setLocations] = useState([]);
   const [ipDetails, setIpDetails] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [ticketsPerPage, setTicketsPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [filters, setFilters] = useState({});
+  const [showFilter, setShowFilter] = useState({});
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch(`${baseURL}/backend/dropdown.php`);
         const data = await response.json();
-        setIpDetails(data.Ipdetails); 
-        setLocations(data.locations); 
+        setLocations(data.locations);
+        setIpDetails(data.Ipdetails);
+        setFilteredUsers(data.Ipdetails);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-  
     fetchData();
   }, []);
-  
+
   const getLocationName = (locationId) => {
     const location = locations.find((loc) => loc.id === locationId);
     return location ? location.name : 'Unknown';
   };
-  
 
-  const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    const allowedExtensions = ["pdf", "jpg", "jpeg", "png"];
-    const fileExtension = file ? file.name.split(".").pop().toLowerCase() : "";
-
-    if (file && allowedExtensions.includes(fileExtension)) {
-      setAttachment(file);
-      setAttachmentError("");
-    } else {
-      setAttachment(null);
-      setAttachmentError(
-        "Invalid file type. Only PDF, JPG, JPEG, and PNG files are allowed."
-      );
-    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleRowsPerPageChange = (e) => {
-    const value = parseInt(e.target.value, 10); // Parse the input value as an integer
-    if (!isNaN(value) && value >= 1) {
-      setTicketsPerPage(value);
-      setCurrentPage(0); // Update state only if value is a valid number >= 1
-    } else {
-      setTicketsPerPage(1);
-      setCurrentPage(0); // Default to 1 if input is cleared or set to invalid value
-    }
+    const value = parseInt(e.target.value, 10);
+    setTicketsPerPage(!isNaN(value) && value >= 1 ? value : 1);
+    setCurrentPage(0);
   };
-
 
   const handlePageClick = ({ selected }) => {
     setCurrentPage(selected);
@@ -124,33 +73,26 @@ const Form = () => {
       });
 
       const result = await response.json();
-
       if (!response.ok) {
         throw new Error(result.message || 'Something went wrong');
       }
 
       if (result.message === 'IP_Address already exists.') {
-        setSubmissionStatus({ success: false, message: result.message });
-        toast.error(result.message); // Display error message
+        toast.error(result.message);
       } else if (result.message === 'IP_Address added successfully.') {
-        setSubmissionStatus({ success: true, message: result.message });
-        toast.success(result.message); // Display success message
+        toast.success(result.message);
         setFormData({ location: '', from_ip: '', to_ip: '' });
-        location.reload(); // Clear form after success
+        window.location.reload();
       } else {
         throw new Error('Unexpected response message.');
       }
     } catch (error) {
-      setSubmissionStatus({
-        success: false,
-        message: 'There was a problem with your fetch operation: ' + error.message,
-      });
-      toast.error('There was a problem with your fetch operation: ' + error.message); // Display error message
+      toast.error('There was a problem with your fetch operation: ' + error.message);
     }
   };
-  
+
   const handleFilterChange = (e, field, type) => {
-    const value = e.target.value.toLowerCase(); // convert filter value to lowercase
+    const value = e.target.value.toLowerCase();
     setFilters((prevFilters) => ({
       ...prevFilters,
       [field]: { type, value }
@@ -158,308 +100,228 @@ const Form = () => {
   };
 
   useEffect(() => {
-    let filtered = [...users];
+    let filtered = [...ipDetails];
     Object.keys(filters).forEach((field) => {
       const { type, value } = filters[field];
       if (value) {
-        filtered = filtered.filter((ticket) => {
-          const fieldValue = ticket[field];
- 
-          if (fieldValue == null) {
-            if (type === "contain" || type === "equal to") return false;
-            if (type === "not contain") return true; if (type === "more than" || type === "less than") return false;
-          }
- 
-          const fieldValueStr = fieldValue.toString().toLowerCase();
-          const valueStr = value.toLowerCase();
- 
-          if (type === "contain")
-            return fieldValueStr.includes(valueStr);
-          if (type === "not contain")
-            return !fieldValueStr.includes(valueStr);
-          if (type === "equal to")
-            return fieldValueStr === valueStr;
-          if (type === "more than")
-            return parseFloat(fieldValue) > parseFloat(value);
-          if (type === "less than")
-            return parseFloat(fieldValue) < parseFloat(value);
+        filtered = filtered.filter((ipDetail) => {
+          const fieldValue = ipDetail[field]?.toString().toLowerCase() || "";
+
+          if (type === "contain") return fieldValue.includes(value);
+          if (type === "not contain") return !fieldValue.includes(value);
+          if (type === "equal to") return fieldValue === value;
+          if (type === "more than") return parseFloat(fieldValue) > parseFloat(value);
+          if (type === "less than") return parseFloat(fieldValue) < parseFloat(value);
+          
           return true;
         });
       }
     });
     setFilteredUsers(filtered);
-  }, [filters, users]);
+  }, [filters, ipDetails]);
 
   const exportCSV = () => {
-    // Get table headers
-    const tableHeaders = Array.from(document.querySelectorAll(".header span"))
-      .map(header => header.textContent.trim());
- 
-    // Get table data values, excluding the header row
-    const tableRows = Array.from(document.querySelectorAll("table tr"));
-   
-    // Skip the first row if it is the header row
-    const tableData = tableRows.slice(1).map(row =>
-      Array.from(row.querySelectorAll("td")).map(cell => cell.textContent.trim())
-    );
- 
-    // Filter out rows that contain filter content
-    const filteredTableData = tableData.filter(row =>
-      !row.some(cell => cell.includes("Contains") || cell.includes("Does Not Contain") || cell.includes("Equal To") || cell.includes("More Than") || cell.includes("Less Than"))
-    );
- 
-    // Create CSV content
+    const headers = ["Id", "Location", "Ip_from", "Ip_to"];
     const csvContent = [
-      tableHeaders.join(","),
-      ...filteredTableData.map(row => row.join(","))
+      headers.join(","),
+      ...filteredUsers.map(ipDetail => `${ipDetail.id},${getLocationName(ipDetail.location_id)},${ipDetail.ip_from},${ipDetail.ip_to}`)
     ].join("\n");
- 
-    // Create and download CSV file
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
     const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
+    link.href = URL.createObjectURL(new Blob([csvContent], { type: "text/csv;charset=utf-8;" }));
     link.setAttribute("download", "IP_Address.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
- 
+
   const exportExcel = () => {
-    const table = document.querySelector('.filter-table');
-    if (!table) return;
- 
-    // Extract table headers
-    const headers = Array.from(document.querySelectorAll(".header span")).map(header => header.textContent.trim());
- 
-    // Extract table data values
-    const rows = Array.from(table.querySelectorAll('tbody tr')).map(row =>
-      Array.from(row.querySelectorAll('td')).map(td => td.innerText.trim())
-    );
- 
-    // Filter out rows that contain filter content
-    const filteredRows = rows.filter(row =>
-      !row.some(cell => cell.includes("Contains") || cell.includes("Does Not Contain") || cell.includes("Equal To") || cell.includes("More Than") || cell.includes("Less Than"))
-    );
- 
-    const data = [headers, ...filteredRows];
+    const headers = ["Id", "Location", "Ip_from", "Ip_to"];
+    const data = [headers, ...filteredUsers.map(ipDetail => [
+      ipDetail.id, getLocationName(ipDetail.location_id), ipDetail.ip_from, ipDetail.ip_to
+    ])];
     const worksheet = XLSX.utils.aoa_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
     XLSX.writeFile(workbook, 'IP_Address.xlsx');
   };
- 
- 
+
   const exportPDF = () => {
     const table = document.querySelector('.filter-table');
     if (!table) return;
- 
-    // Create a copy of the table
-    const tableClone = table.cloneNode(true);
- 
-    // Remove filter dropdowns and inputs from the cloned table
-    tableClone.querySelectorAll('.filter').forEach(filter => filter.remove());
- 
-    // Center-align all table cell contents
-    tableClone.querySelectorAll('th, td').forEach(cell => {
-      cell.style.textAlign = 'center';
-    });
- 
-    // Append the cloned table to the body (temporarily)
-    document.body.appendChild(tableClone);
- 
-    // Use html2canvas to convert the cloned table to an image
-    html2canvas(tableClone).then(canvas => {
+
+    html2canvas(table).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF();
       const imgWidth = 210;
-      const imgHeight = canvas.height * imgWidth / canvas.width;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
       pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
       pdf.save('IP_Address.pdf');
- 
-      // Remove the cloned table from the document
-      document.body.removeChild(tableClone);
     });
   };
+
   const offset = currentPage * ticketsPerPage;
   const currentTickets = filteredUsers.slice(offset, offset + ticketsPerPage);
 
   return (
     <div className="bg-second max-h-5/6 max-w-full text-xs mx-auto p-2 lg:overflow-y-hidden h-auto ticket-scroll font-poppins">
-     
-     {showForm && (
-  <div className="max-w-full m-2 mb-4 p-4 bg-box rounded-lg font-mont">
-    <div className="ticket-table mt-2">
-      <form onSubmit={handleSubmit} className="space-y-4 text-label">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-          <div className="font-mont font-semibold text-2xl mb-4">
-            Add IP_Address:
+      {showForm && (
+        <div className="max-w-full m-2 mb-4 p-4 bg-box rounded-lg font-mont">
+          <div className="ticket-table mt-2">
+            <form onSubmit={handleSubmit} className="space-y-4 text-label">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
+                <div className="font-mont font-semibold text-2xl mb-4">
+                  Add IP_Address:
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 ml-10 pr-10 mb-0">
+                <div className="flex items-center mb-2 mr-4">
+                  <label className="text-sm font-semibold text-prime mr-2 w-32">Location</label>
+                  <select
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    required
+                    className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                  >
+                    <option value="" disabled>Select Location</option>
+                    {locations.map((location) => (
+                      <option key={location.id} value={location.id}>
+                        {location.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex items-center mb-2 mr-4">
+                  <label className="text-sm font-semibold text-prime mr-2 w-32">From_IP</label>
+                  <input
+                    type="text"
+                    name="from_ip"
+                    placeholder="Enter From IP"
+                    value={formData.from_ip}
+                    onChange={handleChange}
+                    required
+                    className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                  />
+                </div>
+                <div className="flex items-center mb-2 mr-4">
+                  <label className="text-sm font-semibold text-prime mr-2 w-32">To_IP</label>
+                  <input
+                    type="text"
+                    name="to_ip"
+                    placeholder="Enter To IP"
+                    value={formData.to_ip}
+                    onChange={handleChange}
+                    required
+                    className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                  />
+                </div>
+                <div className="flex items-center mb-2 mt-4 ml-8 mr-4">
+                  <button
+                    type="submit"
+                    className="ml-5 bg-prime font-mont font-semibold text-md text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
+      )}
 
-        {/* Additional Fields */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 ml-10 pr-10 mb-0">
-        <div className="flex items-center mb-2 mr-4">
-        <label className="text-sm font-semibold text-prime mr-2 w-32">Location</label>
-        <select
-          name="location"
-          value={formData.location}
-          onChange={handleChange}
-          required
-          className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
-        >
-          <option value="" disabled>Select Location</option>
-          {locations.map((location) => (
-            <option key={location.id} value={location.id} className="custom-option">
-              {location.name}
-            </option>
-          ))}
-        </select>
-      </div>
-          {/* From_IP Field */}
-          <div className="flex items-center mb-2 mr-4">
-        <label className="text-sm font-semibold text-prime mr-2 w-32">From_IP</label>
-        <input
-          type="text"
-          name="from_ip"
-          placeholder="Enter From IP"
-          value={formData.from_ip}
-          onChange={handleChange}
-          required
-          className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
-        />
-      </div>
-
-          {/* To_IP Field */}
-          <div className="flex items-center mb-2 mr-4">
-        <label className="text-sm font-semibold text-prime mr-2 w-32">To_IP</label>
-        <input
-          type="text"
-          name="to_ip"
-          placeholder="Enter To IP"
-          value={formData.to_ip}
-          onChange={handleChange}
-          required
-          className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-[0_0_6px_#5fdd33]"
-        />
-      </div>
-
-          <div className="flex items-center mb-2 mr-4"></div>
-          <div className="flex items-center mb-2 mt-4  ml-8 mr-4">
-          <button
-            type="submit"
-            className="ml-5 bg-prime font-mont font-semibold text-md text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
-          >
-            Submit
-          </button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-)}
-      
       <div className="max-w-1/2 m-2 bg-box p-4 rounded-lg font-mont">
-       <div className="flex justify-end flex-wrap space-x-2 mt-4">
-          <button
-            onClick={exportCSV}
-            className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
-          >
-            CSV
-          </button>
-          <button
-            onClick={exportExcel}
-            className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
-          >
-            Excel
-          </button>
-          <button
-            onClick={exportPDF}
-            className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
-          >
-            PDF
-          </button>
+        <div className="ticket-table mt-4">
+          <h3 className="text-2xl font-bold text-prime mb-4 flex justify-between items-center">
+            <span>
+              IP Address Data
+              <button
+                onClick={() => setShowForm(!showForm)}
+                className="ml-4 bg-second hover:bg-prime hover:text-box font-mont font-bold text-sm text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
+              >
+                {showForm ? "Close" : "+ Add IP"}
+              </button>
+            </span>
+            <span className="text-xs flex items-center gap-2">
+              <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
+                Rows per page:
+              </label>
+              <input
+                type="number"
+                id="rowsPerPage"
+                placeholder={ticketsPerPage}
+                onChange={handleRowsPerPageChange}
+                className="w-16 px-2 py-2 border-2 rounded text-gray-900 ml-2 mr-2"
+                min="0"
+              />
+              <button onClick={exportCSV} className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none">CSV</button>
+              <button onClick={exportExcel} className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none">Excel</button>
+              <button onClick={exportPDF} className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none">PDF</button>
+            </span>
+          </h3>
+
+          <table className="min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
+            <thead className="bg-second border-2 border-prime text-prime font-semibold font-poppins text-fontadd">
+              <tr>
+                {["Id", "Location", "Ip_from", "Ip_to"].map((header, index) => (
+                  <td key={index} className="w-1/6 py-4 px-4">
+                    <div className="flex items-center justify-center">
+                      <div className="header flex">
+                        <span>{header}</span>
+                        <FaFilter
+                          className="cursor-pointer ml-3"
+                          onClick={() => setShowFilter(prevState => ({
+                            ...prevState,
+                            [header.toLowerCase().replace(" ", "")]: !prevState[header.toLowerCase().replace(" ", "")]
+                          }))}
+                        />
+                      </div>
+                    </div>
+                    {showFilter[header.toLowerCase().replace(" ", "")] && (
+                      <div className="mt-2 bg-prime p-2 rounded shadow-md filter">
+                        <select
+                          onChange={(e) => handleFilterChange(e, header.toLowerCase().replace(" ", ""), e.target.value)}
+                          className="mb-2 p-1 border text-prime rounded w-full"
+                        >
+                          <option value="contain">Contains</option>
+                          <option value="not contain">Does Not Contain</option>
+                          <option value="equal to">Equal To</option>
+                          <option value="more than">More Than</option>
+                          <option value="less than">Less Than</option>
+                        </select>
+                        <input
+                          type="text"
+                          placeholder="Enter value"
+                          onChange={(e) =>
+                            handleFilterChange(
+                              e,
+                              header.toLowerCase().replace(" ", ""),
+                              filters[header.toLowerCase().replace(" ", "")]?.type || "contain"
+                            )
+                          }
+                          className="p-1 border rounded text-prime w-full"
+                        />
+                      </div>
+                    )}
+                  </td>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {currentTickets.map((ipDetail, index) => (
+                <tr key={ipDetail.id} className="bg-white text-fontadd text-center font-medium">
+                  <td className="border-t py-3 px-3">{index + 1 + offset}</td>
+                  <td className="border-t py-3 px-3">{getLocationName(ipDetail.location_id)}</td>
+                  <td className="border-t py-3 px-3">{ipDetail.ip_from}</td>
+                  <td className="border-t py-3 px-3">{ipDetail.ip_to}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
-        {/* Table displaying fetched user data */}
-        <div className="ticket-table mt-8 ">
-          <h2 className="text-2xl font-bold text-prime mb-4"><span>IP Address Data </span><span className="items-end"><button
-          onClick={() => setShowForm(!showForm)}
-          className="ml-2 bg-second hover:bg-prime hover:text-box font-mont font-bold text-sm text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
-        >
-          {showForm ? "Close" : "+ Add IP"}
-        </button></span></h2>
-        <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
-            Rows per page :
-          </label>
-          <input
-            type="number"
-            id="rowsPerPage"
-            placeholder={ticketsPerPage}
-            onChange={handleRowsPerPageChange}
-            className="w-16 px-2 py-2 border-2 rounded text-gray-900 ml-2"
-            min="0"
-          />
-       
-
-        <table className=" min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
-       
-  <thead className="bg-second border-2 border-prime  text-prime font-semibold font-poppins text-fontadd">
- 
-    <tr>
-      {["Id", "Location", "Ip_from", "Ip_to"].map((header, index) => (
-        <td key={index} className="w-1/6 py-4 px-4">
-          <div className="flex items-center justify-center">
-          <div className="header flex">
-            <span>{header}</span>
-            <FaFilter
-              className="cursor-pointer ml-3"
-              onClick={() => setShowFilter(prevState => ({
-                ...prevState,
-                [header.toLowerCase().replace(" ", "")]: !prevState[header.toLowerCase().replace(" ", "")]
-              }))}
-            />
-          </div>
-        </div>
-        {showFilter[header.toLowerCase().replace(" ", "")] && (
-          <div className="mt-2 bg-prime p-2 rounded shadow-md filter">
-            <select
-              onChange={(e) => handleFilterChange(e, header.toLowerCase().replace(" ", ""), e.target.value)}
-              className="mb-2 p-1 border text-prime rounded w-full"
-            >
-              <option value="contain">Contains</option>
-              <option value="not contain">Does Not Contain</option>
-              <option value="equal to">Equal To</option>
-              <option value="more than">More Than</option>
-              <option value="less than">Less Than</option>
-            </select>
-            <input
-              type="text"
-              placeholder="Enter value"
-              onChange={(e) => handleFilterChange(e, header.toLowerCase().replace(" ", ""), filters[header.toLowerCase().replace(" ", "")]?.type || "contain")}
-              className="p-1 border rounded text-prime w-full"
-            />
-          </div>
-        )}
-
-        </td>
-      ))}
-    </tr>
-  </thead>
-  <tbody>
-  {ipDetails.map((ipDetail, index) => (
-    <tr key={ipDetail.id} className="bg-box text-fontadd text-center font-medium">
-      <td className="border-t py-3 px-3">{index + 1}</td>
-      <td className="border-t py-3 px-3">{getLocationName(ipDetail.location_id)}</td>
-      <td className="border-t py-3 px-3">{ipDetail.ip_from}</td>
-      <td className="border-t py-3 px-3">{ipDetail.ip_to}</td>
-    </tr>
-  ))}
-</tbody>
-
-</table>
-        </div>
-         {/* Pagination Controls */}
-         <div className="pagination mt-4 flex justify-center font-semibold">
+        <div className="pagination mt-4 flex justify-center font-semibold">
           <ReactPaginate
             previousLabel={"Previous"}
             nextLabel={"Next"}
@@ -476,7 +338,7 @@ const Form = () => {
             breakClassName={"pagination-break"}
             activeClassName={"pagination-active"}
           />
-          </div>
+        </div>
       </div>
     </div>
   );

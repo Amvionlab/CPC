@@ -8,6 +8,7 @@ $data = json_decode(file_get_contents('php://input'), true);
 // Validate and sanitize inputs
 $table = isset($data['table']) ? $data['table'] : '';
 $name = isset($data['name']) ? $data['name'] : '';
+$type_id = isset($data['type_id']) ? $data['type_id'] : '';
 
 // Validate inputs
 if (empty($table) || empty($name)) {
@@ -34,7 +35,10 @@ $alterSql = "ALTER TABLE `$tableName` ADD `$name` VARCHAR(255)";
 
 // Execute the query
 if ($conn->query($alterSql) === TRUE) {
+    $tfSql = "INSERT INTO table_fields (`column_name`, `type_id`, `is_active`) VALUES ('$name','$type_id','0')";
+    if ($conn->query($tfSql) === TRUE) {
     echo json_encode(['message' => 'Column added successfully']);
+    }
 } else {
     http_response_code(500);
     echo json_encode(['message' => 'Error adding column: ' . $conn->error]);

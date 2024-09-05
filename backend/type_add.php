@@ -3,67 +3,75 @@ include 'config.php';
 
 // Process form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $uploadDir = 'D:/xampp/htdocs/TMS/src/photo/';
-    $attachmentPath = '';
 
-    if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] == UPLOAD_ERR_OK) {
-        $fileTmpPath = $_FILES['attachment']['tmp_name'];
-        $fileName = basename($_FILES['attachment']['name']); // Ensure file name is safe
-        $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-        $allowedExtensions = array('pdf', 'jpg', 'jpeg', 'png');
-
-        if (in_array($fileExtension, $allowedExtensions)) {
-            $filePath = $uploadDir . $fileName;
-
-            // Move the file to the specified directory
-            if (move_uploaded_file($fileTmpPath, $filePath)) {
-                $attachmentPath = 'src/photo/' . $fileName; // Storing relative path
-            } else {
-                $response = array('success' => false, 'message' => 'File upload failed.');
-                echo json_encode($response);
-                exit;
-            }
-        } else {
-            $response = array('success' => false, 'message' => 'Invalid file type. Only PDF, JPG, JPEG, and PNG files are allowed.');
-            echo json_encode($response);
-            exit;
-        }
-    }
-
-    $type = trim($_POST['name']); // The type field, to be inserted into 'type' column
-    $groupId = trim($_POST['dropdown']); // Dropdown value's id, to be inserted into 'group_id' column
+    $typename = trim($_POST['name']); 
+    $tag = trim($_POST['tag']);
+    $groupId = trim($_POST['dropdown']);
     $active = "1";
 
-    // Check if the type already exists in the 'asset_type' table
+    // Prepare statement to check if the type already exists
     $checkSql = "SELECT id FROM asset_type WHERE type = ?";
     $stmt = $conn->prepare($checkSql);
-    $stmt->bind_param("s", $type);
+    $stmt->bind_param("s", $typename);
     $stmt->execute();
     $stmt->store_result();
+
     if ($stmt->num_rows > 0) {
-        // Type already exists
-        $response = array('success' => false, 'message' => 'Type already exists.');
+        $response = ['success' => false, 'message' => 'Type already exists.'];
         echo json_encode($response);
     } else {
-        // Insert the new type into the 'asset_type' table
-        $sql = "INSERT INTO asset_type (type, group_id, is_active) VALUES (?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sss", $type, $groupId, $active);
-
+        // Prepare the INSERT statement for asset_type
+        $insertSql = "INSERT INTO asset_type (type, tag, group_id, is_active) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($insertSql);
+        $stmt->bind_param("ssss", $typename, $tag, $groupId, $active);
+        
         if ($stmt->execute()) {
-            $response = array('success' => true, 'message' => 'Type added successfully.');
-            echo json_encode($response);
-        } else {
-            $response = array('success' => false, 'message' => 'Error: ' . $stmt->error);
-            echo json_encode($response);
-        }
-    }
+            // Capturing the newly created ID
+            $type_id = $stmt->insert_id;
 
-    $stmt->close();
+            $columnsResult = $conn->query("SHOW COLUMNS FROM asset_template");
+            if ($columnsResult) {
+                while ($row = $columnsResult->fetch_assoc()) {
+                    $column_name = $row['Field'];
+                    if (!in_array($column_name, ['id', 'tag', 'post_date', 'is_active'])) {
+                        // Insert each column into the table_fields
+                        $insertFieldSql = "INSERT INTO table_fields (type_id, column_name, is_active) VALUES (?, ?, ?)";
+                        $stmt = $conn->prepare($insertFieldSql);
+                        $stmt->bind_param("sss", $type_id, $column_name, $active);
+
+                        if (!$stmt->execute()) {
+                            $response = ['success' => false, 'message' => 'Error inserting into table_fields: ' . $stmt->error];
+                            echo json_encode($response);
+                            $stmt->close();
+                            $conn->close();
+                            exit;
+                        }
+                    }
+                }
+            }
+
+            $result = $conn->query("SHOW CREATE TABLE asset_template");
+$row = $result->fetch_assoc();
+$createTableSql = $row['Create Table']; // This gets the full CREATE TABLE SQL
+
+// Modify $createTableSql to replace 'asset_template' with 'asset_' plus the escaped $typename
+$newTableName = 'asset_' . $conn->real_escape_string($typename);
+$createTableSql = str_replace('CREATE TABLE `asset_template`', 'CREATE TABLE `' . $newTableName . '`', $createTableSql);
+if ($conn->query($createTableSql) === TRUE) {
+                $response = ['success' => true, 'message' => 'Associated table and table fields created successfully.'];
+            } else {
+                $response = ['success' => false, 'message' => 'Error creating table: ' . $conn->error];
+            }
+        } else {
+            $response = ['success' => false, 'message' => 'Error: ' . $stmt->error];
+        }
+
+        echo json_encode($response);
+        $stmt->close();
+    }
 } else {
-    $response = array('success' => false, 'message' => 'Invalid request method.');
+    $response = ['success' => false, 'message' => 'Invalid request method.'];
     echo json_encode($response);
 }
 
 $conn->close();
-?>

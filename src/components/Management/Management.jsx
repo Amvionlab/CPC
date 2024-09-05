@@ -6,8 +6,8 @@ import {
   faChevronDown,
   faComment,
 } from "@fortawesome/free-solid-svg-icons";
+import { baseURL } from '../../config.js';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
 import { Link } from "react-router-dom";
 
 function Management() {
@@ -22,13 +22,19 @@ function Management() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost/AMS/backend/fetchGroup.php"
-        );
-        setType(response.data);
+        const response = await fetch(`${baseURL}/backend/fetchGroup.php`);
+      
+        if (!response.ok) {
+          throw new Error(`Failed to fetch data: ${response.statusText}`);
+        }
+      
+        const data = await response.json();
+        setType(data);
       } catch (error) {
-        setError(error);
+        console.error("Error fetching data:", error);
+        // Optionally handle the error, e.g., by setting an error state
       }
+      
     };
     fetchData();
   }, []);
@@ -43,12 +49,12 @@ function Management() {
           {type.map(
             (item, i) =>
               item.group && (
-                <Link to={`/${item.id}/type`} key={i} className="flex-1">
-                  <div className="m-2 group transform transition-transform duration-300 hover:scale-105 border-2  shadow-md rounded-lg p-4 flex items-center justify-center cursor-pointer">
-                    <p className="font-medium text-base text-gray-700 text-center">
-                      {item.group}
-                    </p>
-                  </div>
+                <Link to={`/management/${item.group}`} key={i} className="flex-1">
+                  <div className="m-2 group transform transition-transform duration-300 hover:scale-105 bg-second shadow-md rounded-lg p-4 flex items-center justify-center cursor-pointer">
+            <p className="font-medium text-base text-gray-700 text-center">
+              {item.group}
+            </p>
+          </div>
                 </Link>
               )
           )}

@@ -26,9 +26,14 @@ import Access from "./components/Admin/Access";
 import Ticket_status from "./components/Admin/Ticket_status";
 import Ticket_service from "./components/Admin/Ticket_service";
 import Ticket_type from "./components/Admin/Ticket_type";
+import Template from "./components/Admin/Template";
 import Type from "./components/Admin/Type";
 import Group from "./components/Admin/Group";  // Your custom Group component
 import IP_Address from "./components/Admin/IP_Address";
+import Employee from "./components/Admin/Employee";
+import Vendor from "./components/Admin/Vendor";
+import Smtp from "./components/Admin/Smtp";
+import Asset_Add from "./components/Admin/Asset_Add";
 import Login from "./components/Login/Login";
 import ChangePass from "./components/Login/Change_pass";
 import { ToastContainer, toast } from "react-toastify";
@@ -38,10 +43,8 @@ import { TicketProvider } from "../src/components/UserContext/TicketContext";
 import SideMenu from "./components/sideMenu/SideMenu";
 import Management from "./components/Management/Management";
 import Setup from "./components/Setup/Setup";
-import AssetType from "./AssetType/AssetType";
-import TypeTable from "./TypeTable/TypeTable";
-import { Group as GroupIcon } from "@mui/icons-material";  // Renamed the MUI icon import
-
+import AssetType from "./components/AssetType/AssetType";
+import TypeTable from "./components/TypeTable/TypeTable";
 const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour
 
 function App() {
@@ -118,7 +121,7 @@ function App() {
                     {user && user.setup === "1" && (
                       <Route
                         path="*"
-                        element={<Navigate to="/admin/access" />}
+                        element={<Navigate to="/setup/access" />}
                       />
                     )}
                     {user && user.setup === "0" && (
@@ -126,14 +129,14 @@ function App() {
                     )}
 
                     <>
-                      <Route path="/admin/user" element={<User />} />
+                      <Route path="/setup/user" element={<User />} />
                       <Route path="/admin/customer" element={<Customer />} />
-                      <Route path="/admin/access" element={<Access />} />
+                      <Route path="/setup/access" element={<Access />} />
                       <Route path="/management" element={<Management />} />
                       <Route path="/setup" element={<Setup />} />
-                      <Route path="/:id/type" element={<AssetType />} />
+                      <Route path="/management/:group" element={<AssetType />} />
                       <Route
-                        path="/:id/:type/typetable"
+                        path="/management/:group/:type"
                         element={<TypeTable />}
                       />
                       <Route
@@ -164,7 +167,11 @@ function App() {
                       <Route path="/Setup/group" element={<Group />} />
                       <Route path="/Setup/type" element={<Type />} />
                       <Route path="/Setup/ip_address" element={<IP_Address />} />
-
+                      <Route path="/Setup/employee" element={<Employee />} />
+                      <Route path="/Setup/vendor" element={<Vendor />} />
+                      <Route path="/Setup/smtp" element={<Smtp />} />
+                      <Route path="/Setup/template" element={<Template />} />
+                      <Route path="/Setup/asset_add" element={<Asset_Add />} />
                     </>
                   </Routes>
                 </TicketProvider>
