@@ -27,10 +27,8 @@ if (empty($type)) {
     exit;
 }
 
-// Convert type to lowercase and concatenate with 'asset_'
 $table_name = 'asset_' . strtolower($type);
 
-// Fetch default columns from asset_template
 $template_columns = [];
 $template_result = $conn->query("SHOW COLUMNS FROM asset_template");
 if (!$template_result) {

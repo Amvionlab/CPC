@@ -43,5 +43,8 @@ while ($row = $result->fetch_assoc()) {
     }
 }
 
-echo json_encode(['fields' => $extra_columns]);
+echo json_encode([
+    'default_columns' => $default_columns,
+    'extra_columns' => $extra_columns
+]);
 ?>

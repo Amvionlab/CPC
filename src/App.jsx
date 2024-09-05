@@ -34,6 +34,7 @@ import Employee from "./components/Admin/Employee";
 import Vendor from "./components/Admin/Vendor";
 import Smtp from "./components/Admin/Smtp";
 import Asset_Add from "./components/Admin/Asset_Add";
+import Asset_Import from "./components/Admin/Asset_Import";
 import Login from "./components/Login/Login";
 import ChangePass from "./components/Login/Change_pass";
 import { ToastContainer, toast } from "react-toastify";
@@ -183,6 +184,7 @@ function App() {
                       <Route path="/Setup/smtp" element={<Smtp />} />
                       <Route path="/Setup/template" element={<Template />} />
                       <Route path="/Setup/asset_add" element={<Asset_Add />} />
+                      <Route path="/Setup/asset_import" element={<Asset_Import />} />
                     </>
                   </Routes>
                 </TicketProvider>
