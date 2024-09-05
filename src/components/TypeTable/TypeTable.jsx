@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faTriangleExclamation,
-  faPlus,
-  faMinus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTriangleExclamation, faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -13,24 +9,27 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import TablePagination from "@mui/material/TablePagination";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
 import { baseURL } from "../../config.js";
 
 function TypeTable() {
   const { type, group } = useParams();
   const [allData, setAllData] = useState(null);
   const [inactiveColumns, setInactiveColumns] = useState([]);
-  const [typeData, setTypeData] = useState([]); // State for type data
+  const [typeData, setTypeData] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedRows, setSelectedRows] = useState([]);
   const [anchorElAdd, setAnchorElAdd] = useState(null);
   const [anchorElRemove, setAnchorElRemove] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(
-        `${baseURL}/backend/fetchTableFields.php?type=${type}`
-      );
+      const response = await fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
       const data = await response.json();
       setAllData(data);
       setInactiveColumns(data.inactive_columns || []);
@@ -41,11 +40,9 @@ function TypeTable() {
 
   useEffect(() => {
     const fetchTypeData = async () => {
-      const response = await fetch(
-        `${baseURL}/backend/fetchTypedata.php?type=${type}`
-      );
+      const response = await fetch(`${baseURL}/backend/fetchTypedata.php?type=${type}`);
       const data = await response.json();
-      setTypeData(data); // Store the fetched type data
+      setTypeData(data);
     };
 
     fetchTypeData();
@@ -119,6 +116,50 @@ function TypeTable() {
     setAnchorElRemove(null);
   };
 
+  const toggleRowSelection = (rowIndex) => {
+    setSelectedRows((prevSelectedRows) =>
+      prevSelectedRows.includes(rowIndex)
+        ? prevSelectedRows.filter((index) => index !== rowIndex)
+        : [...prevSelectedRows, rowIndex]
+    );
+  };
+
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelecteds = typeData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((_, index) => index + page * rowsPerPage);
+      setSelectedRows(newSelecteds);
+    } else {
+      setSelectedRows([]);
+    }
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+    setSelectedRows([]); // Clear selection on page change to simplify logic
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const exportToCSV = () => {
+    const headers = ["ID", ...columnsToShow.map(col => col.column_name)];
+    const rows = typeData.map((row, index) =>
+      [index + 1, ...columnsToShow.map(col => row[col.column_name] || "-")]
+    );
+
+    let csvContent = "data:text/csv;charset=utf-8,"
+      + [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
+
+    const link = document.createElement("a");
+    link.setAttribute("href", encodeURI(csvContent));
+    link.setAttribute("download", `${type}_data.csv`);
+    document.body.appendChild(link); // Required for FF
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (!allData || !allData.active_columns) {
     return (
       <p className="text-center text-red-600">
@@ -127,44 +168,71 @@ function TypeTable() {
     );
   }
 
-  const columnsToShow = allData.active_columns.filter(
-    (column) => column.type === type
-  );
+  const columnsToShow = allData.active_columns.filter(column => column.type === type);
 
   return (
-    <div className="relative lg:flex p-4 gap-4 w-full h-screen font-poppins lg:grid-cols-2 grid-cols-1 bg-slate-200">
-      <div className="w-full bg-white p-4 rounded-md">
-        <div className="w-full flex justify-between items-center text-base font-medium mb-5">
-          <div className="flex">
+    <div className="lg:flex p-1 gap-4 w-full h-full lg:grid-cols-2 grid-cols-1 bg-slate-200">
+      <div className="w-full bg-white p-1 rounded-md h-full flex flex-col">
+        <div className="w-full h-9 flex text-sm justify-between items-center font-semibold mb-3">
+          <div className="flex capitalize">
             <Link
               to={`/management/${group}/${type}`}
-              className="text-red-500 hover:underline"
+              className="text-prime hover:underline capitalize "
             >
-              Asset Type
+              ASSET TYP
             </Link>
-            <p>/{type}</p>
+            <p>E / {type}</p>
           </div>
-          <div className="flex gap-2">
-            <button onClick={handleClickAdd}>
-              <div className="px-2 py-1 rounded-full bg-gradient-to-b from-prime via-slate-700 to-slate-600">
-                <FontAwesomeIcon icon={faPlus} color="white" />
-              </div>
-            </button>
-            <div className="flex">
-              <button onClick={handleClickRemove}>
-                <div className="px-2 py-1 rounded-full bg-gradient-to-tr from-red-600 via-red-700 to-red-900">
-                  <FontAwesomeIcon icon={faMinus} color="white" />
-                </div>
-              </button>
-            </div>
-          </div>
+          <div className="flex gap-1"> {/* Reduced gap between elements */}
+  <TablePagination
+    className="compact-pagination" // Use the compact pagination class
+    rowsPerPageOptions={[5, 10, 25, 50, 100, 500, 1000]}
+    component="div"
+    count={typeData.length}
+    rowsPerPage={rowsPerPage}
+    page={page}
+    onPageChange={handleChangePage}
+    onRowsPerPageChange={handleChangeRowsPerPage}
+    size="small" // Ensure pagination is already smaller
+  />
+  </div>
+  <div className="flex gap-1">
+  <button
+    onClick={exportToCSV}
+    className="px-2 py-1 rounded border text-xs hover:shadow-md shadow-inner"
+  >
+    CSV
+  </button></div>
+  <div className="flex gap-2 mr-2">
+  <button
+    onClick={handleClickAdd}
+    className="px-2 py-1 rounded border text-xs hover:shadow-md shadow-inner"
+  >
+    <FontAwesomeIcon icon={faPlus} />
+  </button>
+  <button
+    onClick={handleClickRemove}
+    className="px-2 py-1 rounded border text-xs hover:shadow-md shadow-inner"
+  >
+    <FontAwesomeIcon icon={faMinus} />
+  </button>
+  </div>
+
+
         </div>
 
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
-          <TableContainer sx={{ maxHeight: 440 }}>
+        
+          <TableContainer sx={{ maxHeight: "calc(100vh - 100px)" }}> {/* Adjust the value as necessary */}
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
+                  <TableCell padding="checkbox" sx={{ padding: '1px', fontSize: '10px' }}>
+                    <Checkbox
+                      indeterminate={selectedRows.length > 0 && selectedRows.length < typeData.length}
+                      checked={typeData.length > 0 && selectedRows.length === typeData.length}
+                      onChange={handleSelectAllClick}
+                    />
+                  </TableCell>
                   <TableCell align="center" style={{ minWidth: 50, fontWeight: "bold" }}>
                     ID
                   </TableCell>
@@ -182,13 +250,19 @@ function TypeTable() {
               </TableHead>
 
               <TableBody>
-                {typeData.map((row, rowIndex) => (
+                {typeData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, rowIndex) => (
                   <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
-                    <TableCell className="capitalize" align="center">
-                      {rowIndex + 1}
+                    <TableCell padding="checkbox" sx={{ padding: '1px', fontSize: '10px' }}> {/* Reduced padding */}
+                      <Checkbox
+                        checked={selectedRows.includes(rowIndex + page * rowsPerPage)}
+                        onChange={() => toggleRowSelection(rowIndex + page * rowsPerPage)}
+                      />
+                    </TableCell>
+                    <TableCell align="center" sx={{ padding: '2px', fontSize: '10px' }}> {/* Reduced padding */}
+                      {rowIndex + 1 + page * rowsPerPage}
                     </TableCell>
                     {columnsToShow.map((column, colIndex) => (
-                      <TableCell className="capitalize" align="center" key={colIndex}>
+                      <TableCell align="center" key={colIndex} sx={{ padding: '10px', fontSize: '12px' }}> {/* Reduced padding */}
                         {row[column.column_name] || "-"}
                       </TableCell>
                     ))}
@@ -196,9 +270,12 @@ function TypeTable() {
                 ))}
               </TableBody>
 
+
             </Table>
           </TableContainer>
-        </Paper>
+
+          
+        
 
         <Menu
           anchorEl={anchorElAdd}

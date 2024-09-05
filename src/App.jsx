@@ -28,7 +28,7 @@ import Ticket_service from "./components/Admin/Ticket_service";
 import Ticket_type from "./components/Admin/Ticket_type";
 import Template from "./components/Admin/Template";
 import Type from "./components/Admin/Type";
-import Group from "./components/Admin/Group";  // Your custom Group component
+import Group from "./components/Admin/Group"; // Your custom Group component
 import IP_Address from "./components/Admin/IP_Address";
 import Employee from "./components/Admin/Employee";
 import Vendor from "./components/Admin/Vendor";
@@ -45,6 +45,7 @@ import Management from "./components/Management/Management";
 import Setup from "./components/Setup/Setup";
 import AssetType from "./components/AssetType/AssetType";
 import TypeTable from "./components/TypeTable/TypeTable";
+import SingleAsset from "./components/SingleAsset/SingleAsset";
 const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour
 
 function App() {
@@ -134,10 +135,17 @@ function App() {
                       <Route path="/setup/access" element={<Access />} />
                       <Route path="/management" element={<Management />} />
                       <Route path="/setup" element={<Setup />} />
-                      <Route path="/management/:group" element={<AssetType />} />
+                      <Route
+                        path="/management/:group"
+                        element={<AssetType />}
+                      />
                       <Route
                         path="/management/:group/:type"
                         element={<TypeTable />}
+                      />
+                      <Route
+                        path="/management/:group/:type/:tag"
+                        element={<SingleAsset />}
                       />
                       <Route
                         path="/admin/department"
@@ -166,7 +174,10 @@ function App() {
                       <Route path="/Setup/location" element={<Location />} />
                       <Route path="/Setup/group" element={<Group />} />
                       <Route path="/Setup/type" element={<Type />} />
-                      <Route path="/Setup/ip_address" element={<IP_Address />} />
+                      <Route
+                        path="/Setup/ip_address"
+                        element={<IP_Address />}
+                      />
                       <Route path="/Setup/employee" element={<Employee />} />
                       <Route path="/Setup/vendor" element={<Vendor />} />
                       <Route path="/Setup/smtp" element={<Smtp />} />
