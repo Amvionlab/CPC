@@ -27,6 +27,10 @@ function TypeTable() {
   const [anchorElAdd, setAnchorElAdd] = useState(null);
   const [anchorElRemove, setAnchorElRemove] = useState(null);
 
+  // Sorting state
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState('id');
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
@@ -47,6 +51,24 @@ function TypeTable() {
 
     fetchTypeData();
   }, [type]);
+
+  const handleRequestSort = (property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  const sortedData = () => {
+    return typeData.sort((a, b) => {
+      if (a[orderBy] < b[orderBy]) {
+        return order === 'asc' ? -1 : 1;
+      }
+      if (a[orderBy] > b[orderBy]) {
+        return order === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  };
 
   const handleAddColumn = (columnId) => {
     const url = new URL(`${baseURL}/backend/updateColumnStatus.php`);
@@ -117,25 +139,31 @@ function TypeTable() {
   };
 
   const toggleRowSelection = (rowIndex) => {
-    setSelectedRows((prevSelectedRows) =>
-      prevSelectedRows.includes(rowIndex)
-        ? prevSelectedRows.filter((index) => index !== rowIndex)
-        : [...prevSelectedRows, rowIndex]
-    );
+    setSelectedRows((prevSelectedRows) => {
+      if (prevSelectedRows.includes(rowIndex)) {
+        return prevSelectedRows.filter((index) => index !== rowIndex); // Deselect if already selected
+      } else {
+        return [...prevSelectedRows, rowIndex]; // Select if not selected
+      }
+    });
   };
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = typeData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((_, index) => index + page * rowsPerPage);
+      // Select all rows on current page
+      const newSelecteds = sortedData()
+        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+        .map((_, index) => index + page * rowsPerPage);
       setSelectedRows(newSelecteds);
     } else {
+      // Deselect all rows on current page
       setSelectedRows([]);
     }
   };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    setSelectedRows([]); // Clear selection on page change to simplify logic
+    setSelectedRows([]); // Clear selection on page change
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -183,142 +211,139 @@ function TypeTable() {
             </Link>
             <p>E / {type}</p>
           </div>
-          <div className="flex gap-1"> {/* Reduced gap between elements */}
-  <TablePagination
-    className="compact-pagination" // Use the compact pagination class
-    rowsPerPageOptions={[5, 10, 25, 50, 100, 500, 1000]}
-    component="div"
-    count={typeData.length}
-    rowsPerPage={rowsPerPage}
-    page={page}
-    onPageChange={handleChangePage}
-    onRowsPerPageChange={handleChangeRowsPerPage}
-    size="small" // Ensure pagination is already smaller
-  />
-  </div>
-  <div className="flex gap-1">
-  <button
-    onClick={exportToCSV}
-    className="px-2 py-1 rounded border text-xs hover:shadow-md shadow-inner"
-  >
-    CSV
-  </button></div>
-  <div className="flex gap-2 mr-2">
-  <button
-    onClick={handleClickAdd}
-    className="px-2 py-1 rounded border text-xs hover:shadow-md shadow-inner"
-  >
-    <FontAwesomeIcon icon={faPlus} />
-  </button>
-  <button
-    onClick={handleClickRemove}
-    className="px-2 py-1 rounded border text-xs hover:shadow-md shadow-inner"
-  >
-    <FontAwesomeIcon icon={faMinus} />
-  </button>
-  </div>
-
-
+          <div className="flex gap-1">
+            <TablePagination
+              className="compact-pagination"
+              rowsPerPageOptions={[10, 25, 50, 100, 500, 1000]}
+              component="div"
+              count={typeData.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </div>
+          <div className="flex gap-1">
+            <button
+              onClick={exportToCSV}
+              className="px-2 py-1 rounded border text-xs hover:shadow-md shadow-inner"
+            >
+              CSV
+            </button>
+          </div>
+          <div className="flex gap-2 mr-2">
+            <button
+              onClick={handleClickAdd}
+              className="px-2 py-1 rounded border text-xs hover:shadow-md shadow-inner"
+            >
+              <FontAwesomeIcon icon={faPlus} />
+            </button>
+            <button
+              onClick={handleClickRemove}
+              className="px-2 py-1 rounded border text-xs hover:shadow-md shadow-inner"
+            >
+              <FontAwesomeIcon icon={faMinus} />
+            </button>
+          </div>
         </div>
 
-        
-          <TableContainer sx={{ maxHeight: "calc(100vh - 100px)" }}> {/* Adjust the value as necessary */}
-            <Table stickyHeader aria-label="sticky table">
-              <TableHead>
-                <TableRow>
-                  <TableCell padding="checkbox" sx={{ padding: '1px', fontSize: '10px' }}>
-                    <Checkbox
-                      indeterminate={selectedRows.length > 0 && selectedRows.length < typeData.length}
-                      checked={typeData.length > 0 && selectedRows.length === typeData.length}
-                      onChange={handleSelectAllClick}
-                    />
+        <TableContainer sx={{ maxHeight: "calc(100vh - 100px)" }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                <TableCell padding="checkbox" sx={{ padding: '1px', fontSize: '10px' }}>
+                  <Checkbox
+                    indeterminate={selectedRows.length > 0 && selectedRows.length < typeData.length}
+                    checked={selectedRows.length > 0 && selectedRows.length === typeData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).length}
+                    onChange={handleSelectAllClick}
+                  />
+                </TableCell>
+                <TableCell align="center" style={{ minWidth: 50, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('id')}>ID</button>
+                </TableCell>
+                {columnsToShow.map((column, index) => (
+                  <TableCell
+                    className="capitalize"
+                    key={index}
+                    align="center"
+                    style={{ minWidth: 120, fontWeight: "bold" }}
+                    onClick={() => handleRequestSort(column.column_name)} // Allow sorting on other columns
+                  >
+                    {column.column_name} {orderBy === column.column_name ? (order === 'asc' ? '↑' : '↓') : ''}
                   </TableCell>
-                  <TableCell align="center" style={{ minWidth: 50, fontWeight: "bold" }}>
-                    ID
-                  </TableCell>
-                  {columnsToShow.map((column, index) => (
-                    <TableCell
-                      className="capitalize"
-                      key={index}
-                      align="center"
-                      style={{ minWidth: 120, fontWeight: "bold" }}
-                    >
-                      {column.column_name}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
+                ))}
+              </TableRow>
+            </TableHead>
 
-              <TableBody>
-                {typeData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, rowIndex) => (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex}>
-                    <TableCell padding="checkbox" sx={{ padding: '1px', fontSize: '10px' }}> {/* Reduced padding */}
+            <TableBody>
+              {sortedData()
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, rowIndex) => {
+                const currentRowIndex = rowIndex + page * rowsPerPage; // Calculate the current row index
+                return (
+                  <TableRow hover role="checkbox" tabIndex={-1} key={currentRowIndex} selected={selectedRows.includes(currentRowIndex)}>
+                    <TableCell padding="checkbox" sx={{ padding: '1px', fontSize: '10px' }}>
                       <Checkbox
-                        checked={selectedRows.includes(rowIndex + page * rowsPerPage)}
-                        onChange={() => toggleRowSelection(rowIndex + page * rowsPerPage)}
+                        checked={selectedRows.includes(currentRowIndex)}
+                        onChange={() => toggleRowSelection(currentRowIndex)}
                       />
                     </TableCell>
-                    <TableCell align="center" sx={{ padding: '2px', fontSize: '10px' }}> {/* Reduced padding */}
-                      {rowIndex + 1 + page * rowsPerPage}
+                    <TableCell align="center" sx={{ padding: '2px', fontSize: '12px' }}>
+                      {currentRowIndex + 1}
                     </TableCell>
                     {columnsToShow.map((column, colIndex) => (
-                      <TableCell align="center" key={colIndex} sx={{ padding: '10px', fontSize: '12px' }}> {/* Reduced padding */}
+                      <TableCell align="center" key={colIndex} sx={{ padding: '1px', fontSize: '12px' }}>
                         {row[column.column_name] || "-"}
                       </TableCell>
                     ))}
                   </TableRow>
-                ))}
-              </TableBody>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
+        <Menu
+          anchorEl={anchorElAdd}
+          open={Boolean(anchorElAdd)}
+          onClose={handleCloseAdd}
+        >
+          {inactiveColumns.length > 0 ? (
+            inactiveColumns.map((column) => (
+              <MenuItem
+                key={column.id}
+                onClick={() => handleAddColumn(column.id)}
+              >
+                {column.column_name}
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem disabled>
+              Nothing
+            </MenuItem>
+          )}
+        </Menu>
 
-            </Table>
-          </TableContainer>
-
-          
-        
-
-          <Menu
-  anchorEl={anchorElAdd}
-  open={Boolean(anchorElAdd)}
-  onClose={handleCloseAdd}
->
-  {inactiveColumns.length > 0 ? (
-    inactiveColumns.map((column) => (
-      <MenuItem
-        key={column.id}
-        onClick={() => handleAddColumn(column.id)}
-      >
-        {column.column_name}
-      </MenuItem>
-    ))
-  ) : (
-    <MenuItem disabled>
-      Nothing
-    </MenuItem>
-  )}
-</Menu>
-
-<Menu
-  anchorEl={anchorElRemove}
-  open={Boolean(anchorElRemove)}
-  onClose={handleCloseRemove}
->
-  {columnsToShow.length > 0 ? (
-    columnsToShow.map((column) => (
-      <MenuItem
-        key={column.id}
-        onClick={() => handleRemoveColumn(column.id)}
-      >
-        {column.column_name}
-      </MenuItem>
-    ))
-  ) : (
-    <MenuItem disabled>
-      Nothing
-    </MenuItem>
-  )}
-</Menu>
-
+        <Menu
+          anchorEl={anchorElRemove}
+          open={Boolean(anchorElRemove)}
+          onClose={handleCloseRemove}
+        >
+          {columnsToShow.length > 0 ? (
+            columnsToShow.map((column) => (
+              <MenuItem
+                key={column.id}
+                onClick={() => handleRemoveColumn(column.id)}
+              >
+                {column.column_name}
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem disabled>
+              Nothing
+            </MenuItem>
+          )}
+        </Menu>
       </div>
     </div>
   );
