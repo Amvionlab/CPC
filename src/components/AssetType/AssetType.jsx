@@ -20,7 +20,7 @@ const AssetType = () => {
   return (
     <div className="lg:flex flex-col p-1 gap-1 w-full h-screen font-poppins lg:grid-cols-2 grid-cols-1 bg-slate-200">
       <div className="p-2 bg-white/80 w-full lg:w-full rounded-md flex-col flex border-r-2">
-        <div className="text-base font-medium">
+        <div className="text-base font-medium ">
           <Link
             className="text-red-600 hover:underline"
             to={`/management/${group}`}
