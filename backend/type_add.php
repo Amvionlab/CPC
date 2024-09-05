@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($columnsResult) {
                 while ($row = $columnsResult->fetch_assoc()) {
                     $column_name = $row['Field'];
-                    if (!in_array($column_name, ['id', 'tag', 'post_date', 'is_active'])) {
+                    if (!in_array($column_name, ['id', 'post_date', 'is_active'])) {
                         // Insert each column into the table_fields
                         $insertFieldSql = "INSERT INTO table_fields (type_id, column_name, is_active) VALUES (?, ?, ?)";
                         $stmt = $conn->prepare($insertFieldSql);

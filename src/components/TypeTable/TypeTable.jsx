@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faTriangleExclamation,
-  faPlus,
-  faMinus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTriangleExclamation, faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -13,37 +9,71 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Button from "@mui/material/Button"; // Button for adding/removing columns
-import Menu from "@mui/material/Menu"; // Dropdown for adding/removing columns
-import MenuItem from "@mui/material/MenuItem"; // Dropdown items
+import Checkbox from "@mui/material/Checkbox";
+import TablePagination from "@mui/material/TablePagination";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Button from "@mui/material/Button";
 import { baseURL } from "../../config.js";
 
-// TypeTable Component
 function TypeTable() {
   const { type, group } = useParams();
   const [allData, setAllData] = useState(null);
   const [inactiveColumns, setInactiveColumns] = useState([]);
-  const [anchorElAdd, setAnchorElAdd] = useState(null); // Anchor for add dropdown
-  const [anchorElRemove, setAnchorElRemove] = useState(null); // Anchor for remove dropdown
+  const [typeData, setTypeData] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [anchorElAdd, setAnchorElAdd] = useState(null);
+  const [anchorElRemove, setAnchorElRemove] = useState(null);
 
-  // Fetch data when component mounts or when 'type' changes
+  // Sorting state
+  const [order, setOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState('id');
+
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(
-        `${baseURL}/backend/fetchTableFields.php?type=${type}`
-      );
+      const response = await fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
       const data = await response.json();
       setAllData(data);
-      setInactiveColumns(data.inactive_columns || []); // Initialize inactive columns
+      setInactiveColumns(data.inactive_columns || []);
     };
 
     fetchData();
   }, [type]);
 
+  useEffect(() => {
+    const fetchTypeData = async () => {
+      const response = await fetch(`${baseURL}/backend/fetchTypedata.php?type=${type}`);
+      const data = await response.json();
+      setTypeData(data);
+    };
+
+    fetchTypeData();
+  }, [type]);
+
+  const handleRequestSort = (property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  const sortedData = () => {
+    return typeData.sort((a, b) => {
+      if (a[orderBy] < b[orderBy]) {
+        return order === 'asc' ? -1 : 1;
+      }
+      if (a[orderBy] > b[orderBy]) {
+        return order === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
   const handleAddColumn = (columnId) => {
     const url = new URL(`${baseURL}/backend/updateColumnStatus.php`);
     url.searchParams.append("id", columnId);
-    url.searchParams.append("act", "add"); // Adding the action type
+    url.searchParams.append("act", "add");
 
     fetch(url, {
       method: "POST",
@@ -54,29 +84,22 @@ function TypeTable() {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          console.log(`Column with ID ${columnId} activated successfully.`);
-          // Refresh data after addition
           return fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
-        } else {
-          console.error("Error activating column: ", data.message);
         }
       })
       .then((response) => response.json())
       .then((data) => {
         setAllData(data);
         setInactiveColumns(data.inactive_columns || []);
-        setAnchorElAdd(null); // Close the dropdown after action
+        setAnchorElAdd(null);
       })
-      .catch((error) => {
-        console.error("There was an error during the fetch:", error);
-      });
+      .catch((error) => console.error("There was an error:", error));
   };
 
   const handleRemoveColumn = (columnId) => {
-    //alert(columnId)
     const url = new URL(`${baseURL}/backend/updateColumnStatus.php`);
     url.searchParams.append("id", columnId);
-    url.searchParams.append("act", "remove"); // Adding the action type for removal
+    url.searchParams.append("act", "remove");
 
     fetch(url, {
       method: "POST",
@@ -87,38 +110,82 @@ function TypeTable() {
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          console.log(`Column with ID ${columnId} deactivated successfully.`);
-          // Refresh data after removal
           return fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
-        } else {
-          console.error("Error deactivating column: ", data.message);
         }
       })
       .then((response) => response.json())
       .then((data) => {
         setAllData(data);
         setInactiveColumns(data.inactive_columns || []);
-        setAnchorElRemove(null); // Close the dropdown after action
+        setAnchorElRemove(null);
       })
-      .catch((error) => {
-        console.error("There was an error during the fetch:", error);
-      });
+      .catch((error) => console.error("There was an error:", error));
   };
 
   const handleClickAdd = (event) => {
-    setAnchorElAdd(event.currentTarget); // Set the anchor for the add dropdown
+    setAnchorElAdd(event.currentTarget);
   };
 
   const handleClickRemove = (event) => {
-    setAnchorElRemove(event.currentTarget); // Set the anchor for the remove dropdown
+    setAnchorElRemove(event.currentTarget);
   };
 
   const handleCloseAdd = () => {
-    setAnchorElAdd(null); // Close the add dropdown
+    setAnchorElAdd(null);
   };
 
   const handleCloseRemove = () => {
-    setAnchorElRemove(null); // Close the remove dropdown
+    setAnchorElRemove(null);
+  };
+
+  const toggleRowSelection = (rowIndex) => {
+    setSelectedRows((prevSelectedRows) => {
+      if (prevSelectedRows.includes(rowIndex)) {
+        return prevSelectedRows.filter((index) => index !== rowIndex); // Deselect if already selected
+      } else {
+        return [...prevSelectedRows, rowIndex]; // Select if not selected
+      }
+    });
+  };
+
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      // Select all rows on current page
+      const newSelecteds = sortedData()
+        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+        .map((_, index) => index + page * rowsPerPage);
+      setSelectedRows(newSelecteds);
+    } else {
+      // Deselect all rows on current page
+      setSelectedRows([]);
+    }
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+    setSelectedRows([]); // Clear selection on page change
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const exportToCSV = () => {
+    const headers = ["ID", ...columnsToShow.map(col => col.column_name)];
+    const rows = typeData.map((row, index) =>
+      [index + 1, ...columnsToShow.map(col => row[col.column_name] || "-")]
+    );
+
+    let csvContent = "data:text/csv;charset=utf-8,"
+      + [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
+
+    const link = document.createElement("a");
+    link.setAttribute("href", encodeURI(csvContent));
+    link.setAttribute("download", `${type}_data.csv`);
+    document.body.appendChild(link); // Required for FF
+    link.click();
+    document.body.removeChild(link);
   };
 
   if (!allData || !allData.active_columns) {
@@ -129,103 +196,154 @@ function TypeTable() {
     );
   }
 
-  const columnsToShow = allData.active_columns.filter(
-    (column) => column.type === type
-  );
+  const columnsToShow = allData.active_columns.filter(column => column.type === type);
 
   return (
-    <div className="relative lg:flex p-4 gap-4 w-full h-screen font-poppins lg:grid-cols-2 grid-cols-1 bg-slate-200">
-      <div className="w-full bg-white p-4 rounded-md">
-        <div className="w-full flex justify-between items-center text-base font-medium mb-5">
-          <div className="flex">
-            <Link
-              to={`/management/${group}/${type}`}
-              className="text-red-500 hover:underline"
-            >
-              Asset Type
-            </Link>
-            <p>/{type}</p>
+    <div className="lg:flex p-1 gap-4 w-full h-full lg:grid-cols-2 grid-cols-1 bg-slate-200">
+      <div className="w-full bg-white p-1 rounded-md h-full flex flex-col">
+        <div className="w-full border-b h-9 flex text-sm justify-between items-center font-semibold mb-2">
+        <div className="flex capitalize">
+    <Link
+        to={`/management/${group}`}
+        className="text-flo hover:underline capitalize"
+    >
+        {group}
+    </Link>
+    <p>&nbsp; / {type}</p> {/* Space before the slash */}
+</div>
+
+          <div className="flex gap-1">
+            <TablePagination
+              className="compact-pagination"
+              rowsPerPageOptions={[10, 25, 50, 100, 500, 1000]}
+              component="div"
+              count={typeData.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
           </div>
-          <div className="flex gap-2">
-            <button onClick={handleClickAdd}>
-              <div className="px-2 py-1 rounded-full bg-gradient-to-b from-prime via-slate-700 to-slate-600">
-                <FontAwesomeIcon icon={faPlus} color="white" />
-              </div>
+          <div className="flex gap-1">
+            <button
+              onClick={exportToCSV}
+              className="px-2 py-1 rounded border text-xs hover:shadow-md shadow-inner"
+            >
+              CSV
             </button>
-            <div className="flex">
-              <button onClick={handleClickRemove}>
-                <div className="px-2 py-1 rounded-full bg-gradient-to-tr from-red-600 via-red-700 to-red-900">
-                  <FontAwesomeIcon icon={faMinus} color="white" />
-                </div>
-              </button>
-            </div>
+          </div>
+          <div className="flex gap-2 mr-2">
+            <button
+              onClick={handleClickAdd}
+              className="px-2 py-1 rounded border text-xs hover:shadow-md shadow-inner"
+            >
+              <FontAwesomeIcon icon={faPlus} />
+            </button>
+            <button
+              onClick={handleClickRemove}
+              className="px-2 py-1 rounded border text-xs hover:shadow-md shadow-inner"
+            >
+              <FontAwesomeIcon icon={faMinus} />
+            </button>
           </div>
         </div>
 
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
-          <TableContainer sx={{ maxHeight: 440 }}>
-            <Table stickyHeader aria-label="sticky table">
-              <TableHead>
-                <TableRow>
-                  {columnsToShow.map((column, index) => (
-                    <TableCell
-                      className="capitalize"
-                      key={index}
-                      align="center"
-                      style={{ minWidth: 120, fontWeight: "bold" }}
-                    >
-                      {column.column_name}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                <TableRow hover role="checkbox" tabIndex={-1}>
-                  {columnsToShow.map((column, colIndex) => (
-                    <TableCell
-                      className="capitalize"
-                      align="center"
-                      key={colIndex}
-                    >
-                      {"-"} {/* Change to render actual data */}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
+        <TableContainer sx={{ maxHeight: "calc(100vh - 100px)" }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                <TableCell padding="checkbox" sx={{ padding: '1px', fontSize: '10px' }}>
+                  <Checkbox
+                    indeterminate={selectedRows.length > 0 && selectedRows.length < typeData.length}
+                    checked={selectedRows.length > 0 && selectedRows.length === typeData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).length}
+                    onChange={handleSelectAllClick}
+                  />
+                </TableCell>
+                <TableCell align="center" style={{ minWidth: 50, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('id')}>ID</button>
+                </TableCell>
+                {columnsToShow.map((column, index) => (
+                  <TableCell
+                    className="capitalize"
+                    key={index}
+                    align="center"
+                    style={{ minWidth: 120, fontWeight: "bold" }}
+                    onClick={() => handleRequestSort(column.column_name)} // Allow sorting on other columns
+                  >
+                    {column.column_name} {orderBy === column.column_name ? (order === 'asc' ? '↑' : '↓') : ''}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
 
-        {/* Dropdown for inactive columns */}
+            <TableBody>
+              {sortedData()
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, rowIndex) => {
+                const currentRowIndex = rowIndex + page * rowsPerPage; // Calculate the current row index
+                return (
+                  <TableRow hover role="checkbox" tabIndex={-1} key={currentRowIndex} selected={selectedRows.includes(currentRowIndex)}>
+                    <TableCell padding="checkbox" sx={{ padding: '1px', fontSize: '10px' }}>
+                      <Checkbox
+                        checked={selectedRows.includes(currentRowIndex)}
+                        onChange={() => toggleRowSelection(currentRowIndex)}
+                      />
+                    </TableCell>
+                    <TableCell align="center" sx={{ padding: '2px', fontSize: '12px' }}>
+                      {currentRowIndex + 1}
+                    </TableCell>
+                    {columnsToShow.map((column, colIndex) => (
+                      <TableCell align="center" key={colIndex} sx={{ padding: '1px', fontSize: '12px' }}>
+                        {row[column.column_name] || "-"}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
         <Menu
           anchorEl={anchorElAdd}
           open={Boolean(anchorElAdd)}
           onClose={handleCloseAdd}
         >
-          {inactiveColumns.map((column) => (
-            <MenuItem
-              key={column.id}
-              onClick={() => handleAddColumn(column.id)}
-            >
-              {column.column_name}
+          {inactiveColumns.length > 0 ? (
+            inactiveColumns.map((column) => (
+              <MenuItem
+                key={column.id}
+                onClick={() => handleAddColumn(column.id)}
+              >
+                {column.column_name}
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem disabled>
+              Nothing
             </MenuItem>
-          ))}
+          )}
         </Menu>
 
-        {/* Dropdown for active columns to remove */}
         <Menu
           anchorEl={anchorElRemove}
           open={Boolean(anchorElRemove)}
           onClose={handleCloseRemove}
         >
-          {columnsToShow.map((column) => (
-            <MenuItem
-              key={column.id}
-              onClick={() => handleRemoveColumn(column.id)}
-            >
-              {column.column_name}
+          {columnsToShow.length > 0 ? (
+            columnsToShow.map((column) => (
+              <MenuItem
+                key={column.id}
+                onClick={() => handleRemoveColumn(column.id)}
+              >
+                {column.column_name}
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem disabled>
+              Nothing
             </MenuItem>
-          ))}
+          )}
         </Menu>
       </div>
     </div>
