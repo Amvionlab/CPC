@@ -1,71 +1,88 @@
 <?php
-require_once 'config.php'; // Include your DB configuration
+include 'config.php'; 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $type = $_POST['type'] ?? '';
-    $file = $_FILES['file'] ?? null;
+    if (isset($_POST['type']) && isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
+        $type = $_POST['type'];
+        $file = $_FILES['file']['tmp_name'];
 
-    if (empty($type) || !$file || $file['type'] !== 'text/csv') {
-        echo json_encode(['success' => false, 'message' => 'Invalid type or file']);
-        exit;
-    }
+        // Determine the table name based on the selected type
+        $tableName = 'asset_' . strtolower($type);
 
-    // Step 1: Select the respective table
-    $tableName = 'asset_' . strtolower($type); // Assuming table is named like "asset_desktop", "asset_laptop", etc.
+        // Open the CSV file
+        if (($handle = fopen($file, 'r')) !== false) {
+            // Read the first row to get the type
+            $csvType = fgetcsv($handle)[0];
+            if (strtolower($csvType) !== strtolower($type)) {
+                echo json_encode(['success' => false, 'message' => 'CSV type does not match selected type.']);
+                exit;
+            }
 
-    // Step 2: Open the CSV file and read headers
-    $csvFile = fopen($file['tmp_name'], 'r');
-    if (!$csvFile) {
-        echo json_encode(['success' => false, 'message' => 'Failed to open the file']);
-        exit;
-    }
+            // Read the second row to get column names
+            $columns = fgetcsv($handle);
+            if ($columns === false) {
+                echo json_encode(['success' => false, 'message' => 'Invalid CSV format.']);
+                exit;
+            }
 
-    // Get the first row (headers)
-    $headers = fgetcsv($csvFile);
+            // Check if table exists
+            $stmt = $pdo->prepare("SHOW TABLES LIKE ?");
+            $stmt->execute([$tableName]);
+            if ($stmt->rowCount() === 0) {
+                echo json_encode(['success' => false, 'message' => 'Table does not exist.']);
+                exit;
+            }
 
-    // Step 3: Fetch the column names from the respective table
-    $query = "SHOW COLUMNS FROM $tableName";
-    $result = $pdo->query($query);
+            // Get columns from the table
+            $stmt = $pdo->prepare("DESCRIBE $tableName");
+            $stmt->execute();
+            $tableColumns = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
 
-    if (!$result) {
-        echo json_encode(['success' => false, 'message' => 'Failed to retrieve table columns']);
-        exit;
-    }
+            // Map CSV columns to table columns
+            $columnMapping = [];
+            foreach ($columns as $column) {
+                if (in_array($column, $tableColumns)) {
+                    $columnMapping[] = $column;
+                }
+            }
 
-    $columns = [];
-    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-        $columns[] = $row['Field'];
-    }
+            // Check if there are columns to insert data into
+            if (empty($columnMapping)) {
+                echo json_encode(['success' => false, 'message' => 'No matching columns found.']);
+                exit;
+            }
 
-    // Step 4: Match CSV headers with table columns
-    $validColumns = array_intersect($headers, $columns);
+            // Prepare insert statement
+            $placeholders = implode(',', array_fill(0, count($columnMapping), '?'));
+            $columnsList = implode(',', $columnMapping);
+            $insertStmt = $pdo->prepare("INSERT INTO $tableName ($columnsList) VALUES ($placeholders)");
 
-    if (empty($validColumns)) {
-        echo json_encode(['success' => false, 'message' => 'CSV headers do not match any table columns']);
-        exit;
-    }
+            // Read the CSV file and insert data
+            while (($row = fgetcsv($handle)) !== false) {
+                if (count($row) < count($columns)) {
+                    continue; // Skip rows with insufficient data
+                }
 
-    // Step 5: Prepare the INSERT query
-    $placeholders = implode(', ', array_fill(0, count($validColumns), '?'));
-    $insertQuery = "INSERT INTO $tableName (" . implode(', ', $validColumns) . ") VALUES ($placeholders)";
-    $stmt = $pdo->prepare($insertQuery);
+                // Prepare row data for insertion based on column mapping
+                $rowData = [];
+                foreach ($columnMapping as $col) {
+                    $index = array_search($col, $columns);
+                    $rowData[] = isset($row[$index]) ? $row[$index] : null;
+                }
 
-    // Step 6: Bulk insert data from CSV
-    $rowCount = 0;
-    while ($row = fgetcsv($csvFile)) {
-        $data = [];
-        foreach ($validColumns as $colIndex => $colName) {
-            $data[] = $row[array_search($colName, $headers)];
+                // Execute insert statement
+                $insertStmt->execute($rowData);
+            }
+
+            fclose($handle);
+            echo json_encode(['success' => true, 'message' => 'Data imported successfully.']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to open CSV file.']);
         }
-
-        if ($stmt->execute($data)) {
-            $rowCount++;
-        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Invalid request.']);
     }
-
-    fclose($csvFile);
-
-    echo json_encode(['success' => true, 'message' => "$rowCount rows inserted successfully"]);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Invalid request']);
+    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
 }
+?>

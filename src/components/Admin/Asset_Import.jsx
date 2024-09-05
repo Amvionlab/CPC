@@ -122,17 +122,24 @@ const Form = () => {
             });
         }
     };
-    
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
-        if (selectedFile && selectedFile.type === 'text/csv') {
-            setFile(selectedFile);
-        } else {
-            toast.error("Only CSV files are allowed.");
-            setFile(null);
+        
+        if (selectedFile) {
+            // Check if the selected file is a CSV
+            const isCSV = selectedFile.type === 'text/csv' || selectedFile.name.endsWith('.csv');
+            
+            if (isCSV) {
+                setFile(selectedFile);  // Set the file state
+                setFileName(selectedFile.name);  // Set the file name state
+            } else {
+                toast.error("Only CSV files are allowed.");
+                setFile(null);
+                setFileName("");  // Reset the file name
+            }
         }
-    };
+    }; 
 
     const handleCloseDialog = () => {
         setIsDialogOpen(false);
@@ -144,8 +151,14 @@ const Form = () => {
             toast.error("No fields selected for export.");
             return;
         }
+        const templateType = formData.type || "TYPE_NOT_FOUND"; 
 
-        const csvContent = selectedFields.join(",") + "\n";
+        const firstRow = `${templateType}`;
+   
+        const secondRow = selectedFields.join(",");
+    
+        const csvContent = firstRow + "\n" + secondRow + "\n";
+    
         const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
@@ -155,36 +168,37 @@ const Form = () => {
         link.click();
         document.body.removeChild(link);
     };
-
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!formData.type || !file) {
-            toast.error("Please select a type and attach a CSV file.");
+    
+        if (!file || !formData.type) {
+            toast.error("Please select a type and upload a file.");
             return;
         }
-
+    
         const formDataToSend = new FormData();
-        formDataToSend.append('type', formData.type); // Append type
-        formDataToSend.append('file', file); // Append file
-
+        formDataToSend.append("type", formData.type);  // Send the selected type
+        formDataToSend.append("file", file);  // Send the file
+    
         try {
             const response = await fetch(`${baseURL}/backend/import_add.php`, {
-                method: 'POST',
+                method: "POST",
                 body: formDataToSend,
             });
-
+    
             const result = await response.json();
+    
             if (result.success) {
-                toast.success("Data imported successfully!");
+                toast.success("Data imported successfully.");
             } else {
-                toast.error(result.message || "Error in importing data.");
+                toast.error(result.message);
             }
         } catch (error) {
-            toast.error("An error occurred while submitting the form.");
+            toast.error("Failed to import data.");
         }
-    };
-
+    };             
+    
     const filteredTypes = types.filter(type => type.group_id === formData.group);
 
     const handleOpenDialog = () => {
