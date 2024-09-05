@@ -32,6 +32,7 @@ const Form = () => {
     const [selectedFields, setSelectedFields] = useState([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [file, setFile] = useState(null);
+    const [fileName, setFileName] = useState(''); 
 
     const navigate = useNavigate();
 
@@ -47,6 +48,14 @@ const Form = () => {
             }
         };
         fetchDropdownData();
+    }, []);
+
+    useEffect(() => {
+        // Reset file when the component is unmounted (page reload or close)
+        return () => {
+            setFile(null);
+            setFileName('');
+        };
     }, []);
 
     useEffect(() => {
@@ -91,13 +100,21 @@ const Form = () => {
         if (name === 'group') {
             setFormData({
                 ...formData,
-                group: value,
-                type: '',
+                group: value,   
+                type: '',      
             });
-            setDefaultColumns([]);
-            setExtraColumns([]);
-            setSelectedFields([]);
-            setIsDialogOpen(false);
+            setDefaultColumns([]);       
+            setExtraColumns([]);         
+            setSelectedFields([]);       
+            setFile(null);               
+            setIsDialogOpen(false);      
+        } else if (name === 'type') {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+
+            setSelectedFields([]);   
         } else {
             setFormData({
                 ...formData,
@@ -105,6 +122,7 @@ const Form = () => {
             });
         }
     };
+    
 
     const handleFileChange = (e) => {
         const selectedFile = e.target.files[0];
@@ -140,38 +158,30 @@ const Form = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const form = new FormData();
-        for (const key in formData) {
-            form.append(key, formData[key]);
-        }
-        form.append('selectedFields', JSON.stringify(selectedFields));
 
-        if (file) {
-            form.append('file', file);
+        if (!formData.type || !file) {
+            toast.error("Please select a type and attach a CSV file.");
+            return;
         }
+
+        const formDataToSend = new FormData();
+        formDataToSend.append('type', formData.type); // Append type
+        formDataToSend.append('file', file); // Append file
 
         try {
-            const response = await fetch(`${baseURL}/backend/asset_add.php`, {
-                method: "POST",
-                body: form,
+            const response = await fetch(`${baseURL}/backend/import_add.php`, {
+                method: 'POST',
+                body: formDataToSend,
             });
 
             const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.message || "Something went wrong");
-            }
-
-            if (result.message === "Asset Already Exists") {
-                toast.error(result.message);
-            } else if (result.message === "Asset added successfully with tag.") {
-                toast.success(result.message);
-                location.reload();
+            if (result.success) {
+                toast.success("Data imported successfully!");
             } else {
-                throw new Error("Unexpected response message.");
+                toast.error(result.message || "Error in importing data.");
             }
         } catch (error) {
-            toast.error("There was a problem with your fetch operation: " + error.message);
+            toast.error("An error occurred while submitting the form.");
         }
     };
 
@@ -244,8 +254,12 @@ const Form = () => {
                                     >
                                         Template
                                     </button>
-                                    <div className="flex items-center">
-                                        <label htmlFor="file-upload" className="bg-gray-300 cursor-pointer text-black py-2 px-4 rounded-md shadow-md">
+
+                                    <div className="flex flex-col items-start">
+                                        <label
+                                            htmlFor="file-upload"
+                                            className="bg-gray-300 cursor-pointer text-black py-2 px-4 rounded-md shadow-md"
+                                        >
                                             <input
                                                 id="file-upload"
                                                 type="file"
@@ -255,7 +269,11 @@ const Form = () => {
                                             />
                                             Attach File
                                         </label>
+                                        {fileName && (
+                                            <p className="text-xs text-gray-600 mt-1">{fileName}</p>
+                                        )}
                                     </div>
+
                                     <button
                                         type="submit"
                                         className="mt-1 bg-prime font-mont font-semibold text-lg text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
@@ -268,7 +286,6 @@ const Form = () => {
                     </form>
                 </div>
             </div>
-
 
             {isDialogOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center">
