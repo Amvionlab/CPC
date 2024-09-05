@@ -201,16 +201,16 @@ function TypeTable() {
   return (
     <div className="lg:flex p-1 gap-4 w-full h-full lg:grid-cols-2 grid-cols-1 bg-slate-200">
       <div className="w-full bg-white p-1 rounded-md h-full flex flex-col">
-        <div className="w-full border-b h-9 flex text-sm justify-between items-center font-semibold mb-2">
-        <div className="flex capitalize">
-    <Link
-        to={`/management/${group}`}
-        className="text-flo hover:underline capitalize"
-    >
-        {group}
-    </Link>
-    <p>&nbsp; / {type}</p> {/* Space before the slash */}
-</div>
+        <div className="w-full border-b h-10 flex text-sm justify-between items-center font-semibold mb-2">
+          <div className="flex capitalize">
+            <Link
+              to={`/management/${group}`}
+              className="text-flo hover:underline capitalize"
+            >
+              {group}
+            </Link>
+            <p>&nbsp; / {type}</p> {/* Space before the slash */}
+          </div>
 
           <div className="flex gap-1">
             <TablePagination
@@ -227,7 +227,7 @@ function TypeTable() {
           <div className="flex gap-1">
             <button
               onClick={exportToCSV}
-              className="px-2 py-1 rounded border text-xs hover:shadow-md shadow-inner"
+              className="px-2 py-1 bg-second rounded border text-xs shadow-md transform hover:scale-110 transition-transform duration-200 ease-in-out"
             >
               CSV
             </button>
@@ -235,17 +235,18 @@ function TypeTable() {
           <div className="flex gap-2 mr-2">
             <button
               onClick={handleClickAdd}
-              className="px-2 py-1 rounded border text-xs hover:shadow-md shadow-inner"
+              className="px-2 py-1 bg-second rounded border text-xs shadow-md transform hover:scale-110 transition-transform duration-200 ease-in-out"
             >
               <FontAwesomeIcon icon={faPlus} />
             </button>
             <button
               onClick={handleClickRemove}
-              className="px-2 py-1 rounded border text-xs hover:shadow-md shadow-inner"
+              className="px-2 py-1 bg-second rounded border text-xs shadow-md transform hover:scale-110 transition-transform duration-200 ease-in-out"
             >
               <FontAwesomeIcon icon={faMinus} />
             </button>
           </div>
+
         </div>
 
         <TableContainer sx={{ maxHeight: "calc(100vh - 100px)" }}>
@@ -280,26 +281,26 @@ function TypeTable() {
               {sortedData()
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, rowIndex) => {
-                const currentRowIndex = rowIndex + page * rowsPerPage; // Calculate the current row index
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={currentRowIndex} selected={selectedRows.includes(currentRowIndex)}>
-                    <TableCell padding="checkbox" sx={{ padding: '1px', fontSize: '10px' }}>
-                      <Checkbox
-                        checked={selectedRows.includes(currentRowIndex)}
-                        onChange={() => toggleRowSelection(currentRowIndex)}
-                      />
-                    </TableCell>
-                    <TableCell align="center" sx={{ padding: '2px', fontSize: '12px' }}>
-                      {currentRowIndex + 1}
-                    </TableCell>
-                    {columnsToShow.map((column, colIndex) => (
-                      <TableCell align="center" key={colIndex} sx={{ padding: '1px', fontSize: '12px' }}>
-                        {row[column.column_name] || "-"}
+                  const currentRowIndex = rowIndex + page * rowsPerPage; // Calculate the current row index
+                  return (
+                    <TableRow hover role="checkbox" tabIndex={-1} key={currentRowIndex} selected={selectedRows.includes(currentRowIndex)}>
+                      <TableCell padding="checkbox" sx={{ padding: '1px', fontSize: '10px' }}>
+                        <Checkbox
+                          checked={selectedRows.includes(currentRowIndex)}
+                          onChange={() => toggleRowSelection(currentRowIndex)}
+                        />
                       </TableCell>
-                    ))}
-                  </TableRow>
-                );
-              })}
+                      <TableCell align="center" sx={{ padding: '2px', fontSize: '12px' }}>
+                        {currentRowIndex + 1}
+                      </TableCell>
+                      {columnsToShow.map((column, colIndex) => (
+                        <TableCell align="center" key={colIndex} sx={{ padding: '1px', fontSize: '12px' }}>
+                          {row[column.column_name] || "-"}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  );
+                })}
             </TableBody>
           </Table>
         </TableContainer>
