@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import "./manage.css";
 import { PieChart } from "@mui/x-charts";
 import {
   faBell,
@@ -41,11 +40,11 @@ function Management() {
   console.log(type);
 
   return (
-    <div className="flex p-3 flex-col w-full font-poppins bg-second">
+    <div className="flex p-1 flex-col w-full font-poppins bg-second">
       {/* First Div: Full Width */}
       <div className="p-4 w-full bg-box rounded-md flex flex-col border-b-2">
         <div className="text-base font-medium">Asset Group</div>
-        <div className="flex gap-6 flex-wrap">
+        <div className="flex gap-2 flex-wrap">
           {type.map(
             (item, i) =>
               item.group && (
@@ -62,7 +61,7 @@ function Management() {
       </div>
 
       {/* Second and Third Divs: 50% Width Each */}
-      <div className="flex mt-6 gap-6">
+      <div className="flex mt-1 gap-2">
         {/* First Div: 50% Width */}
         <div className="flex-1 p-4 bg-box rounded-md flex justify-center  items-center">
           <PieChart

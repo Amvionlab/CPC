@@ -18,8 +18,8 @@ const AssetType = () => {
   const filteredData = allData.filter((data) => data.group == group);
 
   return (
-    <div className="lg:flex flex-col p-4 gap-4 w-full h-screen font-poppins lg:grid-cols-2 grid-cols-1 bg-slate-200">
-      <div className="p-4 bg-white/80 w-full lg:w-full rounded-md flex-col flex border-r-2">
+    <div className="lg:flex flex-col p-1 gap-1 w-full h-screen font-poppins lg:grid-cols-2 grid-cols-1 bg-slate-200">
+      <div className="p-2 bg-white/80 w-full lg:w-full rounded-md flex-col flex border-r-2">
         <div className="text-base font-medium">
           <Link
             className="text-red-600 hover:underline"
