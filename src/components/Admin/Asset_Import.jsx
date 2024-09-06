@@ -214,8 +214,6 @@ const Form = () => {
                     type: ""
                 });
             }
-            
-            
              else {
                 toast.error(result.message);
             }
