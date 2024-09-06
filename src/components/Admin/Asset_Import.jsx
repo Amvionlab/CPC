@@ -191,7 +191,32 @@ const Form = () => {
     
             if (result.success) {
                 toast.success("Data imported successfully.");
-            } else {
+            
+                // Reset all fields in formData to an empty string
+                setFormData({
+                    name: "",
+                    manufacturer: "",
+                    model: "",
+                    serial_number: "",
+                    location: "",
+                    user_name: "",
+                    asset_value: "",
+                    vendor_name: "",
+                    purchase_date: "",
+                    po_number: "",
+                    amc_from: "",
+                    amc_to: "",
+                    amc_interval: "",
+                    last_amc: "",
+                    procure_by: "",
+                    warranty_upto: "",
+                    group: "",
+                    type: ""
+                });
+            }
+            
+            
+             else {
                 toast.error(result.message);
             }
         } catch (error) {
