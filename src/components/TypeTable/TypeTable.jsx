@@ -224,6 +224,21 @@ function TypeTable() {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </div>
+
+
+
+          <div className="flex gap-1">
+      <select className="border rounded">
+        <option value="">Select an option</option>
+        <option value="option1">Option 1</option>
+        <option value="option2">Option 2</option>
+        <option value="option3">Option 3</option>
+      </select>
+      <input type="text" placeholder="Enter text" className="border rounded" />
+    </div>
+
+
+    
           <div className="flex gap-1">
             <button
               onClick={exportToCSV}

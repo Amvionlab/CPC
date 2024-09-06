@@ -66,17 +66,18 @@ function Header() {
       </div>
 
       {/* Desktop Icons for Settings, Notifications, and User */}
-      <div className="text-white text-sm sm:flex gap-3 mr-2 my-auto hidden">
+      <div className="text-white text-base sm:flex gap-6 mr-2 my-auto hidden">
         {/* Settings */}
         <div
           title="Change Password"
-          className="w-8 h-8 text-flo bg-second hover:bg-flo hover:text-box rounded-full shadow-inner  cursor-pointer flex items-center justify-center"
+          className="cursor-pointer text-prime flex items-center justify-center"
           onClick={handleSettingsClick}
         >
           <FontAwesomeIcon icon={faKey} />
         </div>
         {/* Notifications */}
-        <div className="relative shadow-inner text-flo w-8 h-8 bg-second  hover:bg-flo hover:text-box rounded-full flex items-center justify-center">
+        <div className="cursor-pointer text-prime  flex items-center justify-center"
+          >
           <FontAwesomeIcon icon={faBell} />
           {/* <p className="absolute -top-1 -right-1 bg-flo text-black rounded-full w-4 h-4 flex items-center justify-center text-sm">
             3
@@ -84,7 +85,7 @@ function Header() {
         </div>
         {/* User */}
         <div
-          className="w-8 h-8 shadow-inner cursor-pointer text-flo bg-second hover:bg-flo hover:text-box rounded-full flex items-center justify-center"
+          className="cursor-pointer text-prime flex items-center justify-center"
           title="Log out"
           onClick={handleIconClick}
         >
