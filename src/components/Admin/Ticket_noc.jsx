@@ -341,7 +341,7 @@ const Form = () => {
           />
         
 
-        <table className=" min-w-full bg-second rounded-lg overflow-hidden filter-table">
+        <table className="min-w-full bg-second rounded-lg overflow-hidden filter-table">
   <thead className="bg-prime text-white">
     <tr>
       {["Id", "name"].map((header, index) => (
