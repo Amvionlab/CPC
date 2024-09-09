@@ -60,7 +60,7 @@ function TypeTable() {
 
   useEffect(() => {
     if (selectedColumn && filterText) {
-      const filtered = data.filter((item) =>
+      const filtered = typeData.filter((item) =>
         item[selectedColumn]
           ?.toString()
           .toLowerCase()
@@ -68,9 +68,9 @@ function TypeTable() {
       );
       setFilteredData(filtered);
     } else {
-      setFilteredData(data); // No filter applied, show all data
+      setFilteredData(typeData); // No filter applied, show all data
     }
-  }, [selectedColumn, filterText, data]);
+  }, [selectedColumn, filterText, typeData]);
 
   useEffect(() => {
     // Fetch active columns when component mounts or type changes
