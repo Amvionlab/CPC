@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { PieChart } from "@mui/x-charts";
 import {
   faBell,
-  faChevronDown,
+  faBroom,
   faComment,
 } from "@fortawesome/free-solid-svg-icons";
 import { baseURL } from '../../config.js';
+import Tooltip from '@mui/material/Tooltip';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 
@@ -40,11 +41,11 @@ function Management() {
   console.log(type);
 
   return (
-    <div className="flex p-1 flex-col w-full font-poppins bg-second">
-      {/* First Div: Full Width */}
-      <div className="p-4 w-full bg-box rounded-md flex flex-col border-b-2">
-        <div className="text-base font-medium">Asset Group</div>
-        <div className="flex gap-2 flex-wrap">
+<div className="lg:flex h-full flex-col p-1 gap-1 w-full lg:grid-cols-2 grid-cols-1 bg-second">
+
+      <div className="p-4 w-full bg-box rounded-md flex flex-col">
+        <div className="text-base font-medium m-2">Asset Group</div>
+        <div className="flex gap-1 flex-wrap">
           {type.map(
             (item, i) =>
               item.group && (
@@ -61,9 +62,9 @@ function Management() {
       </div>
 
       {/* Second and Third Divs: 50% Width Each */}
-      <div className="flex mt-1 gap-2">
+      <div className="flex gap-1">
         {/* First Div: 50% Width */}
-        <div className="flex-1 p-4 bg-box rounded-md flex justify-center  items-center">
+        <div className="flex-1 p-6 bg-box rounded-md flex justify-center  items-center">
           <PieChart
             series={[
               {
@@ -82,7 +83,7 @@ function Management() {
         </div>
 
         {/* Second Div: 50% Width */}
-        <div className="flex-1 p-5 bg-box rounded-md flex flex-col">
+        <div className="flex-1 p-6 bg-box rounded-md flex flex-col">
           <div className="flex items-center justify-between">
             <div className="relative inline-block">
               <FontAwesomeIcon icon={faBell} className="text-xl" />
@@ -90,16 +91,17 @@ function Management() {
                 <p className="text-white">1</p>
               </div>
             </div>
-            <p className="font-poppins font-medium text-xl px-2 overflow-hidden">
+            <p className="font-medium text-xl px-2 overflow-hidden">
               Notifications
             </p>
+            <Tooltip title="Delete">
             <FontAwesomeIcon
-              icon={faChevronDown}
+              icon={faBroom} 
               className="cursor-pointer transition-transform duration-300 transform hover:rotate-180"
-            />
+            /></Tooltip>
           </div>
 
-          <div className="scrollbar-thin p-5 mt-2 bg-second rounded-lg shadow-inner transition-transform duration-500">
+          <div className="scrollbar-thin p-5 mt-4 bg-second rounded-lg shadow-inner transition-transform duration-500">
             {[...Array(5)].map((_, i) => (
               <div
                 key={i}
