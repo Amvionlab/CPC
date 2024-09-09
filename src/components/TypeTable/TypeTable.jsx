@@ -247,9 +247,11 @@ function TypeTable() {
                         onChange={() => toggleRowSelection(rowIndex)}
                       />
                     </TableCell>
-                    <TableCell align="center" sx={{ padding: '2px', fontSize: '12px' }}>
-                      {rowIndex + 1}
+                     <TableCell align="center" sx={{ padding: '2px', fontSize: '12px' }}>
+                     <Link to={`/management/${group}/${type}/DESK0001`} className="text-flo hover:underline capitalize">
+                    {rowIndex + 1} </Link>
                     </TableCell>
+                    
                     {columnsToShow.map((column, colIndex) => (
                       <TableCell align="center" key={colIndex} sx={{ padding: '1px', fontSize: '12px' }}>
                         {row[column.column_name] || "-"}
