@@ -26,6 +26,11 @@ function TypeTable() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [anchorElAdd, setAnchorElAdd] = useState(null);
   const [anchorElRemove, setAnchorElRemove] = useState(null);
+  const [columns, setColumns] = useState([]);
+  const [selectedColumn, setSelectedColumn] = useState("");
+  const [inputValue, setInputValue] = useState("");
+  const [filterText, setFilterText] = useState("");
+  const [filteredData, setFilteredData] = useState([]);
 
   // Sorting state
   const [order, setOrder] = useState('asc');
@@ -33,24 +38,30 @@ function TypeTable() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
-      const data = await response.json();
-      setAllData(data);
-      setInactiveColumns(data.inactive_columns || []);
+      try {
+        const fieldsResponse = await fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
+        const fieldData = await fieldsResponse.json();
+        setAllData(fieldData);
+        setInactiveColumns(fieldData.inactive_columns || []);
+        setColumns(fieldData.active_columns || []);
+
+        const typeResponse = await fetch(`${baseURL}/backend/fetchTypedata.php?type=${type}`);
+        const typedata = await typeResponse.json();
+        setTypeData(typedata);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
 
     fetchData();
   }, [type]);
 
   useEffect(() => {
-    const fetchTypeData = async () => {
-      const response = await fetch(`${baseURL}/backend/fetchTypedata.php?type=${type}`);
-      const data = await response.json();
-      setTypeData(data);
-    };
-
-    fetchTypeData();
-  }, [type]);
+    const filtered = typeData.filter((item) =>
+      item[selectedColumn]?.toString().toLowerCase().includes(filterText.toLowerCase())
+    );
+    setFilteredData(selectedColumn && filterText ? filtered : typeData);
+  }, [selectedColumn, filterText, typeData]);
 
   const handleRequestSort = (property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -59,106 +70,47 @@ function TypeTable() {
   };
 
   const sortedData = () => {
-    return typeData.sort((a, b) => {
-      if (a[orderBy] < b[orderBy]) {
-        return order === 'asc' ? -1 : 1;
-      }
-      if (a[orderBy] > b[orderBy]) {
-        return order === 'asc' ? 1 : -1;
-      }
+    return filteredData.sort((a, b) => {
+      if (a[orderBy] < b[orderBy]) return order === 'asc' ? -1 : 1;
+      if (a[orderBy] > b[orderBy]) return order === 'asc' ? 1 : -1;
       return 0;
     });
   };
 
+  const toggleColumnStatus = async (columnId, action) => {
+    try {
+      const url = new URL(`${baseURL}/backend/updateColumnStatus.php`);
+      url.searchParams.append("id", columnId);
+      url.searchParams.append("act", action);
+
+      const response = await fetch(url, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }});
+      const data = await response.json();
+      if (data.success) {
+        const fieldsResponse = await fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
+        const fieldData = await fieldsResponse.json();
+        setAllData(fieldData);
+        setInactiveColumns(fieldData.inactive_columns || []);
+      }
+    } catch (error) {
+      console.error("There was an error:", error);
+    }
+  };
+
   const handleAddColumn = (columnId) => {
-    const url = new URL(`${baseURL}/backend/updateColumnStatus.php`);
-    url.searchParams.append("id", columnId);
-    url.searchParams.append("act", "add");
-
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          return fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
-        }
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        setAllData(data);
-        setInactiveColumns(data.inactive_columns || []);
-        setAnchorElAdd(null);
-      })
-      .catch((error) => console.error("There was an error:", error));
-  };
-
-  const handleRemoveColumn = (columnId) => {
-    const url = new URL(`${baseURL}/backend/updateColumnStatus.php`);
-    url.searchParams.append("id", columnId);
-    url.searchParams.append("act", "remove");
-
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          return fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
-        }
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        setAllData(data);
-        setInactiveColumns(data.inactive_columns || []);
-        setAnchorElRemove(null);
-      })
-      .catch((error) => console.error("There was an error:", error));
-  };
-
-  const handleClickAdd = (event) => {
-    setAnchorElAdd(event.currentTarget);
-  };
-
-  const handleClickRemove = (event) => {
-    setAnchorElRemove(event.currentTarget);
-  };
-
-  const handleCloseAdd = () => {
+    toggleColumnStatus(columnId, "add");
     setAnchorElAdd(null);
   };
 
-  const handleCloseRemove = () => {
+  const handleRemoveColumn = (columnId) => {
+    toggleColumnStatus(columnId, "remove");
     setAnchorElRemove(null);
   };
 
-  const toggleRowSelection = (rowIndex) => {
-    setSelectedRows((prevSelectedRows) => {
-      if (prevSelectedRows.includes(rowIndex)) {
-        return prevSelectedRows.filter((index) => index !== rowIndex); // Deselect if already selected
-      } else {
-        return [...prevSelectedRows, rowIndex]; // Select if not selected
-      }
-    });
-  };
-
   const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      // Select all rows on current page
-      const newSelecteds = sortedData()
-        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-        .map((_, index) => index + page * rowsPerPage);
-      setSelectedRows(newSelecteds);
-    } else {
-      // Deselect all rows on current page
-      setSelectedRows([]);
-    }
+    const newSelecteds = event.target.checked 
+      ? sortedData().slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((_, index) => index + page * rowsPerPage)
+      : [];
+    setSelectedRows(newSelecteds);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -172,13 +124,12 @@ function TypeTable() {
   };
 
   const exportToCSV = () => {
-    const headers = ["ID", ...columnsToShow.map(col => col.column_name)];
-    const rows = typeData.map((row, index) =>
-      [index + 1, ...columnsToShow.map(col => row[col.column_name] || "-")]
+    const headers = ["ID", ...columns.map(col => col.column_name)];
+    const rows = filteredData.map((row, index) =>
+      [index + 1, ...columns.map(col => row[col.column_name] || "-")]
     );
 
-    let csvContent = "data:text/csv;charset=utf-8,"
-      + [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
+    let csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(row => row.join(","))].join("\n");
 
     const link = document.createElement("a");
     link.setAttribute("href", encodeURI(csvContent));
@@ -189,11 +140,7 @@ function TypeTable() {
   };
 
   if (!allData || !allData.active_columns) {
-    return (
-      <p className="text-center text-red-600">
-        <FontAwesomeIcon icon={faTriangleExclamation} /> No data from {type}
-      </p>
-    );
+    return <p className="text-center text-red-600">Loading...</p>;
   }
 
   const columnsToShow = allData.active_columns.filter(column => column.type === type);
@@ -203,13 +150,8 @@ function TypeTable() {
       <div className="w-full bg-white p-1 rounded-md h-full flex flex-col">
         <div className="w-full border-b h-10 flex text-sm justify-between items-center font-semibold mb-2">
           <div className="flex capitalize ml-4">
-            <Link
-              to={`/management/${group}`}
-              className="text-flo hover:underline capitalize"
-            >
-              {group}
-            </Link>
-            <p>&nbsp; / {type}</p> {/* Space before the slash */}
+            <Link to={`/management/${group}`} className="text-flo hover:underline capitalize">{group}</Link>
+            <p>&nbsp; / {type}</p> 
           </div>
 
           <div className="flex gap-1">
@@ -217,7 +159,7 @@ function TypeTable() {
               className="compact-pagination"
               rowsPerPageOptions={[10, 25, 50, 100, 500, 1000]}
               component="div"
-              count={typeData.length}
+              count={filteredData.length}
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -225,20 +167,28 @@ function TypeTable() {
             />
           </div>
 
-
-
           <div className="flex gap-1">
-      <select className="border rounded">
-        <option value="">Select an option</option>
-        <option value="option1">Option 1</option>
-        <option value="option2">Option 2</option>
-        <option value="option3">Option 3</option>
-      </select>
-      <input type="text" placeholder="Enter text" className="border rounded" />
-    </div>
+            <select 
+              className="border rounded" 
+              value={selectedColumn} 
+              onChange={e => setSelectedColumn(e.target.value)}
+            >
+              <option value="">Column Filter - All</option>
+              {columns.map(column => (
+                <option key={column.id} value={column.column_name}>
+                  {column.column_name}
+                </option>
+              ))}
+            </select>
+            <input 
+              type="text" 
+              placeholder="Enter text" 
+              className="border rounded" 
+              value={inputValue} 
+              onChange={e => { setInputValue(e.target.value); setFilterText(e.target.value); }} 
+            />
+          </div>
 
-
-    
           <div className="flex gap-1">
             <button
               onClick={exportToCSV}
@@ -247,21 +197,15 @@ function TypeTable() {
               CSV
             </button>
           </div>
+
           <div className="flex gap-2 mr-4">
-            <button
-              onClick={handleClickAdd}
-              className="px-2 py-1 bg-second rounded border text-xs shadow-md transform hover:scale-110 transition-transform duration-200 ease-in-out"
-            >
+            <button onClick={(e) => setAnchorElAdd(e.currentTarget)} className="px-2 py-1 bg-second rounded border text-xs shadow-md transform hover:scale-110 transition-transform duration-200 ease-in-out">
               <FontAwesomeIcon icon={faPlus} />
             </button>
-            <button
-              onClick={handleClickRemove}
-              className="px-2 py-1 bg-second rounded border text-xs shadow-md transform hover:scale-110 transition-transform duration-200 ease-in-out"
-            >
+            <button onClick={(e) => setAnchorElRemove(e.currentTarget)} className="px-2 py-1 bg-second rounded border text-xs shadow-md transform hover:scale-110 transition-transform duration-200 ease-in-out">
               <FontAwesomeIcon icon={faMinus} />
             </button>
           </div>
-
         </div>
 
         <TableContainer sx={{ maxHeight: "calc(100vh - 100px)" }}>
@@ -271,7 +215,7 @@ function TypeTable() {
                 <TableCell padding="checkbox" sx={{ padding: '1px', fontSize: '10px' }}>
                   <Checkbox
                     indeterminate={selectedRows.length > 0 && selectedRows.length < typeData.length}
-                    checked={selectedRows.length > 0 && selectedRows.length === typeData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).length}
+                    checked={selectedRows.length === typeData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).length}
                     onChange={handleSelectAllClick}
                   />
                 </TableCell>
@@ -284,7 +228,7 @@ function TypeTable() {
                     key={index}
                     align="center"
                     style={{ minWidth: 120, fontWeight: "bold" }}
-                    onClick={() => handleRequestSort(column.column_name)} // Allow sorting on other columns
+                    onClick={() => handleRequestSort(column.column_name)} 
                   >
                     {column.column_name} {orderBy === column.column_name ? (order === 'asc' ? '↑' : '↓') : ''}
                   </TableCell>
@@ -295,70 +239,51 @@ function TypeTable() {
             <TableBody>
               {sortedData()
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, rowIndex) => {
-                  const currentRowIndex = rowIndex + page * rowsPerPage; // Calculate the current row index
-                  return (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={currentRowIndex} selected={selectedRows.includes(currentRowIndex)}>
-                      <TableCell padding="checkbox" sx={{ padding: '1px', fontSize: '10px' }}>
-                        <Checkbox
-                          checked={selectedRows.includes(currentRowIndex)}
-                          onChange={() => toggleRowSelection(currentRowIndex)}
-                        />
+                .map((row, rowIndex) => (
+                  <TableRow hover role="checkbox" tabIndex={-1} key={rowIndex} selected={selectedRows.includes(rowIndex)}>
+                    <TableCell padding="checkbox" sx={{ padding: '1px', fontSize: '10px' }}>
+                      <Checkbox
+                        checked={selectedRows.includes(rowIndex)}
+                        onChange={() => toggleRowSelection(rowIndex)}
+                      />
+                    </TableCell>
+                    <TableCell align="center" sx={{ padding: '2px', fontSize: '12px' }}>
+                      {rowIndex + 1}
+                    </TableCell>
+                    {columnsToShow.map((column, colIndex) => (
+                      <TableCell align="center" key={colIndex} sx={{ padding: '1px', fontSize: '12px' }}>
+                        {row[column.column_name] || "-"}
                       </TableCell>
-                      <TableCell align="center" sx={{ padding: '2px', fontSize: '12px' }}>
-                        {currentRowIndex + 1}
-                      </TableCell>
-                      {columnsToShow.map((column, colIndex) => (
-                        <TableCell align="center" key={colIndex} sx={{ padding: '1px', fontSize: '12px' }}>
-                          {row[column.column_name] || "-"}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                })}
+                    ))}
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
 
-        <Menu
-          anchorEl={anchorElAdd}
-          open={Boolean(anchorElAdd)}
-          onClose={handleCloseAdd}
-        >
-          {inactiveColumns.length > 0 ? (
-            inactiveColumns.map((column) => (
-              <MenuItem
-                key={column.id}
-                onClick={() => handleAddColumn(column.id)}
-              >
-                {column.column_name}
-              </MenuItem>
-            ))
-          ) : (
-            <MenuItem disabled>
-              Nothing
+        <Menu anchorEl={anchorElAdd} open={Boolean(anchorElAdd)} onClose={() => setAnchorElAdd(null)}>
+          {inactiveColumns.map((column) => (
+            <MenuItem key={column.id} onClick={() => handleAddColumn(column.id)}>
+              {column.column_name}
             </MenuItem>
+          )).length > 0 ? inactiveColumns.map((column) => (
+            <MenuItem key={column.id} onClick={() => handleAddColumn(column.id)}>
+              {column.column_name}
+            </MenuItem>
+          )) : (
+            <MenuItem disabled>Nothing</MenuItem>
           )}
         </Menu>
 
-        <Menu
-          anchorEl={anchorElRemove}
-          open={Boolean(anchorElRemove)}
-          onClose={handleCloseRemove}
-        >
+        <Menu anchorEl={anchorElRemove} open={Boolean(anchorElRemove)} onClose={() => setAnchorElRemove(null)}>
           {columnsToShow.length > 0 ? (
             columnsToShow.map((column) => (
-              <MenuItem
-                key={column.id}
-                onClick={() => handleRemoveColumn(column.id)}
-              >
+              <MenuItem key={column.id} onClick={() => handleRemoveColumn(column.id)}>
                 {column.column_name}
               </MenuItem>
             ))
           ) : (
-            <MenuItem disabled>
-              Nothing
-            </MenuItem>
+            <MenuItem disabled>Nothing</MenuItem>
           )}
         </Menu>
       </div>
