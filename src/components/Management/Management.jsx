@@ -94,7 +94,7 @@ function Management() {
             <p className="font-medium text-xl px-2 overflow-hidden">
               Notifications
             </p>
-            <Tooltip title="Delete">
+            <Tooltip title="Clear All">
             <FontAwesomeIcon
               icon={faBroom} 
               className="cursor-pointer transition-transform duration-300 transform hover:rotate-180"

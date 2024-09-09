@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTriangleExclamation, faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
-import Paper from "@mui/material/Paper";
+import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -13,7 +12,6 @@ import Checkbox from "@mui/material/Checkbox";
 import TablePagination from "@mui/material/TablePagination";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import Button from "@mui/material/Button";
 import { baseURL } from "../../config.js";
 
 function TypeTable() {
@@ -57,10 +55,17 @@ function TypeTable() {
   }, [type]);
 
   useEffect(() => {
-    const filtered = typeData.filter((item) =>
-      item[selectedColumn]?.toString().toLowerCase().includes(filterText.toLowerCase())
-    );
-    setFilteredData(selectedColumn && filterText ? filtered : typeData);
+    const filtered = selectedColumn === "" || selectedColumn === "All"
+      ? typeData.filter(item =>
+          Object.values(item).some(value =>
+            value?.toString().toLowerCase().includes(filterText.toLowerCase())
+          )
+        )
+      : typeData.filter(item =>
+          item[selectedColumn]?.toString().toLowerCase().includes(filterText.toLowerCase())
+        );
+
+    setFilteredData(filtered);
   }, [selectedColumn, filterText, typeData]);
 
   const handleRequestSort = (property) => {
@@ -83,7 +88,7 @@ function TypeTable() {
       url.searchParams.append("id", columnId);
       url.searchParams.append("act", action);
 
-      const response = await fetch(url, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }});
+      const response = await fetch(url, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" } });
       const data = await response.json();
       if (data.success) {
         const fieldsResponse = await fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`);
@@ -151,7 +156,7 @@ function TypeTable() {
         <div className="w-full border-b h-10 flex text-sm justify-between items-center font-semibold mb-2">
           <div className="flex capitalize ml-4">
             <Link to={`/management/${group}`} className="text-flo hover:underline capitalize">{group}</Link>
-            <p>&nbsp; / {type}</p> 
+            <p>&nbsp; / {type}</p>
           </div>
 
           <div className="flex gap-1">
@@ -169,11 +174,11 @@ function TypeTable() {
 
           <div className="flex gap-1">
             <select 
-              className="border rounded" 
+              className="border rounded text-xs" 
               value={selectedColumn} 
               onChange={e => setSelectedColumn(e.target.value)}
             >
-              <option value="">Column Filter - All</option>
+              <option value="All">All</option>
               {columns.map(column => (
                 <option key={column.id} value={column.column_name}>
                   {column.column_name}
@@ -183,7 +188,7 @@ function TypeTable() {
             <input 
               type="text" 
               placeholder="Enter text" 
-              className="border rounded" 
+              className="border rounded p-1 text-xs" 
               value={inputValue} 
               onChange={e => { setInputValue(e.target.value); setFilterText(e.target.value); }} 
             />
@@ -247,11 +252,12 @@ function TypeTable() {
                         onChange={() => toggleRowSelection(rowIndex)}
                       />
                     </TableCell>
-                     <TableCell align="center" sx={{ padding: '2px', fontSize: '12px' }}>
-                     <Link to={`/management/${group}/${type}/DESK0001`} className="text-flo hover:underline capitalize">
-                    {rowIndex + 1} </Link>
+                    <TableCell align="center" sx={{ padding: '2px', fontSize: '12px' }}>
+                      <Link to={`/management/${group}/${type}/DESK0001`} className="text-flo hover:underline capitalize">
+                        {rowIndex + 1}
+                      </Link>
                     </TableCell>
-                    
+
                     {columnsToShow.map((column, colIndex) => (
                       <TableCell align="center" key={colIndex} sx={{ padding: '1px', fontSize: '12px' }}>
                         {row[column.column_name] || "-"}
@@ -264,11 +270,7 @@ function TypeTable() {
         </TableContainer>
 
         <Menu anchorEl={anchorElAdd} open={Boolean(anchorElAdd)} onClose={() => setAnchorElAdd(null)}>
-          {inactiveColumns.map((column) => (
-            <MenuItem key={column.id} onClick={() => handleAddColumn(column.id)}>
-              {column.column_name}
-            </MenuItem>
-          )).length > 0 ? inactiveColumns.map((column) => (
+          {inactiveColumns.length > 0 ? inactiveColumns.map((column) => (
             <MenuItem key={column.id} onClick={() => handleAddColumn(column.id)}>
               {column.column_name}
             </MenuItem>
