@@ -34,14 +34,14 @@ function SingleAsset() {
     { title: "Detailed View", icon: faEye, component: <Detailed /> },
     { title: "User Detail", icon: faUser, component: <UserDetail /> },
     { title: "Asset Notes", icon: faStickyNote, component: <AssetNotes /> },
-    { title: "Related Documents", icon: faFolderOpen, component: <RelatedDoc /> },
+    { title: "Documents", icon: faFolderOpen, component: <RelatedDoc /> },
     { title: "AMC", icon: faClipboard, component: <AMC /> },
     { title: "Warranty", icon: faFileContract, component: <Warranty /> },
     { title: "Connection", icon: faLink, component: <Connection /> },
     { title: "Transfer", icon: faExchangeAlt, component: <Transfer /> },
     { title: "Depreciation", icon: faChartBar, component: <Depreciation /> },
     { title: "Vendor Details", icon: faBuilding, component: <VendorDetails /> },
-    { title: "Planning & Budget", icon: faListAlt, component: <PAB /> },
+    { title: "P&B", icon: faListAlt, component: <PAB /> },
     { title: "Log", icon: faFileAlt, component: <Log /> },
   ];
 
@@ -51,6 +51,7 @@ function SingleAsset() {
 
   return (
     <div className="flex h-full bg-second p-1 gap-1">
+      <div className="bg-box overflow-y-auto overflow-x-hidden">
       <aside
         className={`transition-all duration-500 bg-white text-prime ${isExpanded ? "w-48" : "w-16"}`}
         style={{ minWidth: isExpanded ? "8rem" : "2rem" }}
@@ -59,7 +60,7 @@ function SingleAsset() {
           {menuItems.map(({ title, icon, component }) => (
             <div 
               key={title} 
-              className="relative group ml-2"
+              className="group ml-2"
               onMouseEnter={() => setHoveredItem(title)}
               onMouseLeave={() => setHoveredItem(null)}
             >
@@ -70,7 +71,7 @@ function SingleAsset() {
                 style={{
                   height: '35px',
                   // Fixed width for the button
-                  minWidth: isExpanded ? "140px" : "40px",
+                  minWidth: isExpanded ? "130px" : "35px",
                   display: "flex",
                   justifyContent: "start",
                   alignItems: "center"
@@ -82,7 +83,7 @@ function SingleAsset() {
                   style={{ width: '24px', textAlign: "center" }} // Fixed width for icon
                 />
                 {isExpanded && (
-                  <span className="text-sm font-medium" style={{ width: '130px', textAlign: "left", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}> 
+                  <span className="text-sm font-medium" style={{ width: '105px', textAlign: "left", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis"}}> 
                     {title}
                   </span>
                 )}
@@ -111,12 +112,16 @@ function SingleAsset() {
         </div>
 
       </aside>
+      </div>
 
-      <div className="flex-grow bg-white p-4">
+     
+      <div className="flex-grow bg-white p-4 overflow-y-auto text-wrap w-full">
         <Suspense fallback={<div>Loading...</div>}>
           {data.component}
         </Suspense>
       </div>
+
+
     </div>
   );
 }
