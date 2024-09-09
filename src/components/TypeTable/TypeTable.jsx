@@ -26,6 +26,12 @@ function TypeTable() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [anchorElAdd, setAnchorElAdd] = useState(null);
   const [anchorElRemove, setAnchorElRemove] = useState(null);
+  const [columns, setColumns] = useState([]);
+  const [selectedColumn, setSelectedColumn] = useState("");
+  const [inputValue, setInputValue] = useState("");
+   const [filterText, setFilterText] = useState("");
+  const [filteredValues, setFilteredValues] = useState([]);
+  const [filteredData, setFilteredData] = useState(typeData)
 
   // Sorting state
   const [order, setOrder] = useState('asc');
@@ -51,6 +57,61 @@ function TypeTable() {
 
     fetchTypeData();
   }, [type]);
+
+  useEffect(() => {
+    if (selectedColumn && filterText) {
+      const filtered = data.filter((item) =>
+        item[selectedColumn]
+          ?.toString()
+          .toLowerCase()
+          .includes(filterText.toLowerCase())
+      );
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(data); // No filter applied, show all data
+    }
+  }, [selectedColumn, filterText, data]);
+
+  useEffect(() => {
+    // Fetch active columns when component mounts or type changes
+    fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // Extract column names
+        const columnNames = data.map(item => ({
+          id: item.id,
+          name: item.column_name
+        }));
+        setColumns(columnNames || []);
+      })
+      .catch((error) => console.error("Error fetching columns:", error));
+  }, [type]);
+
+  const fetchActiveColumns = () => {
+    fetch(`${baseURL}/backend/fetchTableFields.php?type=${type}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // Assuming the active columns are returned in 'data.active_columns'
+        setColumns(data.active_columns || []);
+        console.log(data.active_columns)
+      })
+      .catch((error) => console.error("Error fetching columns:", error));
+  };
+
+  // Call fetchActiveColumns on component mount
+  useEffect(() => {
+    fetchActiveColumns();
+  }, []);
+
+  const handleColumnChange = (event) => {
+    setSelectedColumn(event.target.value);
+    setInputValue(""); // Clear input value when column changes
+  };
+
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+    setFilterText(event.target.value);
+  };
 
   const handleRequestSort = (property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -217,7 +278,7 @@ function TypeTable() {
               className="compact-pagination"
               rowsPerPageOptions={[10, 25, 50, 100, 500, 1000]}
               component="div"
-              count={typeData.length}
+              count={filteredData.length} // Use filteredData length
               rowsPerPage={rowsPerPage}
               page={page}
               onPageChange={handleChangePage}
@@ -225,20 +286,18 @@ function TypeTable() {
             />
           </div>
 
-
-
           <div className="flex gap-1">
       <select className="border rounded">
-        <option value="">Select an option</option>
-        <option value="option1">Option 1</option>
-        <option value="option2">Option 2</option>
-        <option value="option3">Option 3</option>
+        <option value="">Column Filter - All</option>
+        {/* Loop through columns and display the 'column_name' */}
+        {columns.map((column) => (
+          <option key={column.id} value={column.column_name}>
+            {column.column_name}
+          </option>
+        ))}
       </select>
       <input type="text" placeholder="Enter text" className="border rounded" />
     </div>
-
-
-    
           <div className="flex gap-1">
             <button
               onClick={exportToCSV}
@@ -247,6 +306,7 @@ function TypeTable() {
               CSV
             </button>
           </div>
+
           <div className="flex gap-2 mr-4">
             <button
               onClick={handleClickAdd}
@@ -261,9 +321,7 @@ function TypeTable() {
               <FontAwesomeIcon icon={faMinus} />
             </button>
           </div>
-
         </div>
-
         <TableContainer sx={{ maxHeight: "calc(100vh - 100px)" }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
