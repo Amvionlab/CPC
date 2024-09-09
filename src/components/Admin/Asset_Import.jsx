@@ -190,12 +190,7 @@ const Form = () => {
                     group: "",
                     type: ""
                 });
-<<<<<<< HEAD
-            }
-             else {
-=======
             } else {
->>>>>>> 1606de61fd21f3f1ce46bdc79dade6e7e7da336b
                 toast.error(result.message);
             }
         } catch (error) {

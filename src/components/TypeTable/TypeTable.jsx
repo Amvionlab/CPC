@@ -195,7 +195,8 @@ function TypeTable() {
     setAnchorElAdd(null);
   };
 
-  const handleCloseRemove = () => {
+  const handleCloseRemove = (
+  ) => {
     setAnchorElRemove(null);
   };
 
