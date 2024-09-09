@@ -97,7 +97,7 @@ function SingleAsset() {
           ))}
         </nav>
 
-        <div className="ml-2 mt-6 flex items-center justify-between p-1 rounded-md ">
+        <div className="ml-2 mt-4 flex items-center justify-between p-1 rounded-md ">
           <button 
             onClick={() => setIsExpanded(prev => !prev)}
             className="flex items-center justify-start p-2 rounded-md text-flo hover:text-purple-500 transition-colors duration-300"

@@ -73,6 +73,10 @@ function TypeTable() {
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
+  
+  const handleFilterTextChange = (event) => {
+    setFilterText(event.target.value);
+  };
 
   const sortedData = () => {
     return filteredData.sort((a, b) => {
