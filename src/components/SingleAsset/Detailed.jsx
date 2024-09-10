@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { baseURL } from '../../config.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
 
 function Detailed() {
   const { group, type, tag } = useParams();
@@ -45,21 +47,26 @@ function Detailed() {
     return Object.entries(dataObj)
       .filter(([key]) => key !== 'id' && key !== 'is_active' && key !== 'post_date')
       .map(([key, value]) => (
-        <div key={key} className="bg-white border shadow-md rounded-lg p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex flex-col m-2">
-          <Link to={`/management/${value}`} className="flex-1">
-            <div className="m-2 group transform transition-transform duration-300 hover:scale-105 bg-second shadow-md rounded-lg p-4 flex items-center justify-center cursor-pointer">
-              <p className="font-medium text-base text-gray-700 text-center">
+        <div key={key} className="bg-white border-r border-b border-l hover:border-prime rounded-lg p-3 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex flex-col mb-4 transition-transform transform hover:scale-110 hover:z-10">
+          
+             <h3 className="text-base font-semibold text-flo capitalize">{key.replace(/_/g, ' ')}</h3>
+              <p className="text-sm text-gray-500 font-medium m-2 text-center">
                 {value}
               </p>
-            </div>
-          </Link>
         </div>
       ));
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Detailed View</h1>
+    <div className='font-sui'>
+     <div className="flex font-bold justify-between items-center mb-3">
+        <h1 className="text-xl ">Detailed View</h1>
+        <button className="flex text-xs items-center px-3 py-1 bg-box border shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110">
+  <FontAwesomeIcon icon={faEdit} className="mr-2" />
+  Edit
+</button>
+
+      </div>
 
       {data ? (
         <div className="flex gap-1 flex-wrap">
