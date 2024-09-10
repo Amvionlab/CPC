@@ -295,13 +295,13 @@ const handleRowsPerPageChange = (e) => {
   }, [filters, users]);
 
   return (
-    <div className="bg-second max-h-5/6 max-w-4/6 text-xs mx-auto p-1 lg:overflow-y-hidden h-auto ticket-scroll">
+    <div className="bg-second h-full w-full text-xs mx-auto p-1 lg:overflow-y-hidden ticket-scroll">
      
-        <div className="max-w-full mt-3 m-2 mb-4 p-2 bg-box rounded-lg font-mont " >
+        <div className="w-full h-full p-2 bg-box rounded-lg  " >
           <div className="ticket-table mt-2">
             <form onSubmit={handleSubmit} className="space-y-4 text-label">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-                <div className="font-mont font-semibold text-2xl mb-4">
+                <div className=" font-semibold text-2xl mb-4">
                   Asset Details:
                 </div>
               </div>
@@ -593,7 +593,7 @@ const handleRowsPerPageChange = (e) => {
               <div className="flex justify-center">
                 <button
                   type="submit"
-                  className="mt-1 bg-prime font-mont font-semibold text-lg text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
+                  className="mt-1 bg-prime  font-semibold text-lg text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
                 >
                   Submit
                 </button>
