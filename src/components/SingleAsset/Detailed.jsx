@@ -41,23 +41,32 @@ function Detailed() {
     return <div>Error fetching data: {error}</div>;
   }
 
-  // Assuming data is an object or an array of objects
+  // Function to filter out unwanted fields
+  const displayData = (dataObj) => {
+    return Object.entries(dataObj)
+      .filter(([key]) => key !== 'id' && key !== 'is_active' && key !== 'post_date') // Exclude specific fields
+      .map(([key, value]) => (
+        <div key={key} className="bg-white border shadow-md rounded-lg p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex flex-col m-2">
+          <h3 className="text-lg font-semibold font-poppinsx text-gray-800 capitalize">{key.replace(/_/g, ' ')}</h3>
+          <p className="text-gray-600 text-sm mt-1 font-poppins">{value}</p>
+        </div>
+      ));
+  };
+
   return (
     <div>
-      <h1>Detailed View</h1>
+      <h1 className="text-2xl font-bold mb-6">Detailed View</h1>
+
       {data ? (
-        <div>
-          {/* Assuming data is an array of objects */}
+        <div className="flex flex-wrap -m-2">
           {Array.isArray(data) ? (
             data.map((item, index) => (
               <div key={index}>
-                <h2>Item {index + 1}</h2>
-                <pre>{JSON.stringify(item, null, 2)}</pre>
+                {displayData(item)}
               </div>
             ))
           ) : (
-            // If data is a single object
-            <pre>{JSON.stringify(data, null, 2)}</pre>
+            displayData(data)
           )}
         </div>
       ) : (
