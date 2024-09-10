@@ -47,12 +47,13 @@ function Detailed() {
     return Object.entries(dataObj)
       .filter(([key]) => key !== 'id' && key !== 'is_active' && key !== 'post_date')
       .map(([key, value]) => (
-        <div key={key} className="bg-white border-r border-b border-l hover:border-prime rounded-lg p-3 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex flex-col mb-4 transition-transform transform hover:scale-110 hover:z-10">
-          
-             <h3 className="text-base font-semibold text-flo capitalize">{key.replace(/_/g, ' ')}</h3>
-              <p className="text-sm text-gray-500 font-medium m-2 text-center">
+        <div key={key} className=" p-1 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex flex-col ">
+          <div className='p-3 border-r border-b border-l border-gray-300 hover:border-prime rounded-full mb-4 transition-transform transform hover:scale-105 hover:z-10'>
+             <h3 className="text-sm font-bold text-prime capitalize">{key.replace(/_/g, ' ')}</h3>
+              <p className="text-xs text-gray-500 font-medium m-2 text-center">
                 {value}
               </p>
+              </div>
         </div>
       ));
   };
@@ -61,7 +62,7 @@ function Detailed() {
     <div className='font-sui'>
      <div className="flex font-bold justify-between items-center mb-3">
         <h1 className="text-xl ">Detailed View</h1>
-        <button className="flex text-xs items-center px-3 py-1 bg-box border shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110">
+        <button className="flex text-xs items-center px-3 py-1 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110">
   <FontAwesomeIcon icon={faEdit} className="mr-2" />
   Edit
 </button>
