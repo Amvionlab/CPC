@@ -162,19 +162,26 @@ useEffect(() => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Check if the "group" field is being changed
     if (name === 'group') {
-        // Reset the form to its initial state, excluding the group field
         setFormData({
             group: value, // Keep the newly selected group
-            type: '', // Reset type
-            // Add any default fields that should not be reset here
+            type: '',
         });
 
-        // Update the dynamicFields based on the new group selection
         setDynamicFields([]); // Reset dynamic fields to an empty array or default columns if needed
-    } else {
-        // Update the form data for other fields normally
+    }
+    else if ( value=='select') {
+     
+      setFormData({
+          group: formData.group, 
+          type: '', 
+      });
+
+     
+      setDynamicFields([]); 
+  }
+    else {
+       
         setFormData({
             ...formData,
             [name]: value,
@@ -300,9 +307,9 @@ const handleRowsPerPageChange = (e) => {
   }, [filters, users]);
 
   return (
-    <div className="bg-second max-h-5/6 max-w-4/6 text-xs mx-auto p-1 lg:overflow-y-hidden h-auto ticket-scroll">
+    <div className="bg-second w-full h-full text-xs mx-auto p-1 lg:overflow-y-hidden ticket-scroll">
      
-        <div className="max-w-full mt-3 m-2 mb-4 p-2 bg-box rounded-lg font-mont " >
+        <div className="w-full h-full p-2 bg-box rounded-lg font-mont " >
           <div className="ticket-table mt-2">
             <form onSubmit={handleSubmit} className="space-y-4 text-label">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
@@ -344,7 +351,7 @@ const handleRowsPerPageChange = (e) => {
                     onChange={handleChange}
                     className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
                 >
-                    <option value="">Select Type</option>
+                    <option value="select">Select Type</option>
                     {filteredTypes
                     .map((type) => (
                         <option key={type.type} value={type.type}>
@@ -581,7 +588,7 @@ const handleRowsPerPageChange = (e) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
     {dynamicFields.map((field, index) => (
         <div key={field || index} className="flex items-center mb-2 mr-4">
-            <label className="text-sm font-semibold text-prime mr-2 w-32">
+            <label className="capitalize text-sm font-semibold text-prime mr-2 w-32">
                 {field.replace('_', ' ')}
             </label>
             <input
