@@ -60,6 +60,7 @@ const Form = () => {
   const [locations, setLocations] = useState([]);
   const [groups, setGroups] = useState([]);
   const [types, setTypes] = useState([]);
+  const [defaultFields, setDefaultFields] = useState([]);
  
   useEffect(() => {
     const fetchLocations = async () => {
@@ -121,34 +122,38 @@ useEffect(() => {
   if (formData.type) {
     const fetchDynamicFields = async () => {
       try {
-          const response = await fetch(`${baseURL}/backend/get_extra_columns.php`, {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/x-www-form-urlencoded",
-              },
-              body: new URLSearchParams({ type: formData.type }),
-          });
-  
-          if (!response.ok) {
-              // If the response is not OK, log the response text for debugging
-              const text = await response.text();
-              throw new Error("Network response was not ok: " + text);
-          }
-  
-          // Attempt to parse JSON
-          const result = await response.json();
-  
-          if (result.message) {
-              // Handle errors from PHP script
-              throw new Error(result.message);
-          }
-          setDynamicFields(result.fields || []);
+        const response = await fetch(`${baseURL}/backend/get_extra_columns.php`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({ type: formData.type }),
+        });
+
+        if (!response.ok) {
+          // If the response is not OK, log the response text for debugging
+          const text = await response.text();
+          throw new Error("Network response was not ok: " + text);
+        }
+
+        // Attempt to parse JSON
+        const result = await response.json();
+
+        if (result.message) {
+          // Handle errors from PHP script
+          throw new Error(result.message);
+        }
+
+        // Set default and extra fields
+        setDefaultFields(result.default_columns || []);
+        setDynamicFields(result.extra_columns || []);
       } catch (error) {
-          console.error("Error fetching dynamic fields:", error);
-          toast.error("Error fetching dynamic fields: " + error.message);
+        console.error("Error fetching dynamic fields:", error);
+        toast.error("Error fetching dynamic fields: " + error.message);
       }
-  };
-      fetchDynamicFields();
+    };
+    
+    fetchDynamicFields();
   }
 }, [formData.type]);
 
@@ -295,19 +300,19 @@ const handleRowsPerPageChange = (e) => {
   }, [filters, users]);
 
   return (
-    <div className="bg-second h-full w-full text-xs mx-auto p-1 lg:overflow-y-hidden ticket-scroll">
+    <div className="bg-second max-h-5/6 max-w-4/6 text-xs mx-auto p-1 lg:overflow-y-hidden h-auto ticket-scroll">
      
-        <div className="w-full h-full p-2 bg-box rounded-lg  " >
+        <div className="max-w-full mt-3 m-2 mb-4 p-2 bg-box rounded-lg font-mont " >
           <div className="ticket-table mt-2">
             <form onSubmit={handleSubmit} className="space-y-4 text-label">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-                <div className=" font-semibold text-xl mb-4">
+                <div className="font-mont font-semibold text-2xl mb-4">
                   Asset Details:
                 </div>
               </div>
 
               {/* Additional Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-1 ml-10 pr-10 mb-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
               <div className="flex items-center mb-2 mr-4">
     <label className="text-sm font-semibold text-prime mr-2 w-32">
         Group
@@ -593,7 +598,7 @@ const handleRowsPerPageChange = (e) => {
               <div className="flex justify-center">
                 <button
                   type="submit"
-                  className="mt-1 bg-prime  font-semibold text-lg text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
+                  className="mt-1 bg-prime font-mont font-semibold text-lg text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
                 >
                   Submit
                 </button>
