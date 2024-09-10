@@ -32,10 +32,10 @@ function UserDetail() {
 
   return (
     <div>
-      <h1 className="font-semibold text-xl mb-10">User Details</h1>
+      <h1 className="font-semibold text-xl mb-5">User Details</h1>
 
-      <div className="h-auto w-full flex gap-5">
-        <div className="flex justify-start h-full ">
+      <div className="h-auto w-full flex gap-5 shadow-md shadow-gray-300 rounded-md py-5">
+        <div className="flex justify-center h-full">
           <img
             src={allData?.photo || avatar}
             className="md:w-[200px] object-contain h-full"
