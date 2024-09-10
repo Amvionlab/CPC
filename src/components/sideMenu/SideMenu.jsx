@@ -85,7 +85,7 @@ const SideMenu = () => {
                     </p>
                   )}
                   {!isExpanded && hoveredItem === title && (
-                    <p className="absolute z-50 left-20 p-1 rounded-md text-sm bg-purple-500 text-white transition-opacity">
+                    <p className="absolute z-50 left-20 p-1 rounded-md text-sm bg-purple-800 text-white transition-opacity">
                       {title}
                     </p>
                   )}

@@ -301,13 +301,13 @@ const handleRowsPerPageChange = (e) => {
           <div className="ticket-table mt-2">
             <form onSubmit={handleSubmit} className="space-y-4 text-label">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-                <div className=" font-semibold text-2xl mb-4">
+                <div className=" font-semibold text-xl mb-4">
                   Asset Details:
                 </div>
               </div>
 
               {/* Additional Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-1 ml-10 pr-10 mb-0">
               <div className="flex items-center mb-2 mr-4">
     <label className="text-sm font-semibold text-prime mr-2 w-32">
         Group
