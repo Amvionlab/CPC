@@ -42,11 +42,11 @@ function Setup() {
             className="group cursor-pointer flex flex-row p-4 gap-4 items-center bg-box border-2 border-box rounded-xl transition-transform hover:shadow-lg hover:border-prime"
             onClick={() => navigate(item.path)} 
           >
-            <span className="text-flo text-4xl transition-transform transform group-hover:rotate-180 group-hover:scale-110 group-hover:translate-x-1 group-hover:text-prime motion-reduce:transform-none">
+            <span className="text-flo text-4xl transition-transform transform group-hover:-rotate-90 group-hover:scale-110 group-hover:translate-x-1 group-hover:text-prime motion-reduce:transform-none">
               {item.icon}
             </span>
             <div className="flex flex-col">
-              <span className="font-bold text-prime text-lg">{item.title}</span>
+              <span className="font-bold text-prime text-lg group-hover:text-flo">{item.title}</span>
               <span className="text-gray-500 text-sm">{item.sub}</span>
             </div>
           </div>
