@@ -133,7 +133,7 @@ function TypeTable() {
   };
 
   const exportToCSV = () => {
-    const headers = ["ID", ...columns.map(col => col.column_name)];
+    const headers = ["ID", ...columns.map(col => col.column_name.replace('_', ' '))];
     const rows = filteredData.map((row, index) =>
       [index + 1, ...columns.map(col => row[col.column_name] || "-")]
     );
@@ -178,14 +178,14 @@ function TypeTable() {
 
           <div className="flex gap-1">
             <select 
-              className="border rounded text-xs" 
+              className="border rounded text-xs capitalize" 
               value={selectedColumn} 
               onChange={e => setSelectedColumn(e.target.value)}
             >
               <option value="All">All</option>
               {columns.map(column => (
                 <option key={column.id} value={column.column_name}>
-                  {column.column_name}
+                  {column.column_name.replace('_', ' ')}
                 </option>
               ))}
             </select>
@@ -233,13 +233,13 @@ function TypeTable() {
                 </TableCell>
                 {columnsToShow.map((column, index) => (
                   <TableCell
-                    className="capitalize"
+                    className="capitalize text-nowrap"
                     key={index}
                     align="center"
                     style={{ minWidth: 120, fontWeight: "bold" }}
                     onClick={() => handleRequestSort(column.column_name)} 
                   >
-                    {column.column_name} {orderBy === column.column_name ? (order === 'asc' ? '↑' : '↓') : ''}
+                    {column.column_name.replace('_', ' ')} {orderBy === column.column_name ? (order === 'asc' ? '↑' : '↓') : ''}
                   </TableCell>
                 ))}
               </TableRow>
@@ -275,8 +275,8 @@ function TypeTable() {
 
         <Menu anchorEl={anchorElAdd} open={Boolean(anchorElAdd)} onClose={() => setAnchorElAdd(null)}>
           {inactiveColumns.length > 0 ? inactiveColumns.map((column) => (
-            <MenuItem key={column.id} onClick={() => handleAddColumn(column.id)}>
-              {column.column_name}
+            <MenuItem className="capitalize" key={column.id} onClick={() => handleAddColumn(column.id)}>
+              {column.column_name.replace('_', ' ')}
             </MenuItem>
           )) : (
             <MenuItem disabled>Nothing</MenuItem>
@@ -286,8 +286,8 @@ function TypeTable() {
         <Menu anchorEl={anchorElRemove} open={Boolean(anchorElRemove)} onClose={() => setAnchorElRemove(null)}>
           {columnsToShow.length > 0 ? (
             columnsToShow.map((column) => (
-              <MenuItem key={column.id} onClick={() => handleRemoveColumn(column.id)}>
-                {column.column_name}
+              <MenuItem className="capitalize" key={column.id} onClick={() => handleRemoveColumn(column.id)}>
+                {column.column_name.replace('_', ' ')}
               </MenuItem>
             ))
           ) : (

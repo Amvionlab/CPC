@@ -8,6 +8,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { UserContext } from "../UserContext/UserContext";
+import { Tooltip, tooltipClasses } from "@mui/material";
+import { styled } from '@mui/system';
 
 function Header() {
   const [open, setOpen] = useState(false);
@@ -18,7 +20,18 @@ function Header() {
     localStorage.removeItem("user");
     window.location.href = "/login";
   };
-
+  const PurpleTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: 'purple',
+      color: 'white',
+      fontSize: '0.875rem',
+    },
+    [`& .${tooltipClasses.arrow}`]: {
+      color: 'purple',
+    },
+  });
   const handleSettingsClick = () => {
     navigate("/password-change");
   };
@@ -68,29 +81,38 @@ function Header() {
       {/* Desktop Icons for Settings, Notifications, and User */}
       <div className="text-white text-base sm:flex gap-6 mr-2 my-auto hidden">
         {/* Settings */}
+        <PurpleTooltip 
+               title="Change Password" 
+               arrow 
+             >
         <div
-          title="Change Password"
+          
           className="cursor-pointer text-prime flex items-center justify-center"
           onClick={handleSettingsClick}
         >
           <FontAwesomeIcon icon={faKey} />
         </div>
+        </PurpleTooltip>
         {/* Notifications */}
+       
         <div className="cursor-pointer text-prime  flex items-center justify-center"
           >
           <FontAwesomeIcon icon={faBell} />
-          {/* <p className="absolute -top-1 -right-1 bg-flo text-black rounded-full w-4 h-4 flex items-center justify-center text-sm">
-            3
-          </p> */}
+         
         </div>
-        {/* User */}
+        
+        <PurpleTooltip 
+               title="Log out"
+               arrow 
+             >
         <div
           className="cursor-pointer text-prime flex items-center justify-center"
-          title="Log out"
+          
           onClick={handleIconClick}
         >
           <FontAwesomeIcon icon={faSignOutAlt} />
         </div>
+        </PurpleTooltip>
       </div>
     </header>
   );

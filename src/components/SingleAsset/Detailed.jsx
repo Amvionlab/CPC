@@ -47,10 +47,10 @@ function Detailed() {
     return Object.entries(dataObj)
       .filter(([key]) => key !== 'id' && key !== 'is_active' && key !== 'post_date')
       .map(([key, value]) => (
-        <div key={key} className=" p-1 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex flex-col ">
-          <div className='p-3 border-r border-b border-l border-gray-300 hover:border-prime rounded-full mb-4 transition-transform transform hover:scale-105 hover:z-10'>
-             <h3 className="text-sm font-bold text-prime capitalize">{key.replace(/_/g, ' ')}</h3>
-              <p className="text-xs text-gray-500 font-medium m-2 text-center">
+        <div key={key} className=" p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex flex-col ">
+          <div className='p-3 border-r border-b border-l border-gray-300 hover:border-flo rounded-full transition-transform transform hover:scale-125 hover:z-10'>
+             <h3 className="text-sm font-bold text-flo capitalize">{key.replace(/_/g, ' ')}</h3>
+              <p className="text-xs text-gray-500 font-semibold m-1 text-center">
                 {value}
               </p>
               </div>

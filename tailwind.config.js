@@ -34,7 +34,7 @@ export default {
         bgGray: "#2F2F2F",
         bgBlack: "#1F1F1F",
         name: "#B1B1B1",
-        flo: "#840484",
+        flo: "#a505a5",
         prime: "#07274c",
         second: "#ebeef5",
         box: "#ffffff",
