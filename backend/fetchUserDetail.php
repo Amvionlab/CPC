@@ -22,7 +22,7 @@ $tableName = "asset_" . strtolower($type);
 
 try {
     // Prepare the query to fetch the details from the respective table
-    $query = "SELECT emp_id FROM $tableName WHERE tag = :tag LIMIT 1";
+    $query = "SELECT user_id FROM $tableName WHERE tag = :tag LIMIT 1";
     $stmt = $pdo->prepare($query);
     $stmt->bindParam(':tag', $tag, PDO::PARAM_INT);
     $stmt->execute();
@@ -32,7 +32,7 @@ try {
 
     if ($result) {
         // Extract the emp_id from the result
-        $emp_id = $result['emp_id'];
+        $emp_id = $result['user_id'];
 
         // Prepare the query to fetch user details from the employee table
         if ($emp_id) {
