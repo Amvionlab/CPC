@@ -1,6 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { baseURL } from '../../config.js';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TablePagination from '@mui/material/TablePagination';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
 
 function AssetNotes() {
   const [showPopup, setShowPopup] = useState(false);
@@ -8,10 +21,25 @@ function AssetNotes() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [newNote, setNewNote] = useState(''); // State to handle new note input
+  const [newNote, setNewNote] = useState('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  // Search and filter state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchField, setSearchField] = useState('all'); 
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
   };
 
   useEffect(() => {
@@ -58,10 +86,8 @@ function AssetNotes() {
     .then(response => response.json())
     .then(result => {
       if (result.success) {
-        // Reset the new note input and fetch updated data
         setNewNote('');
         togglePopup();
-        // Optionally, you can re-fetch the notes or update state here to include the new note
         fetchNotes();
       } else {
         console.error('Failed to add note:', result.error);
@@ -94,6 +120,28 @@ function AssetNotes() {
       });
   };
 
+  // Filter data based on search term and field
+  const filterData = data.filter((item) => {
+    const term = searchTerm.toLowerCase();
+    
+    if (searchField === 'all') {
+      // Search across all fields
+      return (
+        item.id.toString().toLowerCase().includes(term) ||
+        item.notes.toLowerCase().includes(term) ||
+        new Date(item.post_date).toLocaleString().toLowerCase().includes(term)
+      );
+    } else if (searchField === 'post_date') {
+      // Search in post_date field
+      return new Date(item[searchField])
+        .toLocaleString()
+        .toLowerCase()
+        .includes(term);
+    } else {
+      // Search in specific field (id or notes)
+      return item[searchField].toString().toLowerCase().includes(term);
+    }
+  });
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -112,6 +160,47 @@ function AssetNotes() {
         >
           <span> + </span> Add Note
         </button>
+      </div>
+
+      {/* Search bar and dropdown */}
+      <div className="flex items-center mb-4">
+      <TextField
+          id="search-bar"
+          label="Search"
+          variant="outlined"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{ ml: 0, width: '300px' }}
+          InputProps={{
+            style: {
+              height: '55px', 
+            },
+          }}
+        />
+        
+        <FormControl variant="outlined" sx={{ ml: 2, minWidth: 120 }}>
+          <InputLabel>Search Field</InputLabel>
+          <Select
+            value={searchField}
+            onChange={(e) => setSearchField(e.target.value)}
+            label="Search Field"
+          >
+            <MenuItem value="all">All</MenuItem>
+            <MenuItem value="id">ID</MenuItem>
+            <MenuItem value="notes">Notes</MenuItem>
+            <MenuItem value="post_date">Date</MenuItem>
+          </Select>
+        </FormControl>
+
+        <TablePagination
+          rowsPerPageOptions={[10, 25, 100]}
+          component="div"
+          count={filterData.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </div>
 
       {/* Popup form */}
@@ -134,7 +223,7 @@ function AssetNotes() {
                 <button 
                   type="button"
                   className="bg-gray-500 text-white px-4 py-2 rounded-md mr-2"
-                  onClick={togglePopup} // Close the popup
+                  onClick={togglePopup}
                 >
                   Cancel
                 </button>
@@ -151,26 +240,30 @@ function AssetNotes() {
       )}
 
       {/* Table section */}
-      <div className='font-poppins'>
-        <table className="border-collapse border border-slate-400 w-full table-fixed shadow-lg">
-          <thead className='bg-prime text-white'>
-            <tr>
-              <th className="border border-slate-400 p-3 text-left">ID</th>
-              <th className="border border-slate-400 p-3 text-left">Notes</th>
-              <th className="border border-slate-400 p-3 text-left">Date</th>
-            </tr>
-          </thead>
-          <tbody className='bg-gray-100'>
-            {data.map(note => (
-              <tr key={note.id} className='hover:bg-gray-200 transition duration-300 ease-in-out'>
-                <td className="border border-slate-400 p-3 text-sm">{note.id}</td>
-                <td className="border border-slate-400 p-3 text-sm">{note.notes}</td>
-                <td className="border border-slate-400 p-3 text-sm">{new Date(note.post_date).toLocaleString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+        <TableContainer sx={{ maxHeight: 440 }}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>Notes</TableCell>
+                <TableCell>Date</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filterData
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row) => (
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                    <TableCell>{row.id}</TableCell>
+                    <TableCell>{row.notes}</TableCell>
+                    <TableCell>{new Date(row.post_date).toLocaleString()}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
     </div>
   );
 }
