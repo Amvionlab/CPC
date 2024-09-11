@@ -9,11 +9,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TablePagination from '@mui/material/TablePagination';
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
 
 function AssetNotes() {
   const [showPopup, setShowPopup] = useState(false);
@@ -24,10 +19,10 @@ function AssetNotes() {
   const [newNote, setNewNote] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  
   // Search and filter state
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchField, setSearchField] = useState('all'); 
+  const [searchField, setSearchField] = useState('all');
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -142,6 +137,7 @@ function AssetNotes() {
       return item[searchField].toString().toLowerCase().includes(term);
     }
   });
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -163,37 +159,32 @@ function AssetNotes() {
       </div>
 
       {/* Search bar and dropdown */}
-      <div className="flex items-center mb-4">
-      <TextField
-          id="search-bar"
-          label="Search"
-          variant="outlined"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          sx={{ ml: 0, width: '300px' }}
-          InputProps={{
-            style: {
-              height: '55px', 
-            },
-          }}
-        />
+      <div className="flex justify-between items-center">
+        <div className='flex font-medium'>
         
-        <FormControl variant="outlined" sx={{ ml: 2, minWidth: 120 }}>
-          <InputLabel>Search Field</InputLabel>
-          <Select
-            value={searchField}
-            onChange={(e) => setSearchField(e.target.value)}
-            label="Search Field"
-          >
-            <MenuItem value="all">All</MenuItem>
-            <MenuItem value="id">ID</MenuItem>
-            <MenuItem value="notes">Notes</MenuItem>
-            <MenuItem value="post_date">Date</MenuItem>
-          </Select>
-        </FormControl>
-
+        <select 
+          value={searchField} 
+          className='text-xs border p-2 mr-2 rounded-md'
+          onChange={(e) => setSearchField(e.target.value)} 
+          style={{ height: '30px'}}
+        >
+          <option value="all">All</option>
+          <option value="id">ID</option>
+          <option value="notes">Notes</option>
+          <option value="post_date">Date</option>
+        </select>
+        <input 
+          type="text" 
+          id="search-bar" 
+          placeholder="Search" 
+          className='text-xs border p-2 rounded-md'
+          value={searchTerm} 
+          onChange={(e) => setSearchTerm(e.target.value)} 
+          style={{ height: '30px', width: '100px'}} 
+        />
+        </div>
         <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
+          rowsPerPageOptions={[10, 25, 100, 500]}
           component="div"
           count={filterData.length}
           rowsPerPage={rowsPerPage}
@@ -240,8 +231,8 @@ function AssetNotes() {
       )}
 
       {/* Table section */}
-      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
+     
+        <TableContainer sx={{ maxHeight: 440 }} >
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
@@ -254,7 +245,7 @@ function AssetNotes() {
               {filterData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={row.id} className="text-xs">
                     <TableCell>{row.id}</TableCell>
                     <TableCell>{row.notes}</TableCell>
                     <TableCell>{new Date(row.post_date).toLocaleString()}</TableCell>
@@ -263,7 +254,7 @@ function AssetNotes() {
             </TableBody>
           </Table>
         </TableContainer>
-      </Paper>
+  
     </div>
   );
 }
