@@ -512,9 +512,9 @@ const handleDelete = async (index) => {
   const currentTickets = filteredUsers.slice(offset, offset + ticketsPerPage);
 
   return (
-    <div className="bg-second max-h-5/6 max-w-4/6 text-xs mx-auto p-1 lg:overflow-y-hidden h-auto ticket-scroll">
+    <div className="bg-second max-h-full max-full text-xs mx-auto p-1 lg:overflow-y-hidden h-auto ticket-scroll">
       
-       <div className="max-w-1/2 m-2 bg-box p-5 rounded-lg font-mont">
+       <div className="max-w-full bg-box p-3 rounded-lg font-mont">
         <div className="ticket-table mt-4">
         <h3 className="text-2xl font-bold text-prime mb-4 flex justify-between items-center">
             <span>
@@ -600,7 +600,7 @@ const handleDelete = async (index) => {
   {filteredUsers
               .slice(currentPage * ticketsPerPage, (currentPage + 1) * ticketsPerPage)
               .map((user, index) => (
-                <tr key={user.id} className="bg-box text-fontadd text-center font-medium">
+                <tr key={user.id} className="bg-box text-xs text-center font-medium">
                   <td className="border-t py-1 px-4">{i++}</td>
                   <td className="border-t py-1 px-4">{user.type}</td>
                   <td className="border-t py-1 px-4">{user.group}</td>
@@ -640,7 +640,7 @@ const handleDelete = async (index) => {
     
       {showDialog && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-60 flex justify-center items-center z-10">
-          <div className="bg-white w-11/12 md:w-1/3 lg:w-1/3 rounded-lg shadow-lg max-h-full overflow-hidden">
+          <div className="bg-white w-11/12 md:w-4/6 lg:w-4/6 rounded-lg shadow-lg max-h-full overflow-hidden">
             {/* Header */}
             <div className="flex justify-between items-center p-3 border-b">
   <h4 className="text-lg font-semibold">Template Columns</h4>

@@ -3,21 +3,21 @@ import React, { useState } from 'react';
 function AssetNotes() {
   const [showPopup, setShowPopup] = useState(false);
 
-  // Function to handle the Add Note button click
   const togglePopup = () => {
-    setShowPopup(!showPopup); // Toggle the visibility of the popup
+    setShowPopup(!showPopup); 
   };
 
   return (
     <div>
-      <div>
-        <button 
-          className='bg-prime text-white p-2 font-poppins rounded-md flex gap-2 float-right m-5' 
-          onClick={togglePopup} // Toggle the popup on button click
-        >
-          <span> + </span> Add Note
-        </button>
+      <div className="flex font-bold justify-between items-center mb-3">
+        <h1 className="text-xl ">Asset Notes</h1>
+        <button className="flex text-xs items-center px-3 py-2 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110"
+        onClick={togglePopup} >
+        <span> + </span> Add Note
+</button>
+
       </div>
+      
       
       {/* Popup form */}
       {showPopup && (
@@ -29,7 +29,7 @@ function AssetNotes() {
             
             <form>
               <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2">Note</label>
+                
                 <textarea
                   className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-prime"
                   rows="4"
