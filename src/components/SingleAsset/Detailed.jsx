@@ -61,7 +61,7 @@ function Detailed() {
   return (
     <div className='font-sui'>
      <div className="flex font-bold justify-between items-center mb-3">
-        <h1 className="text-xl ">Detailed View</h1>
+        <h1 className="text-lg ">Detailed View</h1>
         <button className="flex text-xs items-center px-3 py-1 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110">
   <FontAwesomeIcon icon={faEdit} className="mr-2" />
   Edit

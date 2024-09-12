@@ -32,27 +32,32 @@ function UserDetail() {
 
   return (
     <div>
-      <h1 className="font-semibold text-xl mb-5">User Details</h1>
-
-      <div className="h-auto w-full flex gap-5 shadow-md shadow-gray-300 rounded-md py-5 px-2">
-        <div className="flex justify-center h-full">
+      <h1 className="font-bold text-lg mb-1">User Details</h1>
+      <div className="flex justify-center h-full">
+      
           <img
             src={allData?.photo || avatar}
-            className="md:w-[200px] object-contain h-full"
+            className="md:w-[150px] object-contain h-full"
             alt="User avatar"
           />
         </div>
-        <div className="grid grid-cols-4 gap-7 w-full h-auto">
+      
+
+        <div className="flex flex-wrap w-full">
           {title.map((item, i) => (
-            <div key={i} className="capitalize w-full space-y-2">
-              <p className="text-base break-words">
-                <strong> {item.label}</strong>: {item.value || "N/A"}
-              </p>
-            </div>
+            
+            <div key={i} className="p-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex flex-col ">
+            <div className='p-3 border-r border-b border-l border-gray-300 hover:border-flo rounded-full transition-transform transform hover:scale-110 hover:z-10'>
+               <h3 className="text-sm font-bold text-flo capitalize">{item.label.replace(/_/g, ' ')}</h3>
+                <p className="text-xs text-gray-500 font-semibold m-1 text-center">
+                {item.value || "N/A"}
+                </p>
+                </div>
+          </div>
           ))}
         </div>
       </div>
-    </div>
+   
   );
 }
 
