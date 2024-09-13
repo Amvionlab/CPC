@@ -72,8 +72,8 @@ const AssetDocuments = () => {
   if (error) return <div className="text-center py-4 text-red-600">Error: {error}</div>;
 
   return (
-    <div className="overflow-hidden">
-        <div className="flex font-bold justify-between items-center mb-1 ">
+    <div className='-ml-3 -mr-3 pr-7 pl-7 overflow-hidden'>
+        <div className="flex font-bold justify-between items-center mb-2 p-2">
         <h1 className="text-lg ">Asset Documents</h1>
         <button className="flex text-xs items-center px-3 py-1 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110"
          onClick={() => setShowModal(true)}>
@@ -83,34 +83,35 @@ const AssetDocuments = () => {
 
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {files.map((file) => (
-          <div key={file.id} className="rounded shadow-inner bg-second hover:shadow">
-            <div className="p-2 ">
+          <div key={file.id} className="rounded-lg shadow-sm  border bg-box ">
+            <div className="p-2 mb-2">
               <div className="flex justify-between space-x-2 mt-1 text-xs text-prime font-bold">
                 <h1 className='text-flo'>{file.name}</h1>
                 <h1>{file.post_date}</h1>
                 <div className='flex'>
-                <button
-                  className="bg-box text-prime border px-2 py-1 text-xs rounded-md flex items-center space-x-1 hover:bg-prime hover:text-box"
-                  onClick={() => deleteAssetFile(file.attachment_id)}
-                >
-                  <FaTrash className="w-3 h-3" />
-                </button>
                 <a
                   href={`/asset_doc_download.php?file=${file.path}&filename=${file.attachmentname}`}
-                  className="bg-box text-prime border px-2 py-1 text-xs rounded flex items-center space-x-1 hover:bg-prime hover:text-box"
+                  className="bg-box  mr-2 text-green-500 border px-1 py-1 text-xs rounded flex items-center space-x-1 hover:bg-second"
                 >
                   <FaDownload className="w-3 h-3" />
                 </a>
+                <button
+                  className="bg-box text-red-500 border px-1 py-1 text-xs rounded-md flex items-center space-x-1 hover:bg-second"
+                  onClick={() => deleteAssetFile(file.attachment_id)}
+                >
+                  <FaTrash className="w-3 h-3 " />
+                </button>
+               
                 </div>
               </div>
             </div>
-            <div className="flex justify-center p-2 bg-second">
+            <div className="flex justify-center rounded-lg bg-box">
               <img
                 src={`${baseURL}/${file.path}`}
                 alt={file.attachmentname}
-                className="h-44 border w-auto transition-transform transform hover:scale-125"
+                className="h-44 border w-auto hover:z-10 rounded-lg transition-transform transform hover:scale-125"
               />
             </div>
           </div>
