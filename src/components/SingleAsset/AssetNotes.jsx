@@ -1,14 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { baseURL } from '../../config.js';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TablePagination from '@mui/material/TablePagination';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination } from '@mui/material';
+import { CSVLink } from 'react-csv';
 
 function AssetNotes() {
   const [showPopup, setShowPopup] = useState(false);
@@ -27,6 +21,11 @@ function AssetNotes() {
   const togglePopup = () => {
     setShowPopup(!showPopup);
   };
+  const headers = [
+    { label: "ID", key: "id" },
+    { label: "Notes", key: "notes" },
+    { label: "Date", key: "post_date" }
+  ];
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -36,11 +35,11 @@ function AssetNotes() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-
+  const decodedGroup = decodeURIComponent(group);
+  const decodedType = decodeURIComponent(type);
+  const decodedTag = decodeURIComponent(tag);
   useEffect(() => {
-    const decodedGroup = decodeURIComponent(group);
-    const decodedType = decodeURIComponent(type);
-    const decodedTag = decodeURIComponent(tag);
+    
     
     const url = `${baseURL}/backend/fetchNotes.php?action=fetch&group=${decodedGroup}&type=${decodedType}&tag=${decodedTag}`;
     
@@ -183,6 +182,7 @@ function AssetNotes() {
           style={{ height: '30px', width: '100px'}} 
         />
         </div>
+       
         <TablePagination
           rowsPerPageOptions={[10, 25, 100, 500]}
           component="div"
@@ -192,6 +192,14 @@ function AssetNotes() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
+         <CSVLink 
+            data={filterData} 
+            headers={headers}
+            filename={`asset-notes-${decodedTag}.csv`}
+            className="flex text-xs items-center px-3 py-1 bg-box border border-gray-400 font-bold shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110"
+          >
+            CSV
+          </CSVLink>
       </div>
 
       {/* Popup form */}
@@ -236,19 +244,19 @@ function AssetNotes() {
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Notes</TableCell>
-                <TableCell>Date</TableCell>
+                <TableCell align="center">ID</TableCell>
+                <TableCell align="center">Notes</TableCell>
+                <TableCell align="center">Date</TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody sx={{ padding: '2px' }}>
               {filterData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.id} className="text-xs">
-                    <TableCell>{row.id}</TableCell>
-                    <TableCell>{row.notes}</TableCell>
-                    <TableCell>{new Date(row.post_date).toLocaleString()}</TableCell>
+                    <TableCell align="center" sx={{ padding: '10px' }}>{row.id}</TableCell>
+                    <TableCell align="center" sx={{ padding: '10px' }}>{row.notes}</TableCell>
+                    <TableCell align="center" sx={{ padding: '10px' }}>{new Date(row.post_date).toLocaleString()}</TableCell>
                   </TableRow>
                 ))}
             </TableBody>

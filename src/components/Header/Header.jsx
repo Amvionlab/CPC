@@ -43,23 +43,23 @@ function Header() {
   const { user } = useContext(UserContext);
 
   return (
-    <header className="border-b-2  fixed shadow-gray-300 bg-box top-0 right-0 h-[8vh] w-full flex justify-between items-center">
+    <header className="border-b-2  fixed bg-box top-0 right-0 h-[8vh] w-full flex justify-between items-center">
       {/* Desktop Logo and Search */}
       <div className="hidden sm:flex items-center">
         <div
-          className={`hidden sm:flex lg:flex absolute left-52 text-prime  p-2 rounded-full items-center justify-between transition-all duration-300 ${
-            isInputVisible ? "w-[15vw] scale-80" : "w-10 scale-80"
+          className={`hidden sm:flex lg:flex absolute left-52 text-prime  rounded-full items-center justify-between transition-all duration-300 ${
+            isInputVisible ? "w-[13vw] scale-80" : "w-10 scale-80"
           }`}
         >
           <FontAwesomeIcon
-            className="text-xl text-prime cursor-pointer mr-2"
+            className="text-sm text-prime font-bold cursor-pointer mr-2 hover:text-flo"
             icon={faSearch}
             onClick={() => setInputVisible(!isInputVisible)}
           />
           <div
             className={
               isInputVisible
-                ? "p-1 rounded-full shadow-inner bg-second"
+                ? "p-1 rounded-full text-xs shadow-inner bg-second"
                 : "bg-transparent"
             }
           >
@@ -71,7 +71,7 @@ function Header() {
                   : "scale-0 opacity-0 w-0"
               }`}
               placeholder="Search Your Asset"
-              style={{ transformOrigin: "left center" }} // Optional: To control the origin of the scale effect
+              style={{ transformOrigin: "left center" }}
               autoFocus={isInputVisible}
             />
           </div>
@@ -87,7 +87,7 @@ function Header() {
              >
         <div
           
-          className="cursor-pointer text-prime flex items-center justify-center"
+          className="cursor-pointer text-prime hover:text-flo flex text-sm items-center justify-center"
           onClick={handleSettingsClick}
         >
           <FontAwesomeIcon icon={faKey} />
@@ -95,7 +95,7 @@ function Header() {
         </PurpleTooltip>
         {/* Notifications */}
        
-        <div className="cursor-pointer text-prime  flex items-center justify-center"
+        <div className="cursor-pointer text-prime hover:text-flo flex text-sm items-center justify-center"
           >
           <FontAwesomeIcon icon={faBell} />
          
@@ -106,7 +106,7 @@ function Header() {
                arrow 
              >
         <div
-          className="cursor-pointer text-prime flex items-center justify-center"
+          className="cursor-pointer text-prime hover:text-flo flex text-sm items-center justify-center"
           
           onClick={handleIconClick}
         >

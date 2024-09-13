@@ -1,12 +1,7 @@
 <?php
-// Include database configuration
 include 'config.php';
-
-// Set the content-type to JSON
 header('Content-Type: application/json');
 
-// Extract parameters from the query string
-$group = urldecode($_GET['group']);
 $type = urldecode($_GET['type']);
 $tag = $_GET['tag'];
 
@@ -14,35 +9,36 @@ $tag = $_GET['tag'];
 $emp_id = null;
 $userDetails = null;
 
-// Get the ID from the tag (assuming tag format "DESK0001" where "0001" is the ID)
-$id = (int) filter_var($tag, FILTER_SANITIZE_NUMBER_INT);
 
-// Construct the dynamic table name based on type
+
 $tableName = "asset_" . strtolower($type);
 
 try {
     // Prepare the query to fetch the details from the respective table
-    $query = "SELECT user_id FROM $tableName WHERE tag = :tag LIMIT 1";
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':tag', $tag, PDO::PARAM_INT);
-    $stmt->execute();
+   $query = "SELECT user_id FROM $tableName WHERE tag = ? AND is_active=1 LIMIT 1";
+$stmt = $conn->prepare($query);
 
-    // Fetch the result
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+// Bind parameters (assuming $tag is an integer)
+$stmt->bind_param("s", $tag);
+
+// Execute the statement
+$stmt->execute();
+
+// Fetch the result
+$result = $stmt->get_result()->fetch_assoc();
 
     if ($result) {
         // Extract the emp_id from the result
         $emp_id = $result['user_id'];
-
-        // Prepare the query to fetch user details from the employee table
         if ($emp_id) {
-            $query = "SELECT * FROM employee WHERE employee_id = :emp_id LIMIT 1";
-            $stmt = $pdo->prepare($query);
-            $stmt->bindParam(':emp_id', $emp_id, PDO::PARAM_INT);
+            $query = "SELECT * FROM employee WHERE employee_id = ? AND is_active=1";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("s", $emp_id);
             $stmt->execute();
 
-            // Fetch user details
-            $userDetails = $stmt->fetch(PDO::FETCH_ASSOC);
+            $result = $stmt->get_result();
+            $userDetails = $result->fetch_assoc();
+            $stmt->close();
         }
     }
 
@@ -50,7 +46,7 @@ try {
     if ($userDetails) {
         echo json_encode($userDetails);
     } else {
-        echo json_encode(['error' => 'No user details found.']);
+        echo json_encode(['Not Mapped' => 'No user details found.']);
     }
 } catch (PDOException $e) {
     // Return an error message in JSON format
