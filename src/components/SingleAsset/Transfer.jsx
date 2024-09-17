@@ -2,8 +2,11 @@ import React, { useEffect, useState, useContext  } from 'react';
 import { useParams } from 'react-router-dom';
 import { baseURL } from '../../config.js';
 import { toast } from "react-toastify";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
+import { LocalShipping, Cancel } from '@mui/icons-material';
 import { CSVLink } from 'react-csv';
+import { Tooltip, tooltipClasses } from "@mui/material";
+import { styled } from '@mui/system';
 import { UserContext } from "../UserContext/UserContext";
 function Transfer() {
   const [showPopup, setShowPopup] = useState(false);
@@ -19,7 +22,18 @@ function Transfer() {
   // Search and filter state
   const [searchTerm, setSearchTerm] = useState('');
   const [searchField, setSearchField] = useState('all');
-  
+  const PurpleTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: 'purple',
+      color: 'white',
+      fontSize: '0.875rem',
+    },
+    [`& .${tooltipClasses.arrow}`]: {
+      color: 'purple',
+    },
+  });
   // Location dropdown states
   const [fromLocation, setFromLocation] = useState('');
   const [toLocation, setToLocation] = useState('');
@@ -374,6 +388,7 @@ useEffect(() => {
   <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>Transfer On</TableCell>
   <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>Received By</TableCell>
   <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>Received On</TableCell>
+  <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>Action</TableCell>
 </TableRow>
 
           </TableHead>
@@ -402,6 +417,26 @@ useEffect(() => {
   <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>
     {isValidDate(row.received_on) ? new Date(row.received_on).toLocaleString() : ''}
   </TableCell>
+  <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>
+  <PurpleTooltip 
+               title="Out for Delivery" 
+               placement="bottom" 
+               arrow 
+             >
+                    <IconButton aria-label="Out for Delivery" color="secondary" onClick={() => handleOpen('approve', row.id)}>
+                    <LocalShipping />
+                    </IconButton>
+                    </PurpleTooltip>
+                    <PurpleTooltip 
+               title="Reject" 
+               placement="bottom" 
+               arrow 
+             >
+                    <IconButton aria-label="Reject" color="error" onClick={() => handleOpen('reject', row.id)}>
+                      <Cancel />
+                    </IconButton>
+                    </PurpleTooltip>
+                  </TableCell>
 </TableRow>
 
               ))}

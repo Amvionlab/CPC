@@ -6,7 +6,8 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Table
 import { CheckCircle, Cancel } from '@mui/icons-material';
 import { CSVLink } from 'react-csv';
 import { UserContext } from "../UserContext/UserContext";
-
+import { Tooltip, tooltipClasses } from "@mui/material";
+import { styled } from '@mui/system';
 function Transfer() {
   const { group, type, tag } = useParams();
   const [data, setData] = useState([]);
@@ -16,7 +17,18 @@ function Transfer() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const { user } = useContext(UserContext);
-
+  const PurpleTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: 'purple',
+      color: 'white',
+      fontSize: '0.875rem',
+    },
+    [`& .${tooltipClasses.arrow}`]: {
+      color: 'purple',
+    },
+  });
   // Dialog states
   const [open, setOpen] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
@@ -266,12 +278,24 @@ function Transfer() {
                     {isValidDate(row.request_on) ? new Date(row.request_on).toLocaleString() : ''}
                   </TableCell>
                   <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>
+                  <PurpleTooltip 
+               title="Approve" 
+               placement="bottom" 
+               arrow 
+             >
                     <IconButton aria-label="approve" color="success" onClick={() => handleOpen('approve', row.id)}>
                       <CheckCircle />
                     </IconButton>
+                    </PurpleTooltip>
+                    <PurpleTooltip 
+               title="Reject" 
+               placement="bottom" 
+               arrow 
+             >
                     <IconButton aria-label="reject" color="error" onClick={() => handleOpen('reject', row.id)}>
                       <Cancel />
                     </IconButton>
+                    </PurpleTooltip>
                   </TableCell>
                 </TableRow>
               ))}
