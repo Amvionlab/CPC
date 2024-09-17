@@ -36,8 +36,6 @@ if ($action == 'fetch') {
 }
 elseif ($action == 'all') {
  
-  
-        
         $sql = "SELECT * FROM transfer WHERE `status`=1 AND `is_active`=1";
         $result = $conn->query($sql);
 
@@ -80,6 +78,53 @@ elseif ($action == 'all') {
         $conn->close();
     } else {
         echo json_encode(["success" => false, "error" => "Tag and note are required."]);
+    }
+}
+elseif ($action == 'approve') {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if (isset($data['id']) && isset($data['user'])) {
+        $id = $conn->real_escape_string($data['id']);
+        $user = $conn->real_escape_string($data['user']);
+
+        // Prepare the SQL update statement
+        $sql = "UPDATE transfer 
+                SET approved_by='$user', approved_on=NOW(), status=2 
+                WHERE id='$id'";
+
+        if ($conn->query($sql) === TRUE) {
+            echo json_encode(["success" => true, "message" => "Transfer approved successfully."]);
+        } else {
+            echo json_encode(["success" => false, "error" => $conn->error]);
+        }
+        
+        $conn->close();
+    } else {
+        echo json_encode(["success" => false, "error" => "ID and user are required."]);
+    }
+}
+
+elseif ($action == 'reject') {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if (isset($data['id']) && isset($data['user'])) {
+        $id = $conn->real_escape_string($data['id']);
+        $user = $conn->real_escape_string($data['user']);
+
+        // Prepare the SQL update statement
+        $sql = "UPDATE transfer 
+                SET rejected_by='$user', rejected_on=NOW(), is_active=0
+                WHERE id='$id'";
+
+        if ($conn->query($sql) === TRUE) {
+            echo json_encode(["success" => true, "message" => "Transfer Rejected successfully."]);
+        } else {
+            echo json_encode(["success" => false, "error" => $conn->error]);
+        }
+        
+        $conn->close();
+    } else {
+        echo json_encode(["success" => false, "error" => "ID and user are required."]);
     }
 } else {
     echo json_encode(["error" => "Invalid action. Use 'fetch' or 'add'."]);

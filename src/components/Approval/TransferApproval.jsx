@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { baseURL } from '../../config.js';
 import { toast } from "react-toastify";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 import { CheckCircle, Cancel } from '@mui/icons-material';
 import { CSVLink } from 'react-csv';
 import { UserContext } from "../UserContext/UserContext";
@@ -16,6 +16,11 @@ function Transfer() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const { user } = useContext(UserContext);
+
+  // Dialog states
+  const [open, setOpen] = useState(false);
+  const [selectedAction, setSelectedAction] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
 
   // Search and filter state
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,60 +44,25 @@ function Transfer() {
     setPage(0);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${baseURL}/backend/dropdown.php`);
-        const data = await response.json();
-        setdetData((prevData) => ({ ...prevData, locations: data.locations }));
-      } catch (error) {
-        console.error("Error fetching data:", error);
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=all`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-    };
+      const result = await response.json();
+      setData(result);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError(error.toString());
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
-
-  const decodedGroup = decodeURIComponent(group);
-  const decodedType = decodeURIComponent(type);
-  const decodedTag = decodeURIComponent(tag);
-
-  useEffect(() => {
-    const url = `${baseURL}/backend/fetchTransfer.php?action=all`;
-
-    fetch(url)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(result => {
-        setData(result);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        setError(error.toString());
-        setLoading(false);
-      });
-
-    const durl = `${baseURL}/backend/fetchDetailedView.php?group=${decodedGroup}&type=${decodedType}&tag=${decodedTag}`;
-
-    fetch(durl)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(result => {
-        setdetData(result);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        setError(error.toString());
-      });
-  }, [group, type, tag]);
 
   function isValidDate(dateString) {
     return dateString && !dateString.startsWith('0000-00-00') && !isNaN(new Date(dateString).getTime());
@@ -127,16 +97,83 @@ function Transfer() {
     return false;
   });
 
-  const handleApprove = (id) => {
-    // Implement your approve logic here
-    console.log('Approved', id);
-    toast.success(`Transfer ID ${id} approved.`);
+  const handleConfirm = async () => {
+    if (selectedAction === 'approve') {
+      handleApprove(selectedId);
+    } else if (selectedAction === 'reject') {
+      handleReject(selectedId);
+    }
+    handleClose();
   };
 
-  const handleReject = (id) => {
-    // Implement your reject logic here
-    console.log('Rejected', id);
-    toast.error(`Transfer ID ${id} rejected.`);
+  const handleOpen = (action, id) => {
+    setSelectedAction(action);
+    setSelectedId(id);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedAction(null);
+    setSelectedId(null);
+  };
+
+  const handleApprove = async (id) => {
+    const payload = {
+      id,
+      user: user.firstname,
+    };
+
+    try {
+      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=approve`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        toast.success(`Transfer ID ${id} approved by ${user.firstname}.`);
+        fetchData(); // Refetch data to get the updated list
+      } else {
+        toast.error(`Failed to approve Transfer ID ${id}. ${result.error || ''}`);
+      }
+    } catch (error) {
+      console.error('Error approving transfer:', error);
+      toast.error('An error occurred while approving the transfer.');
+    }
+  };
+
+  const handleReject = async (id) => {
+    const payload = {
+      id,
+      user: user.firstname,
+    };
+
+    try {
+      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=reject`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        toast.success(`Transfer ID ${id} rejected by ${user.firstname}.`);
+        fetchData(); // Refetch data to get the updated list
+      } else {
+        toast.error(`Failed to reject Transfer ID ${id}. ${result.error || ''}`);
+      }
+    } catch (error) {
+      console.error('Error rejecting transfer:', error);
+      toast.error('An error occurred while rejecting the transfer.');
+    }
   };
 
   if (loading) {
@@ -194,7 +231,7 @@ function Transfer() {
         <CSVLink
           data={filterData}
           headers={headers}
-          filename={`asset-notes-${decodedTag}.csv`}
+          filename={`asset-approvals.csv`}
           className="flex text-xs items-center px-3 py-1 bg-box border border-gray-400 font-bold shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110"
         >
           CSV
@@ -218,9 +255,9 @@ function Transfer() {
           <TableBody sx={{ padding: '2px' }}>
             {filterData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => (
+              .map((row, rowIndex) => (
                 <TableRow hover role="checkbox" tabIndex={-1} key={row.id} className="text-xs">
-                  <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>{row.id}</TableCell>
+                  <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>{rowIndex + 1}</TableCell>
                   <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>{row.from_location}</TableCell>
                   <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>{row.to_location}</TableCell>
                   <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>{row.description}</TableCell>
@@ -229,10 +266,10 @@ function Transfer() {
                     {isValidDate(row.request_on) ? new Date(row.request_on).toLocaleString() : ''}
                   </TableCell>
                   <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>
-                    <IconButton aria-label="approve" color="success" onClick={() => handleApprove(row.id)}>
+                    <IconButton aria-label="approve" color="success" onClick={() => handleOpen('approve', row.id)}>
                       <CheckCircle />
                     </IconButton>
-                    <IconButton aria-label="reject" color="error" onClick={() => handleReject(row.id)}>
+                    <IconButton aria-label="reject" color="error" onClick={() => handleOpen('reject', row.id)}>
                       <Cancel />
                     </IconButton>
                   </TableCell>
@@ -241,6 +278,24 @@ function Transfer() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Confirm Action</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to {selectedAction} transfer ID {selectedId}?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirm} color="primary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
