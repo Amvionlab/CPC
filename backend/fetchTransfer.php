@@ -33,6 +33,28 @@ if ($action == 'fetch') {
     } else {
         echo json_encode(["error" => "tag parameter is required."]);
     }
+}
+elseif ($action == 'all') {
+ 
+  
+        
+        $sql = "SELECT * FROM transfer WHERE `status`=1 AND `is_active`=1";
+        $result = $conn->query($sql);
+
+        $notes = array();
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $notes[] = $row;
+            }
+        } else {
+            // Handle SQL errors
+            echo json_encode(["error" => $conn->error]);
+            exit;
+        }
+
+        $conn->close();
+        echo json_encode($notes);
+ 
 } elseif ($action == 'add') {
     // Handle adding a new note
     // Retrieve the request payload

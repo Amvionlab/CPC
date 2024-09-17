@@ -250,12 +250,12 @@ useEffect(() => {
   <option value="to_location">Transfer To</option>
   <option value="description">Description</option>
   <option value="request_by">Request By</option>
-  <option value="approved_by">Approved By</option>
-  <option value="transfer_by">Transfer By</option>
-  <option value="received_by">Received By</option>
   <option value="request_on">Request On</option>
+  <option value="approved_by">Approved By</option>
   <option value="approved_on">Approved On</option>
+  <option value="transfer_by">Transfer By</option>
   <option value="transfer_on">Transfer On</option>
+  <option value="received_by">Received By</option>
   <option value="received_on">Received On</option>
   
   </select>
