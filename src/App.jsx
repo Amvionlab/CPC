@@ -48,6 +48,7 @@ import Setup from "./components/Setup/Setup";
 import AssetType from "./components/AssetType/AssetType";
 import TypeTable from "./components/TypeTable/TypeTable";
 import SingleAsset from "./components/SingleAsset/SingleAsset";
+import Approval from "./components/Approval/Approval";
 const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour
 
 function App() {
@@ -148,6 +149,10 @@ function App() {
                       <Route
                         path="/management/:group/:type/:tag"
                         element={<SingleAsset />}
+                      />
+                      <Route
+                        path="/approval"
+                        element={<Approval />}
                       />
                       <Route
                         path="/admin/department"

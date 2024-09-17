@@ -2,8 +2,11 @@ import React, { useEffect, useState, useContext  } from 'react';
 import { useParams } from 'react-router-dom';
 import { baseURL } from '../../config.js';
 import { toast } from "react-toastify";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
+import { LocalShipping, Cancel } from '@mui/icons-material';
 import { CSVLink } from 'react-csv';
+import { Tooltip, tooltipClasses } from "@mui/material";
+import { styled } from '@mui/system';
 import { UserContext } from "../UserContext/UserContext";
 function Transfer() {
   const [showPopup, setShowPopup] = useState(false);
@@ -19,7 +22,18 @@ function Transfer() {
   // Search and filter state
   const [searchTerm, setSearchTerm] = useState('');
   const [searchField, setSearchField] = useState('all');
-  
+  const PurpleTooltip = styled(({ className, ...props }) => (
+    <Tooltip {...props} classes={{ popper: className }} />
+  ))({
+    [`& .${tooltipClasses.tooltip}`]: {
+      backgroundColor: 'purple',
+      color: 'white',
+      fontSize: '0.875rem',
+    },
+    [`& .${tooltipClasses.arrow}`]: {
+      color: 'purple',
+    },
+  });
   // Location dropdown states
   const [fromLocation, setFromLocation] = useState('');
   const [toLocation, setToLocation] = useState('');
@@ -192,22 +206,28 @@ useEffect(() => {
       );
     } else if (searchField === 'id') {
       return item.id.toString().toLowerCase().includes(term);
-    } else if (searchField === 'request_by') {
-      return item.request_by.toLowerCase().includes(term);
-    } else if (searchField === 'from_location') {
+    }  else if (searchField === 'from_location') {
       return item.from_location.toLowerCase().includes(term);
     } else if (searchField === 'to_location') {
       return item.to_location.toLowerCase().includes(term);
     } else if (searchField === 'description') {
       return item.to_location.toLowerCase().includes(term);
-    } else if (searchField === 'approved_by') {
-      return item.approved_by.toLowerCase().includes(term);
-    } else if (searchField === 'transfer_by') {
-      return item.transfer_by.toLowerCase().includes(term);
-    } else if (searchField === 'received_by') {
-      return item.received_by.toLowerCase().includes(term);
-    } else if (searchField === 'post_date' && isValidDate(item.request_on)) {
+    } else if (searchField === 'request_by') {
+      return item.request_by.toLowerCase().includes(term);
+    }else if (searchField === 'request_on' && isValidDate(item.request_on)) {
       return new Date(item.request_on).toLocaleString().toLowerCase().includes(term);
+    }else if (searchField === 'approved_by') {
+      return item.approved_by.toLowerCase().includes(term);
+    } else if (searchField === 'approved_on' && isValidDate(item.approved_on)) {
+      return new Date(item.approved_on).toLocaleString().toLowerCase().includes(term);
+    }else if (searchField === 'transfer_by') {
+      return item.transfer_by.toLowerCase().includes(term);
+    } else if (searchField === 'transfer_on' && isValidDate(item.transfer_on)) {
+      return new Date(item.transfer_on).toLocaleString().toLowerCase().includes(term);
+    }else if (searchField === 'received_by') {
+      return item.received_by.toLowerCase().includes(term);
+    }else if (searchField === 'received_on' && isValidDate(item.received_on)) {
+      return new Date(item.received_on).toLocaleString().toLowerCase().includes(term);
     }
   
     return false; // Return false if it does not match any criteria
@@ -250,12 +270,12 @@ useEffect(() => {
   <option value="to_location">Transfer To</option>
   <option value="description">Description</option>
   <option value="request_by">Request By</option>
-  <option value="approved_by">Approved By</option>
-  <option value="transfer_by">Transfer By</option>
-  <option value="received_by">Received By</option>
   <option value="request_on">Request On</option>
+  <option value="approved_by">Approved By</option>
   <option value="approved_on">Approved On</option>
+  <option value="transfer_by">Transfer By</option>
   <option value="transfer_on">Transfer On</option>
+  <option value="received_by">Received By</option>
   <option value="received_on">Received On</option>
   
   </select>
@@ -368,6 +388,7 @@ useEffect(() => {
   <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>Transfer On</TableCell>
   <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>Received By</TableCell>
   <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>Received On</TableCell>
+  <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>Action</TableCell>
 </TableRow>
 
           </TableHead>
@@ -396,6 +417,26 @@ useEffect(() => {
   <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>
     {isValidDate(row.received_on) ? new Date(row.received_on).toLocaleString() : ''}
   </TableCell>
+  <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>
+  <PurpleTooltip 
+               title="Out for Delivery" 
+               placement="bottom" 
+               arrow 
+             >
+                    <IconButton aria-label="Out for Delivery" color="secondary" onClick={() => handleOpen('approve', row.id)}>
+                    <LocalShipping />
+                    </IconButton>
+                    </PurpleTooltip>
+                    <PurpleTooltip 
+               title="Reject" 
+               placement="bottom" 
+               arrow 
+             >
+                    <IconButton aria-label="Reject" color="error" onClick={() => handleOpen('reject', row.id)}>
+                      <Cancel />
+                    </IconButton>
+                    </PurpleTooltip>
+                  </TableCell>
 </TableRow>
 
               ))}

@@ -21,7 +21,7 @@ const SideMenu = () => {
   const menuItems = [
     { title: "Dashboard", icon: faTachometerAlt, to: "/dashboard" },
     { title: "Asset Inventory", icon: faBox, to: "/management" },
-    { title: "Approval Handling", icon: faCheckCircle, to: "#" },
+    { title: "Approval Handling", icon: faCheckCircle, to: "/approval" },
     { title: "Assets Lifecycle", icon: faSyncAlt, to: "#" },
     { title: "Reports", icon: faFileAlt, to: "#" },
     { title: "Setup Wizard", icon: faWrench, to: "/setup" },
