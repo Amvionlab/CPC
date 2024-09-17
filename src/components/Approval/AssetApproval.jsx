@@ -120,7 +120,7 @@ function TypeTable() {
   return (
       <div className="w-full bg-white p-1 rounded-md h-full flex flex-col">
         <div className="w-full border-b h-10 flex text-sm justify-between items-center font-semibold mb-2">
-          <div className="flex capitalize ml-4">
+          <div className="flex capitalize ml-4 text-xl font-semibold">
             <p>Asset Approval</p>
           </div>
 

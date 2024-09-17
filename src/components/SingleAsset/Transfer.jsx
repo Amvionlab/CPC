@@ -192,22 +192,28 @@ useEffect(() => {
       );
     } else if (searchField === 'id') {
       return item.id.toString().toLowerCase().includes(term);
-    } else if (searchField === 'request_by') {
-      return item.request_by.toLowerCase().includes(term);
-    } else if (searchField === 'from_location') {
+    }  else if (searchField === 'from_location') {
       return item.from_location.toLowerCase().includes(term);
     } else if (searchField === 'to_location') {
       return item.to_location.toLowerCase().includes(term);
     } else if (searchField === 'description') {
       return item.to_location.toLowerCase().includes(term);
-    } else if (searchField === 'approved_by') {
-      return item.approved_by.toLowerCase().includes(term);
-    } else if (searchField === 'transfer_by') {
-      return item.transfer_by.toLowerCase().includes(term);
-    } else if (searchField === 'received_by') {
-      return item.received_by.toLowerCase().includes(term);
-    } else if (searchField === 'post_date' && isValidDate(item.request_on)) {
+    } else if (searchField === 'request_by') {
+      return item.request_by.toLowerCase().includes(term);
+    }else if (searchField === 'request_on' && isValidDate(item.request_on)) {
       return new Date(item.request_on).toLocaleString().toLowerCase().includes(term);
+    }else if (searchField === 'approved_by') {
+      return item.approved_by.toLowerCase().includes(term);
+    } else if (searchField === 'approved_on' && isValidDate(item.approved_on)) {
+      return new Date(item.approved_on).toLocaleString().toLowerCase().includes(term);
+    }else if (searchField === 'transfer_by') {
+      return item.transfer_by.toLowerCase().includes(term);
+    } else if (searchField === 'transfer_on' && isValidDate(item.transfer_on)) {
+      return new Date(item.transfer_on).toLocaleString().toLowerCase().includes(term);
+    }else if (searchField === 'received_by') {
+      return item.received_by.toLowerCase().includes(term);
+    }else if (searchField === 'received_on' && isValidDate(item.received_on)) {
+      return new Date(item.received_on).toLocaleString().toLowerCase().includes(term);
     }
   
     return false; // Return false if it does not match any criteria
