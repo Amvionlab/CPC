@@ -149,7 +149,7 @@ function Transfer() {
 
       if (response.ok && result.success) {
         toast.success(`Transfer ID ${id} approved by ${user.firstname}.`);
-        fetchData(); // Refetch data to get the updated list
+        fetchData();
       } else {
         toast.error(`Failed to approve Transfer ID ${id}. ${result.error || ''}`);
       }

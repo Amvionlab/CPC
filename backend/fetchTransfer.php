@@ -103,6 +103,52 @@ elseif ($action == 'approve') {
         echo json_encode(["success" => false, "error" => "ID and user are required."]);
     }
 }
+elseif ($action == 'receive') {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if (isset($data['id']) && isset($data['user'])) {
+        $id = $conn->real_escape_string($data['id']);
+        $user = $conn->real_escape_string($data['user']);
+
+        // Prepare the SQL update statement
+        $sql = "UPDATE transfer 
+                SET received_by='$user', received_on=NOW(), status=4 
+                WHERE id='$id'";
+
+        if ($conn->query($sql) === TRUE) {
+            echo json_encode(["success" => true, "message" => "Transfer Received successfully."]);
+        } else {
+            echo json_encode(["success" => false, "error" => $conn->error]);
+        }
+        
+        $conn->close();
+    } else {
+        echo json_encode(["success" => false, "error" => "ID and user are required."]);
+    }
+}
+elseif ($action == 'ofd') {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if (isset($data['id']) && isset($data['user'])) {
+        $id = $conn->real_escape_string($data['id']);
+        $user = $conn->real_escape_string($data['user']);
+
+        // Prepare the SQL update statement
+        $sql = "UPDATE transfer 
+                SET transfer_by='$user', transfer_on=NOW(), status=3 
+                WHERE id='$id'";
+
+        if ($conn->query($sql) === TRUE) {
+            echo json_encode(["success" => true, "message" => "Transfer approved successfully."]);
+        } else {
+            echo json_encode(["success" => false, "error" => $conn->error]);
+        }
+        
+        $conn->close();
+    } else {
+        echo json_encode(["success" => false, "error" => "ID and user are required."]);
+    }
+}
 
 elseif ($action == 'reject') {
     $data = json_decode(file_get_contents('php://input'), true);
