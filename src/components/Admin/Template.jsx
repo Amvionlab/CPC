@@ -665,62 +665,79 @@ const handleDelete = async (index) => {
             <div className="overflow-y-auto p-4" style={{ maxHeight: '80vh' }}>
             <table className="min-w-full border-collapse">
   <tbody>
-    {dialogContent.map((column, index) => (
-      <tr key={index} className="hover:bg-blue-50  rounded-lg bg-second transition-colors duration-150 ">
-        <th className="border-t text-sm border-l border-box border-2 px-4 py-2 rounded-lg text-left font-medium w-4/5">
-          {editingIndex === index ? (
-            <input
-              type="text"
-              value={tempColumnName}
-              onChange={handleChange}
-              autoFocus
-              className="border rounded px-2 py-2 w-1/2 focus:outline-none focus:border-blue-500"
-            />
-          ) : (
-            <span>{column}</span>
-          )}
-        </th>
-        <td className="border-t border-r rounded-lg  border-box border-2 px-3 py-2 w-2/4">
-          <div className="flex justify-end space-x-3">
-            {editingIndex === index ? (
-              <>
-                <button
-                  className="border-green-600 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-green-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
-                  onClick={handleSave}
-                >
-                  Save
-                </button>
-                <button
-                  className="border-gray-800 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-gray-800 transition-transform duration-200 ease-in-out transform hover:scale-110"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  className="border-blue-600 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-blue-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
-                  onClick={() => templateColumns.includes(column) ? toast.success("Default values cannot be Edited") : handleEdit(index)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="border-red-600 border-2 hover:text-white font-bold text-prime py-1 px-3 rounded hover:bg-red-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
-                  onClick={() => templateColumns.includes(column) ? toast.success("Default values cannot be Deleted") : handleDelete(index)}
-                >
-                  Delete
-                </button>
-              </>
-            )}
-          </div>
-        </td>
-      </tr>
-    ))}
+  <div className="grid grid-cols-2 gap-4 hover:bg-blue-50 rounded-lg bg-second transition-colors duration-150 p-4">
+  {dialogContent.map((column, index) => (
+    <div
+      key={index}
+      className="flex justify-between items-center border rounded-lg p-2"
+    >
+      {/* Column name and action buttons together */}
+      <div className="text-sm font-medium flex items-center space-x-4">
+        {editingIndex === index ? (
+          <input
+            type="text"
+            value={tempColumnName}
+            onChange={handleChange}
+            autoFocus
+            className="border rounded px-2 py-1 w-2/3 focus:outline-none focus:border-blue-500"
+          />
+        ) : (
+          <span>{column}</span>
+        )}
+      </div>
+
+      {/* Action buttons */}
+      <div className="space-x-3">
+        {editingIndex === index ? (
+          <>
+            <button
+              className="border-green-600 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-green-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
+              onClick={handleSave}
+            >
+              Save  
+            </button>
+            <button
+              className="border-gray-800 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-gray-800 transition-transform duration-200 ease-in-out transform hover:scale-110"
+              onClick={handleCancel}
+            >
+              Cancel
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className="border-blue-600 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-blue-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
+              onClick={() =>
+                templateColumns.includes(column)
+                  ? toast.success("Default values cannot be Edited")
+                  : handleEdit(index)
+              }
+            >
+              <i className="fa fa-pencil-alt"></i>
+            </button>
+            <button
+              className="border-red-600 border-2 hover:text-white font-bold text-prime py-1 px-3 rounded hover:bg-red-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
+              onClick={() =>
+                templateColumns.includes(column)
+                  ? toast.success("Default values cannot be Deleted")
+                  : handleDelete(index)
+              }
+            >
+              <i className="fa fa-trash"></i>
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  ))}
+</div>
+
+
+
 
     {isInputVisible && (
-      <tr className="rounded-lg">
-        <th className="border-t border-l border-b rounded-lg border-gray-200 px-4 py-3">
+      <div className="rounded-lg flex items-center justify-center">
+        <div className="border-t border-l border-b rounded-lg w-1/2 border-gray-200 px-4 py-3">
           <input
             type="text"
             value={newColumnName}
@@ -729,8 +746,8 @@ const handleDelete = async (index) => {
             placeholder="Enter column "
             className="border rounded placeholder:font-normal px-2 py-2 w-full focus:outline-none focus:border-blue-500"
           />
-        </th>
-        <td className="border-t border-b border-r rounded-lg border-gray-200 px-4 py-3">
+        </div>
+        <div className="border-t border-b border-r rounded-lg border-gray-200 px-4 py-3">
           <div className="flex justify-end space-x-2">
             <button
               className="border-green-600 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-green-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
@@ -745,8 +762,8 @@ const handleDelete = async (index) => {
               Cancel
             </button>
           </div>
-        </td>
-      </tr>
+        </div>
+      </div>
     )}
   </tbody>
 </table>
