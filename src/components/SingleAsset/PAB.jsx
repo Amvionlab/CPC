@@ -51,7 +51,11 @@ function PAB() {
         <h1 className="text-lg ">Planning & Budget</h1>
       </div>
 
-      {data.tag}
+      {data.purchase_date}<br />
+      {data.po_number}<br />
+      {data.procure_by}<br />
+      {data.asset_value}<br />
+      {data.vendor_name}<br />
     </div>
   );
 }
