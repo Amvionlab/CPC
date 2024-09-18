@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { baseURL } from '../../config.js';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit } from '@fortawesome/free-solid-svg-icons';
+
 
 function PAB() {
   const { group, type, tag } = useParams();
@@ -51,11 +50,62 @@ function PAB() {
         <h1 className="text-lg ">Planning & Budget</h1>
       </div>
 
-      {data.purchase_date}<br />
-      {data.po_number}<br />
-      {data.procure_by}<br />
-      {data.asset_value}<br />
-      {data.vendor_name}<br />
+
+
+      
+        <div className='text-center'>
+        <i className="fa fa-user text-5xl" ></i>
+
+             <h3 className="text-2xl">Procure By</h3>
+              <p className=''>{data.procure_by}</p><br />
+         </div>
+<div className='grid grid-cols-2 gap-4'>
+<div className='text-center '>
+  <div className=' rounded-lg  '>
+  <i className="fa fa-calendar text-5xl"></i>
+
+             <h3 className="text-2xl mt-4">Purchase Date</h3>
+              <p className=''>   {data.purchase_date}<br /></p><br />
+              </div>
+</div>
+<div className='text-center '>
+<div className=' rounded-lg '>
+<i className="fa fa-file text-5xl"></i>
+
+             <h3 className="text-2xl mt-4">Purchase Number</h3>
+              <p className=''>      {data.po_number}<br /></p><br />
+              </div>
+</div>
+<div className='text-center '>
+<div className=' rounded-lg '>
+<i className="fa fa-dollar text-5xl"></i>
+
+             <h3 className="text-2xl mt-4">Asset Value</h3>
+              <p className=''>   {data.asset_value}<br /></p><br />
+              </div>
+</div>
+<div className='text-center '>
+<div className=' rounded-lg '>
+<i className="fa fa-user text-5xl"></i>
+
+             <h3 className="text-2xl mt-4">Vendor Name</h3>
+              <p className=''>       {data.vendor_name}<br /></p><br />
+              </div>
+</div>
+</div>
+
+
+
+        
+
+
+
+
+   
+   
+      
+      
+  
     </div>
   );
 }
