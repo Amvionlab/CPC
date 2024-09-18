@@ -665,89 +665,100 @@ const handleDelete = async (index) => {
             <div className="overflow-y-auto p-4" style={{ maxHeight: '80vh' }}>
             <table className="min-w-full border-collapse">
   <tbody>
-    {dialogContent.map((column, index) => (
-      <tr key={index} className="hover:bg-blue-50  rounded-lg bg-second transition-colors duration-150 ">
-        <th className="border-t text-sm border-l border-box border-2 px-4 py-2 rounded-lg text-left font-medium w-4/5">
-          {editingIndex === index ? (
-            <input
-              type="text"
-              value={tempColumnName}
-              onChange={handleChange}
-              autoFocus
-              className="border rounded px-2 py-2 w-1/2 focus:outline-none focus:border-blue-500"
-            />
-          ) : (
-            <span>{column}</span>
-          )}
-        </th>
-        <td className="border-t border-r rounded-lg  border-box border-2 px-3 py-2 w-2/4">
-          <div className="flex justify-end space-x-3">
-            {editingIndex === index ? (
-              <>
-                <button
-                  className="border-green-600 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-green-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
-                  onClick={handleSave}
-                >
-                  Save
-                </button>
-                <button
-                  className="border-gray-800 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-gray-800 transition-transform duration-200 ease-in-out transform hover:scale-110"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  className="border-blue-600 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-blue-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
-                  onClick={() => templateColumns.includes(column) ? toast.success("Default values cannot be Edited") : handleEdit(index)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="border-red-600 border-2 hover:text-white font-bold text-prime py-1 px-3 rounded hover:bg-red-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
-                  onClick={() => templateColumns.includes(column) ? toast.success("Default values cannot be Deleted") : handleDelete(index)}
-                >
-                  Delete
-                </button>
-              </>
-            )}
-          </div>
-        </td>
-      </tr>
-    ))}
+  <div className="grid grid-cols-3 gap-3 rounded-lg  transition-colors duration-150 p-2">
+  {dialogContent.map((column, index) => (
+    <div
+      key={index}
+      className="flex justify-between items-center border hover:bg-second rounded-lg p-2"
+    >
+      {/* Column name and action buttons together */}
+      <div className=" text-xs font-medium flex items-center space-x-4">
+        {editingIndex === index ? (
+          <input
+            type="text"
+            value={tempColumnName}
+            onChange={handleChange}
+            autoFocus
+            className="border rounded px-2 py-1 w-2/3 focus:outline-none focus:border-blue-500"
+          />
+        ) : (
+          <span>{column}</span>
+        )}
+      </div>
 
-    {isInputVisible && (
-      <tr className="rounded-lg">
-        <th className="border-t border-l border-b rounded-lg border-gray-200 px-4 py-3">
+      {/* Action buttons */}
+      <div className="space-x-1">
+        {editingIndex === index ? (
+          <>
+            <button
+              className="border-green-600  text-xs hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-green-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
+              onClick={handleSave}
+            >
+              <i className="fas fa-save mr-1"></i>
+            </button>
+            <button
+              className="border-red-800 text-xs hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-red-800 transition-transform duration-200 ease-in-out transform hover:scale-110"
+              onClick={handleCancel}
+            >
+              <i className="fas fa-times "></i>
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className="border-blue-600 text-xs hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-blue-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
+              onClick={() =>
+                templateColumns.includes(column)
+                  ? toast.success("Default values cannot be Edited")
+                  : handleEdit(index)
+              }
+            >
+              <i className="fa fa-pencil-alt"></i>
+            </button>
+            <button
+              className="border-red-600 text-xs border-2 hover:text-white font-bold text-prime py-1 px-3 rounded hover:bg-red-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
+              onClick={() =>
+                templateColumns.includes(column)
+                  ? toast.success("Default values cannot be Deleted")
+                  : handleDelete(index)
+              }
+            >
+              <i className="fa fa-trash  text-xs"></i>
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  ))}
+  {isInputVisible && (
+      <div className="rounded-lg flex items-center justify-center gap-2 border text-sm border-gray-200 px-2 py-1">
           <input
             type="text"
             value={newColumnName}
             onChange={(e) => setNewColumnName(e.target.value)}
             autoFocus
             placeholder="Enter column "
-            className="border rounded placeholder:font-normal px-2 py-2 w-full focus:outline-none focus:border-blue-500"
+            className="border text-xs rounded placeholder:font-normal px-3 py-1 w-full focus:outline-none focus:border-blue-500"
           />
-        </th>
-        <td className="border-t border-b border-r rounded-lg border-gray-200 px-4 py-3">
-          <div className="flex justify-end space-x-2">
+       
+          <div className="flex justify-end text-xs space-x-1">
             <button
-              className="border-green-600 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-green-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
+              className="border-green-600 hover:text-white font-bold border-2 text-prime  px-3 rounded hover:bg-green-600 transition-transform duration-200 ease-in-out transform hover:scale-110"
               onClick={handleSaveNewColumn}
-            >
-              Save
+            ><i className="fas fa-save mr-1"></i>
+              
             </button>
             <button
-               className="border-gray-800 hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-gray-800 transition-transform duration-200 ease-in-out transform hover:scale-110"
+               className="border-gray-800 text-sm hover:text-white font-bold border-2 text-prime py-1 px-3 rounded hover:bg-gray-800 transition-transform duration-200 ease-in-out transform hover:scale-110"
                onClick={() => setIsInputVisible(false)}
             >
-              Cancel
+              <i className="fas fa-times mr-1"></i>
             </button>
           </div>
-        </td>
-      </tr>
+        </div>
     )}
+</div>
+
   </tbody>
 </table>
 

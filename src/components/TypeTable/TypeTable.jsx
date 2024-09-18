@@ -257,7 +257,7 @@ function TypeTable() {
                       />
                     </TableCell>
                     <TableCell align="center" sx={{ padding: '2px', fontSize: '12px' }}>
-                      <Link to={`/management/${group}/${type}/DESK0001`} className="text-flo hover:underline capitalize">
+                      <Link to={`/management/${group}/${type}/${row.tag}`} className="text-flo hover:underline capitalize">
                         {rowIndex + 1}
                       </Link>
                     </TableCell>
