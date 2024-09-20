@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { PieChart } from "@mui/x-charts";
-import {
-  faBell,
-  faBroom,
-  faComment,
-} from "@fortawesome/free-solid-svg-icons";
-import { baseURL } from '../../config.js';
-import Tooltip from '@mui/material/Tooltip';
+import { faBell, faBroom, faComment } from "@fortawesome/free-solid-svg-icons";
+import { baseURL } from "../../config.js";
+import Tooltip from "@mui/material/Tooltip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 
@@ -23,38 +19,40 @@ function Management() {
     const fetchData = async () => {
       try {
         const response = await fetch(`${baseURL}/backend/fetchGroup.php`);
-      
+
         if (!response.ok) {
           throw new Error(`Failed to fetch data: ${response.statusText}`);
         }
-      
+
         const data = await response.json();
         setType(data);
       } catch (error) {
         console.error("Error fetching data:", error);
         // Optionally handle the error, e.g., by setting an error state
       }
-      
     };
     fetchData();
   }, []);
   console.log(type);
 
   return (
-<div className="lg:flex h-full flex-col p-1 gap-1 w-full lg:grid-cols-2 grid-cols-1 bg-second">
-
+    <div className="lg:flex h-full flex-col p-1 gap-1 w-full lg:grid-cols-2 grid-cols-1 bg-second">
       <div className="p-4 w-full bg-box rounded-md flex flex-col">
         <div className="text-base font-medium m-2">Asset Group</div>
         <div className="flex gap-1 flex-wrap">
           {type.map(
             (item, i) =>
               item.group && (
-                <Link to={`/management/${item.group}`} key={i} className="flex-1">
+                <Link
+                  to={`/management/${item.group}`}
+                  key={i}
+                  className="flex-1"
+                >
                   <div className="m-2 group transform transition-transform duration-300 hover:scale-105 bg-second shadow-md rounded-lg p-4 flex items-center justify-center cursor-pointer">
-            <p className="font-medium text-base text-gray-700 text-center">
-              {item.group}
-            </p>
-          </div>
+                    <p className="font-medium text-base text-gray-700 text-center">
+                      {item.group}
+                    </p>
+                  </div>
                 </Link>
               )
           )}
@@ -95,10 +93,11 @@ function Management() {
               Notifications
             </p>
             <Tooltip title="Clear All">
-            <FontAwesomeIcon
-              icon={faBroom} 
-              className="cursor-pointer transition-transform duration-300 transform hover:rotate-180"
-            /></Tooltip>
+              <FontAwesomeIcon
+                icon={faBroom}
+                className="cursor-pointer transition-transform duration-300 transform hover:rotate-180"
+              />
+            </Tooltip>
           </div>
 
           <div className="scrollbar-thin p-5 mt-4 bg-second rounded-lg shadow-inner transition-transform duration-500">

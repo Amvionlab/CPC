@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { baseURL } from '../../config.js';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { baseURL } from "../../config.js";
 
 function AMC() {
   const { group, type, tag } = useParams();
@@ -15,26 +15,30 @@ function AMC() {
     const decodedType = decodeURIComponent(type);
     const decodedTag = decodeURIComponent(tag);
 
-    console.log('Decoded parameters:', { decodedGroup, decodedType, decodedTag });
+    console.log("Decoded parameters:", {
+      decodedGroup,
+      decodedType,
+      decodedTag,
+    });
 
     const url = `${baseURL}/backend/fetchDetailedView.php?group=${decodedGroup}&type=${decodedType}&tag=${decodedTag}`;
-    
-    console.log('Fetching URL:', url);
+
+    console.log("Fetching URL:", url);
 
     fetch(url)
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         return response.json();
       })
-      .then(result => {
-        console.log('Fetched data:', result);
+      .then((result) => {
+        console.log("Fetched data:", result);
         setData(result);
         setLoading(false);
       })
-      .catch(error => {
-        console.error('Error fetching data:', error);
+      .catch((error) => {
+        console.error("Error fetching data:", error);
         setError(error.toString());
         setLoading(false);
       });
@@ -49,7 +53,7 @@ function AMC() {
   }
 
   const { amc_from, amc_to, amc_interval } = data;
-  console.log('AMC Details:', { amc_from, amc_to, amc_interval });
+  console.log("AMC Details:", { amc_from, amc_to, amc_interval });
 
   const calculateIntervals = (start, end, intervalMonths) => {
     const intervals = [];
@@ -62,8 +66,8 @@ function AMC() {
     return intervals;
   };
 
-  const startDate = new Date(amc_from);  // Format: 'mm-dd-yyyy'
-  const endDate = new Date(amc_to);      // Format: 'mm-dd-yyyy'
+  const startDate = new Date(amc_from); // Format: 'mm-dd-yyyy'
+  const endDate = new Date(amc_to); // Format: 'mm-dd-yyyy'
   const currentDate = new Date();
 
   const intervals = calculateIntervals(
@@ -83,31 +87,39 @@ function AMC() {
   };
 
   return (
-    <div className='font-sui'>
+    <div className="font-sui">
       <div className="flex font-bold justify-between items-center mb-3">
-        <h1 className="text-lg">AMC Details</h1>
+        <h1 className="text-xl">AMC Details</h1>
       </div>
       <div className="grid grid-cols-4 gap-4">
         {intervals.map((interval, index) => {
           const intervalDate = interval;
-          let backgroundColor = '';
+          let backgroundColor = "";
 
           if (intervalDate < currentDate) {
-            backgroundColor = 'bg-red-200'; 
+            backgroundColor =
+              "bg-gradient-to-tl from-red-900 via-rose-800 to-gray-900";
           } else if (
             intervalDate.getFullYear() === currentDate.getFullYear() &&
             intervalDate.getMonth() === currentDate.getMonth()
           ) {
-            backgroundColor = 'bg-white'; 
+            backgroundColor = "bg-white";
           } else {
-            backgroundColor = 'bg-green-200'; 
+            backgroundColor =
+              "bg-gradient-to-tl from-emerald-900 via-teal-800 to-black";
           }
 
           return (
-            <div key={index} className={`p-4 ${backgroundColor} rounded-xl cursor-pointer`} style={{ textAlign: 'center', border: '1px solid #ccc' }}
-                 onClick={() => handleIntervalClick(intervalDate)}>
-              {intervalDate.toLocaleDateString()}<br />
-              {intervalDate.toLocaleDateString()}
+            <div
+              key={index}
+              className={`p-4 ${backgroundColor} font-raleway text-lg font-semibold 
+              hover:text-xl transition-all duration-700 text-center text-white rounded-r-2xl
+              hover:rounded-l-2xl hover:rounded-r-none
+              cursor-pointer`}
+              onClick={() => handleIntervalClick(intervalDate)}
+            >
+              <p>{intervalDate.toLocaleDateString()}</p>
+              <p>{intervalDate.toLocaleDateString()}</p>
             </div>
           );
         })}
@@ -119,7 +131,10 @@ function AMC() {
             <h2 className="text-lg font-bold">AMC Date Notes</h2>
             <p>Date: {selectedDate && selectedDate.toLocaleDateString()}</p>
             {/* Add additional content or logic here to fetch/display notes specific to the date */}
-            <button onClick={closeModal} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+            <button
+              onClick={closeModal}
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+            >
               Close
             </button>
           </div>
