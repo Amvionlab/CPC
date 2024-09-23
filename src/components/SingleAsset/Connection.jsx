@@ -1,97 +1,224 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from "react";
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TablePagination from "@mui/material/TablePagination";
+import TableRow from "@mui/material/TableRow";
 
-function AssetConnections({ assetId }) {
-  const [connectedToData, setConnectedToData] = useState([]);
-  const [connectedWithData, setConnectedWithData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+// Define columns
+const columns = [
+  { id: "name", label: "Name", minWidth: 170 },
+  { id: "code", label: "ISO Code", minWidth: 100 },
+  {
+    id: "population",
+    label: "Population",
+    minWidth: 170,
+    align: "right",
+    format: (value) => value.toLocaleString("en-US"),
+  },
+  {
+    id: "size",
+    label: "Size (km²)",
+    minWidth: 170,
+    align: "right",
+    format: (value) => value.toLocaleString("en-US"),
+  },
+  {
+    id: "density",
+    label: "Density",
+    minWidth: 170,
+    align: "right",
+    format: (value) => value.toFixed(2),
+  },
+];
 
- 
+// Function to create data rows
+function createData(name, code, population, size) {
+  const density = population / size;
+  return { name, code, population, size, density };
+}
+
+// Sample data
+const linkTo = [
+  createData("India", "IN", 1324171354, 3287263),
+  createData("China", "CN", 1403500365, 9596961),
+  createData("Italy", "IT", 60483973, 301340),
+  createData("United States", "US", 327167434, 9833520),
+  createData("Canada", "CA", 37602103, 9984670),
+  createData("Australia", "AU", 25475400, 7692024),
+  createData("Germany", "DE", 83019200, 357578),
+  createData("Ireland", "IE", 4857000, 70273),
+];
+const linkWith = [
+  createData("United States", "US", 327167434, 9833520),
+  createData("Canada", "CA", 37602103, 9984670),
+  createData("Australia", "AU", 25475400, 7692024),
+  createData("Germany", "DE", 83019200, 357578),
+  createData("Ireland", "IE", 4857000, 70273),
+];
+
+function AssetConnections() {
+  const [addLinkWith, setAddLinkWith] = useState(false);
+  const [addLinkTo, setAddLinkTo] = useState(false);
+  const [selectAsset, setSelectAsset] = useState(false);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [table, setTable] = useState("linkWith");
+  // Pagination handlers
+  const handleChangePage = (event, newPage) => setPage(newPage);
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
-    <div className="asset-connections">
-      <div className="content">
-        <h1>Asset Connections (Links)</h1>
+    <div className="asset-connections font-poppins inset-0 w-full">
+      <div className="top flex justify-between items-center">
+        <h1 className="font-semibold text-lg">Asset Connections (Links)</h1>
+        <div className="capitalize flex gap-2 font-medium">
+          <div className="p-2 bg-yellow-200 rounded-md cursor-pointer">
+            <p>Asset Details</p>
+          </div>
+          <div
+            className="p-2 bg-pink-200 rounded-md cursor-pointer"
+            onClick={() => setAddLinkTo(!addLinkTo)}
+          >
+            <p>Add Link To</p>
+          </div>
 
-        <div className="tabs">
-          <ul>
-            <li className="active"><button type="button">Link With</button></li>
-            <li><button type="button">Link To</button></li>
-          </ul>
-          
-          <div className="tab-content">
-            <div className="tab-pane active" id="tablinkwith">
-              <h2>Link With</h2>
-              <table>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Tag</th>
-                    <th>Name</th>
-                    <th>Manufacturer</th>
-                    <th>Model</th>
-                    <th>Serial Number</th>
-                    <th>Location</th>
-                    <th>Office/CTI</th>
-                    <th>Status</th>
-                    <th>Allocated User</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {connectedWithData.map((item, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{item.tag}</td>
-                      <td>{item.name}</td>
-                      <td>{item.manufacturer}</td>
-                      <td>{item.model}</td>
-                      <td>{item.serialNumber}</td>
-                      <td>{item.location}</td>
-                      <td>{item.cti}</td>
-                      <td>{item.status}</td>
-                      <td>{item.allocatedUser || 'Not Allocated'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div
+            className="p-2 bg-prime text-white rounded-md cursor-pointer"
+            onClick={() => setAddLinkWith(!addLinkWith)}
+          >
+            <p>Add Link with</p>
+          </div>
+        </div>
+      </div>
+
+      {addLinkTo && (
+        <div className="inset-0 absolute h-full w-full z-10 bg-black/30 flex justify-center items-center">
+          <div className="h-[400px] w-[700px] bg-white rounded-md relative">
+            <div
+              className="absolute top-2 right-3 p-2 cursor-pointer text-black text-xl"
+              onClick={() => setAddLinkTo(false)}
+            >
+              X
             </div>
-
-            <div className="tab-pane" id="tablinkto">
-              <h2>Link To</h2>
-              <table>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Tag</th>
-                    <th>Name</th>
-                    <th>Manufacturer</th>
-                    <th>Model</th>
-                    <th>Serial Number</th>
-                    <th>Location</th>
-                    <th>Office/CTI</th>
-                    <th>Status</th>
-                    <th>Allocated User</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {connectedToData.map((item, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{item.tag}</td>
-                      <td>{item.name}</td>
-                      <td>{item.manufacturer}</td>
-                      <td>{item.model}</td>
-                      <td>{item.serialNumber}</td>
-                      <td>{item.location}</td>
-                      <td>{item.cti}</td>
-                      <td>{item.status}</td>
-                      <td>{item.allocatedUser || 'Not Allocated'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="p-5">
+              <div
+                onClick={() => setSelectAsset(true)}
+                className="cursor-pointer"
+              >
+                Select Asset
+              </div>
             </div>
           </div>
         </div>
+      )}
+
+      {selectAsset && (
+        <div className="inset-0 absolute h-full w-full bg-black/30 flex z-20 justify-center items-center">
+          <div className="h-[300px] w-[600px] bg-white rounded-md relative">
+            <div
+              className="absolute top-2 right-3 p-2 text-black text-xl cursor-pointer"
+              onClick={() => setSelectAsset(false)}
+            >
+              X
+            </div>
+          </div>
+        </div>
+      )}
+
+      {addLinkWith && (
+        <div className="inset-0 absolute h-full w-full z-10 bg-black/30 flex justify-center items-center">
+          <div className="h-[400px] w-[700px] bg-white rounded-md relative">
+            <div
+              className="absolute top-2 right-3 p-2 text-black text-xl cursor-pointer"
+              onClick={() => setAddLinkWith(false)}
+            >
+              X
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="mt-5 flex gap-5 capitalize font-medium mb-2">
+        <div
+          className={`px-4 p-2 bg-prime text-white rounded-md ${
+            table == "linkWith"
+              ? "bg-prime text-white "
+              : "bg-black/70 text-white "
+          }`}
+          onClick={() => setTable("linkWith")}
+        >
+          <p className="cursor-pointer">Link With</p>
+        </div>
+        <div
+          className={`px-4 p-2 bg-prime text-white rounded-md ${
+            table == "linkTo"
+              ? "bg-prime text-white "
+              : "bg-black/70 text-white "
+          }`}
+          onClick={() => setTable("linkTo")}
+        >
+          <p className="cursor-pointer">Link To</p>
+        </div>
+      </div>
+      <div>
+        <Paper sx={{ width: "100%", overflow: "hidden" }}>
+          <TableContainer sx={{ maxHeight: 300 }}>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  {columns.map((column) => (
+                    <TableCell
+                      key={column.id}
+                      align={column.align}
+                      style={{ minWidth: column.minWidth }}
+                    >
+                      {column.label}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {(table == "linkWith" ? linkWith : linkTo)
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => (
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={row.code}
+                    >
+                      {columns.map((column) => {
+                        const value = row[column.id];
+                        return (
+                          <TableCell key={column.id} align={column.align}>
+                            {column.format && typeof value === "number"
+                              ? column.format(value)
+                              : value}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 100]}
+            component="div"
+            count={table === "linkWith" ? linkWith.length : linkTo.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Paper>
       </div>
     </div>
   );
