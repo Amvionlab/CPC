@@ -49,9 +49,6 @@ function PAB() {
      <div className="flex font-bold justify-between items-center mb-3">
         <h1 className="text-lg ">Planning & Budget</h1>
       </div>
-
-
-
       
         <div className='text-center'>
         <i className="fa fa-user text-5xl" ></i>
