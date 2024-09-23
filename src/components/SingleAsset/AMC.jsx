@@ -91,14 +91,14 @@ function AMC() {
       <div className="flex font-bold justify-between items-center mb-3">
         <h1 className="text-xl">AMC Details</h1>
       </div>
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-4 gap-x-12 gap-y-4 p-4">
         {intervals.map((interval, index) => {
           const intervalDate = interval;
           let backgroundColor = "";
 
           if (intervalDate < currentDate) {
             backgroundColor =
-              "bg-gradient-to-tl from-red-900 via-rose-800 to-gray-900";
+              "bg-red-200 hover:bg-red-300";
           } else if (
             intervalDate.getFullYear() === currentDate.getFullYear() &&
             intervalDate.getMonth() === currentDate.getMonth()
@@ -106,15 +106,15 @@ function AMC() {
             backgroundColor = "bg-white";
           } else {
             backgroundColor =
-              "bg-gradient-to-tl from-emerald-900 via-teal-800 to-black";
+              "bg-green-200 hover:bg-green-300";
           }
 
           return (
             <div
               key={index}
-              className={`p-4 ${backgroundColor} font-raleway text-lg font-semibold 
-              hover:text-xl transition-all duration-700 text-center text-white rounded-r-2xl
-              hover:rounded-l-2xl hover:rounded-r-none
+              className={`p-4 ${backgroundColor} text-sm font-semibold shadow-sm
+              hover:text-sm transition-all duration-700 text-center rounded-lg
+              hover:rounded-3xl 
               cursor-pointer`}
               onClick={() => handleIntervalClick(intervalDate)}
             >
