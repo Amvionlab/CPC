@@ -45,9 +45,9 @@ function Log() {
  {timelineData.map((item, index) => (
 
 <div>
-  <div className='flex gap-8 p-3 text-xs'>
-<span className='p-2 border-prime border-2 rounded-tl-md rounded-br-md flex items-center justify-center w-16 max-w-16'>{index + 1}</span>
-<span className='flex gap-2 border-prime border-2 rounded-tl-md rounded-br-md p-2 shadow-md w-64 max-w-64'><MdDateRange size={16}/>{item.post_date}</span>
+  <div className='flex gap-8 p-3 text-xs text-flo'>
+<span className='p-2 border-prime border-2 rounded-tl-md rounded-br-md flex items-center justify-center font-semibold w-16 max-w-16'>{index + 1}</span>
+<span className='flex gap-2 border-prime border-2 rounded-tl-md rounded-br-md p-2 shadow-md w-64 font-semibold max-w-64'><MdDateRange size={16}/>{item.post_date}</span>
 <span className='flex gap-2 border-prime border-2 shadow-md rounded-tl-lg rounded-br-md p-2 w-full font-semibold'><MdTaskAlt size={20}/>{item.log}</span>
 </div>
 
