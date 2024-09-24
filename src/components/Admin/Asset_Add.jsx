@@ -309,17 +309,17 @@ const handleRowsPerPageChange = (e) => {
   return (
     <div className="bg-second  w-full h-full text-xs mx-auto p-1 lg:overflow-y-hidden ticket-scroll">
      
-        <div className="w-full h-full p-2 bg-box rounded-lg font-mont " >
+        <div className="w-full h-full p-2 bg-box rounded-lg  " >
           <div className="ticket-table mt-2">
             <form onSubmit={handleSubmit} className="space-y-4 text-label">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-                <div className="font-mont font-semibold text-2xl mb-4">
+                <div className="font-semibold text-2xl mb-4">
                   Asset Details:
                 </div>
               </div>
 
               {/* Additional Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-3  ml-10 pr-10 mb-0">
               <div className="flex items-center mb-2 mr-4">
     <label className="text-sm font-semibold text-prime mr-2 w-32">
         Group
@@ -328,7 +328,7 @@ const handleRowsPerPageChange = (e) => {
         name="group"
         value={formData.group}
         onChange={handleChange}  // Attach the updated handleChange function here
-        className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+        className="flex-grow text-xs border p-2  rounded-md outline-none transition ease-in-out delay-150 focus:shadow-sm"
     >
         <option value="">Select Group</option>
         {groups
@@ -349,8 +349,8 @@ const handleRowsPerPageChange = (e) => {
                     name="type"
                     value={formData.type}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                >
+                    className="flex-grow text-xs border p-2  rounded-md outline-none transition ease-in-out delay-150 focus:shadow-sm"
+   >
                     <option value="select">Select Type</option>
                     {filteredTypes
                     .map((type) => (
@@ -372,7 +372,7 @@ const handleRowsPerPageChange = (e) => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150 focus:shadow-sm"
                   />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
@@ -386,7 +386,7 @@ const handleRowsPerPageChange = (e) => {
                     value={formData.manufacturer}
                     onChange={handleChange}
                     required
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
                   />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
@@ -400,7 +400,7 @@ const handleRowsPerPageChange = (e) => {
                     value={formData.model}
                     onChange={handleChange}
                     required
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
                   />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
@@ -414,7 +414,7 @@ const handleRowsPerPageChange = (e) => {
                     value={formData.serial_number}
                     onChange={handleChange}
                     required
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
                   />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
@@ -425,8 +425,8 @@ const handleRowsPerPageChange = (e) => {
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                >
+                    className="flex-grow text-xs border p-2  rounded-md outline-none transition ease-in-out delay-150 focus:shadow-sm"
+                    >
                     <option value="">Select Location</option>
                     {locations
                     .filter(location => location.name) // Ensure that only locations with a name are shown
@@ -447,7 +447,7 @@ const handleRowsPerPageChange = (e) => {
                     placeholder="Enter User Name"
                     value={formData.user_name}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
                   />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
@@ -460,7 +460,7 @@ const handleRowsPerPageChange = (e) => {
                     placeholder="Enter Asset Value"
                     value={formData.asset_value}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
                 />
                 </div>
 
@@ -475,7 +475,7 @@ const handleRowsPerPageChange = (e) => {
                     value={formData.vendor_name}
                     onChange={handleChange}
                     required
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
                   />
                 </div>
                
@@ -489,7 +489,7 @@ const handleRowsPerPageChange = (e) => {
                     placeholder="Enter Purchase Date"
                     value={formData.purchase_date}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
                   />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
@@ -502,7 +502,7 @@ const handleRowsPerPageChange = (e) => {
                     placeholder="Enter PO Number"
                     value={formData.po_number}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
                   />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
@@ -515,7 +515,7 @@ const handleRowsPerPageChange = (e) => {
                     placeholder="Enter Amc From Date"
                     value={formData.amc_from}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
                   />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
@@ -528,7 +528,7 @@ const handleRowsPerPageChange = (e) => {
                     placeholder="Enter AMC To Date"
                     value={formData.amc_to}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
                   />
                 </div>  
                 <div className="flex items-center mb-2 mr-4">
@@ -541,7 +541,7 @@ const handleRowsPerPageChange = (e) => {
                     placeholder="Enter AMC Interval Date"
                     value={formData.amc_interval}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
                   />
                 </div> 
                 <div className="flex items-center mb-2 mr-4">
@@ -554,7 +554,7 @@ const handleRowsPerPageChange = (e) => {
                     placeholder="Enter Last AMC Date"
                     value={formData.last_amc}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
                   />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
@@ -567,7 +567,7 @@ const handleRowsPerPageChange = (e) => {
                     placeholder="Enter Procure By Date"
                     value={formData.procure_by}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
                   />
                 </div>  
                 <div className="flex items-center mb-2 mr-4">
@@ -580,12 +580,12 @@ const handleRowsPerPageChange = (e) => {
                     placeholder="Enter Warranty Upto Date"
                     value={formData.warranty_upto}
                     onChange={handleChange}
-                    className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
                   />
                 </div>  
                 
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-3 ml-10 pr-10 mb-0">
     {dynamicFields.map((field, index) => (
         <div key={field || index} className="flex items-center mb-2 mr-4">
             <label className="capitalize text-sm font-semibold text-prime mr-2 w-32">
@@ -597,7 +597,7 @@ const handleRowsPerPageChange = (e) => {
                 placeholder={`Enter ${field.replace('_', ' ')}`}
                 value={formData[field]}
                 onChange={handleChange}
-                className="flex-grow text-xs bg-second border p-2 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
             />
         </div>
     ))}
@@ -605,7 +605,7 @@ const handleRowsPerPageChange = (e) => {
               <div className="flex justify-center">
                 <button
                   type="submit"
-                  className="mt-1 bg-prime font-mont font-semibold text-lg text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
+                  className="mt-1 bg-prime font-semibold text-lg text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
                 >
                   Submit
                 </button>
