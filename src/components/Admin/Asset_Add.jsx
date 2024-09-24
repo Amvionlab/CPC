@@ -307,7 +307,7 @@ const handleRowsPerPageChange = (e) => {
   }, [filters, users]);
 
   return (
-    <div className="bg-second w-full h-full text-xs mx-auto p-1 lg:overflow-y-hidden ticket-scroll">
+    <div className="bg-second  w-full h-full text-xs mx-auto p-1 lg:overflow-y-hidden ticket-scroll">
      
         <div className="w-full h-full p-2 bg-box rounded-lg font-mont " >
           <div className="ticket-table mt-2">
