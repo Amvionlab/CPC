@@ -168,8 +168,8 @@ function AssetConnections() {
         </div>
       </div>
       <div>
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
-          <TableContainer sx={{ maxHeight: 300 }}>
+        <Paper sx={{ width: "100%", overflow: "hidden", p: 0 }}>
+          <TableContainer sx={{ maxHeight: 300, p: 0 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
@@ -177,7 +177,7 @@ function AssetConnections() {
                     <TableCell
                       key={column.id}
                       align={column.align}
-                      style={{ minWidth: column.minWidth }}
+                      style={{ minWidth: column.minWidth, padding: "8px" }} // Decreased padding
                     >
                       {column.label}
                     </TableCell>
@@ -185,7 +185,7 @@ function AssetConnections() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {(table == "linkWith" ? linkWith : linkTo)
+                {(table === "linkWith" ? linkWith : linkTo)
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
                     <TableRow
@@ -197,7 +197,13 @@ function AssetConnections() {
                       {columns.map((column) => {
                         const value = row[column.id];
                         return (
-                          <TableCell key={column.id} align={column.align}>
+                          <TableCell
+                            key={column.id}
+                            align={column.align}
+                            style={{ padding: "8px" }}
+                          >
+                            {" "}
+                            {/* Decreased padding */}
                             {column.format && typeof value === "number"
                               ? column.format(value)
                               : value}
@@ -217,6 +223,7 @@ function AssetConnections() {
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+            sx={{ padding: "0 16px" }} // Adjusted padding
           />
         </Paper>
       </div>

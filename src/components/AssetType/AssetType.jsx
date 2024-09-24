@@ -3,13 +3,9 @@ import { baseURL } from "../../config.js";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
-import {
-  faBell,
-  faBroom,
-  faComment,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBell, faBroom, faComment } from "@fortawesome/free-solid-svg-icons";
 
-import Tooltip from '@mui/material/Tooltip';
+import Tooltip from "@mui/material/Tooltip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const AssetType = () => {
@@ -27,13 +23,16 @@ const AssetType = () => {
 
   return (
     <div className="lg:flex h-full flex-col p-1 gap-1 w-full lg:grid-cols-2 grid-cols-1 bg-second">
-     <div className="p-4 w-full bg-box rounded-md flex flex-col">
+      <div className="p-4 w-full bg-box rounded-md flex flex-col">
         <div className="text-base font-medium m-2">
+          <Link className="hover:underline" to="/management">
+            Asset Group{" "}
+          </Link>
           <Link
             className="text-prime hover:underline"
             to={`/management/${group}`}
           >
-            {group}
+            /{group}
           </Link>
           &nbsp;/ Asset Type
         </div>
@@ -42,18 +41,20 @@ const AssetType = () => {
           {filteredData.map(
             (item, i) =>
               item.group && (
-                <Link to={`/management/${item.group}/${item.type}`} key={i} className="flex-1">
-                  <div className="m-2 group transform transition-transform duration-300 hover:scale-105 bg-second shadow-md rounded-lg p-4 flex items-center justify-center cursor-pointer">
-            <p className="font-medium text-base text-gray-700 text-center">
-            {item.type}
-            </p>
-          </div>
+                <Link
+                  to={`/management/${item.group}/${item.type}`}
+                  key={i}
+                  className="flex-1"
+                >
+                  <div className="m-2 group transform transition-transform duration-300 hover:scale-105 bg-prime shadow-md rounded-lg p-4 flex items-center justify-center cursor-pointer">
+                    <p className="font-medium text-base text-white text-center">
+                      {item.type}
+                    </p>
+                  </div>
                 </Link>
               )
           )}
         </div>
-
-       
       </div>
 
       <div className="flex gap-1">
@@ -89,10 +90,11 @@ const AssetType = () => {
               Notifications
             </p>
             <Tooltip title="Clear All">
-            <FontAwesomeIcon
-              icon={faBroom} 
-              className="cursor-pointer transition-transform duration-300 transform hover:rotate-180"
-            /></Tooltip>
+              <FontAwesomeIcon
+                icon={faBroom}
+                className="cursor-pointer transition-transform duration-300 transform hover:rotate-180"
+              />
+            </Tooltip>
           </div>
 
           <div className="scrollbar-thin p-5 mt-4 bg-second rounded-lg shadow-inner transition-transform duration-500">
