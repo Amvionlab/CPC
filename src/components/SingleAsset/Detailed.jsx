@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { baseURL } from '../../config.js';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { baseURL } from "../../config.js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 function Detailed() {
   const { group, type, tag } = useParams();
@@ -14,22 +14,22 @@ function Detailed() {
     const decodedGroup = decodeURIComponent(group);
     const decodedType = decodeURIComponent(type);
     const decodedTag = decodeURIComponent(tag);
-    
+
     const url = `${baseURL}/backend/fetchDetailedView.php?group=${decodedGroup}&type=${decodedType}&tag=${decodedTag}`;
-    
+
     fetch(url)
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         return response.json();
       })
-      .then(result => {
+      .then((result) => {
         setData(result);
         setLoading(false);
       })
-      .catch(error => {
-        console.error('Error fetching data:', error);
+      .catch((error) => {
+        console.error("Error fetching data:", error);
         setError(error.toString());
         setLoading(false);
       });
@@ -45,28 +45,34 @@ function Detailed() {
 
   const displayData = (dataObj) => {
     return Object.entries(dataObj)
-      .filter(([key]) => key !== 'id' && key !== 'is_active' && key !== 'post_date')
+      .filter(
+        ([key]) => key !== "id" && key !== "is_active" && key !== "post_date"
+      )
       .map(([key, value]) => (
-        <div key={key} className=" p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex flex-col ">
-          <div className='p-3 border-r border-b border-l border-gray-300 hover:border-flo rounded-full transition-transform transform hover:scale-125 hover:z-10'>
-             <h3 className="text-sm font-bold text-flo capitalize">{key.replace(/_/g, ' ')}</h3>
-              <p className="text-xs text-gray-500 font-semibold m-1 text-center">
-                {value}
-              </p>
-              </div>
+        <div
+          key={key}
+          className=" p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex flex-col "
+        >
+          <div className="p-2 border shadow-lg cursor-pointer border-gray-300 hover:border-flo rounded-md transition-transform hover:border transform hover:scale-95 ">
+            <h3 className="text-sm font-bold text-prime capitalize text-center">
+              {key.replace(/_/g, " ")}
+            </h3>
+            <p className="text-xs text-gray-500 font-bold m-1 text-center">
+              {value}
+            </p>
+          </div>
         </div>
       ));
   };
 
   return (
-    <div className='font-sui'>
-     <div className="flex font-bold justify-between items-center mb-3">
+    <div className="font-sui">
+      <div className="flex font-bold justify-between items-center mb-3">
         <h1 className="text-lg ">Detailed View</h1>
-        <button className="flex text-xs items-center px-3 py-1 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110">
-  <FontAwesomeIcon icon={faEdit} className="mr-2" />
-  Edit
-</button>
-
+        <button className="flex text-xs items-center px-3 py-1 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-">
+          <FontAwesomeIcon icon={faEdit} className="mr-2" />
+          Edit
+        </button>
       </div>
 
       {data ? (
@@ -78,9 +84,7 @@ function Detailed() {
               </div>
             ))
           ) : (
-            <div className="flex flex-wrap w-full">
-              {displayData(data)}
-            </div>
+            <div className="flex flex-wrap w-full">{displayData(data)}</div>
           )}
         </div>
       ) : (
