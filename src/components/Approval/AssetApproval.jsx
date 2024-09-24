@@ -180,9 +180,83 @@ function TypeTable() {
                     onChange={handleSelectAllClick}
                   />
                 </TableCell>
+                
+                
+
                 <TableCell align="center" style={{ minWidth: 50, fontWeight: "bold" }}>
                   <button onClick={() => handleRequestSort('id')}>ID</button>
                 </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 50, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('tag')}>Tag</button>
+                </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 50, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('name')}>Name</button>
+                </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 50, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('manufacturer')}>Manufacturer</button>
+                </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 50, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('model')}>Model</button>
+                </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 125, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('serial_number')}>Serial Number</button>
+                </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 50, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('location')}>Location</button>
+                </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 125, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('user_name')}>User Name</button>
+                </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 125, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('asset_value')}>Asset Value</button>
+                </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 125, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('vendor_name')}>Vendor Name</button>
+                </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 130, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('purchase_date')}>Purchase Date</button>
+                </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 125, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('po_number')}>Po Number</button>
+                </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 100, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('amc_from')}>Amc From</button>
+                </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 100, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('amc_to')}>Amc To </button>
+                </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 120, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('amc_interval')}>Amc Interval </button>
+                </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 125, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('last_amc')}>Last Amc </button>
+                </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 125, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('procure_by')}>Procure By</button>
+                </TableCell>
+
+                <TableCell align="center" style={{ minWidth: 125, fontWeight: "bold" }}>
+                  <button onClick={() => handleRequestSort('warranty_upto')}>Warranty Upto</button>
+                </TableCell>
+
+
+
                 {columnsToShow.map((column, index) => (
                   <TableCell
                     className="capitalize text-nowrap"
