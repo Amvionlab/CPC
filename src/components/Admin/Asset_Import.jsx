@@ -203,13 +203,25 @@ const Form = () => {
     const handleOpenDialog = () => {
         setIsDialogOpen(true);
     };
-
+  
+    const handleImportClick = () => {
+        navigate('/setup/asset_add');
+      };
     return (
-
-        <div className="flex h-full bg-second overflow-hidden gap-1 p-1">
+        <div className="bg-box h-full p-3">
+<div className="flex font-bold justify-between items-center mb-3 p-3 ">
+      <h1 className="text-lg">Bulk Asset Import</h1>
+      <button
+        onClick={handleImportClick}
+        className="flex text-xs items-center px-3 py-1 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110"
+      >
+         Single Asset Add +
+      </button>
+    </div>
+        <div className="flex bg-box overflow-hidden gap-4 p-3">
         {/* Column 1: Group Buttons */}
         <div className="w-1/2 bg-box rounded-lg h-full overflow-y-auto flex flex-col justify-center items-center">
-            <h2 className="font-bold text-lg mb-2">Select Group</h2>
+            <h2 className="font-bold text-md mb-2">Select Group</h2>
             <div className="flex flex-col items-center w-full">
                 {groups.map((group) => (
                     <button
@@ -225,7 +237,7 @@ const Form = () => {
     
         {/* Column 2: Type Buttons */}
         <div className="w-1/2 bg-box rounded-lg h-full overflow-y-auto flex flex-col justify-center items-center">
-            <h2 className="font-bold text-lg mb-2">Select Type</h2>
+            <h2 className="font-bold text-md mb-2">Select Type</h2>
             {formData.group ? (
                 <div className="flex flex-col items-center w-full">
                     {filteredTypes.map((type) => (
@@ -239,13 +251,13 @@ const Form = () => {
                     ))}
                 </div>
             ) : (
-                <p>Please select a group to view types.</p>
+                <p>Select group to view types</p>
             )}
         </div>
     
         {/* Column 3: Template and Submit */}
         <div className="w-full bg-box rounded-lg h-full overflow-y-auto flex flex-col justify-center items-center">
-            <h2 className="font-bold text-lg mb-2">Template Import</h2>
+            <h2 className="font-bold text-md mb-2">Template Import</h2>
             {formData.type ? (
                 <>
                     <div className="mb-4">
@@ -333,7 +345,7 @@ const Form = () => {
             </div>
         )}
     </div>
-    
+    </div>
 
     );
 };

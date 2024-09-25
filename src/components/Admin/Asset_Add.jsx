@@ -2,14 +2,9 @@ import React, { useState, useEffect, useContext } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from '../../config.js';
-import { FaFilter } from "react-icons/fa";
-import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-
-import ReactPaginate from 'react-paginate';
-import html2canvas from 'html2canvas';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { UserContext } from '../UserContext/UserContext';
-import { ConstructionOutlined } from "@mui/icons-material";
 
 const Form = () => {
     const [formData, setFormData] = useState({
@@ -54,6 +49,10 @@ const Form = () => {
     name : false,
     lastname: false,
   });
+  
+  const handleImportClick = () => {
+    navigate('/setup/asset_import');
+  };
 
   const [showForm, setShowForm] = useState(false);
   const [Access, setAccess] = useState([]);
@@ -309,15 +308,19 @@ const handleRowsPerPageChange = (e) => {
   return (
     <div className="bg-second  w-full h-full text-xs mx-auto p-1 lg:overflow-y-hidden ticket-scroll">
      
-        <div className="w-full h-full p-2 bg-box rounded-lg  " >
+        <div className="w-full h-full p-2 bg-box rounded-lg " >
+        <div className="flex font-bold justify-between items-center mb-3 p-3">
+      <h1 className="text-lg">Single Asset Add</h1>
+      <button
+        onClick={handleImportClick}
+        className="flex text-xs items-center px-3 py-1 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110"
+      >
+        <FontAwesomeIcon icon={faDownload} className="mr-2" />
+        Bulk Import
+      </button>
+    </div>
           <div className="ticket-table mt-2">
             <form onSubmit={handleSubmit} className="space-y-4 text-label">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-                <div className="font-semibold text-2xl mb-4">
-                  Asset Details:
-                </div>
-              </div>
-
               {/* Additional Fields */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-3  ml-10 pr-10 mb-0">
               <div className="flex items-center mb-2 mr-4">

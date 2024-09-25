@@ -28,9 +28,8 @@ function Setup() {
     ASSET: [
       { title: "Group", sub: "Asset Group", icon: <DevicesIcon />, path: "/setup/group" },
       { title: "Type", sub: "Asset Type and detail", icon: <CategoryIcon />, path: "/setup/type" },
-      { title: "Asset Add", sub: "Single Asset Add", icon: <AddBoxIcon />, path: "/setup/asset_add" },
-      { title: "Asset Import", sub: "Multiple Asset Import", icon: <FileUploadIcon />, path: "/setup/asset_import" }
-    ],
+      { title: "Asset Add", sub: "Single Asset Add", icon: <FileUploadIcon />, path: "/setup/asset_add" },
+      ],
     BASIC: [
       { title: "Employee", sub: "Employee's Name and Details", icon: <PeopleIcon />, path: "/setup/employee" },
       { title: "Vendor", sub: "Vendor's Name and Details", icon: <BusinessIcon />, path: "/setup/vendor" },
