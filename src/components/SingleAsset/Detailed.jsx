@@ -53,11 +53,11 @@ function Detailed() {
           key={key}
           className=" p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex flex-col "
         >
-          <div className="p-2 border shadow-lg cursor-pointer border-gray-300 hover:border-flo rounded-md transition-transform hover:border transform hover:scale-95 ">
+          <div className="p-2 shadow cursor-pointer border hover:border-flo rounded-md transition-transform hover:border transform hover:scale-95 ">
             <h3 className="text-sm font-bold text-prime capitalize text-center">
               {key.replace(/_/g, " ")}
             </h3>
-            <p className="text-xs text-gray-500 font-bold m-1 text-center">
+            <p className="text-xs text-flo font-semibold m-1 text-center">
               {value}
             </p>
           </div>

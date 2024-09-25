@@ -100,11 +100,11 @@ function Management() {
             </Tooltip>
           </div>
 
-          <div className="scrollbar-thin p-5 mt-4 bg-second rounded-lg shadow-inner transition-transform duration-500">
-            {[...Array(5)].map((_, i) => (
+          <div className="scrollbar-thin p-4 mt-1 bg-box rounded-lg  transition-transform duration-500">
+            {[...Array(6)].map((_, i) => (
               <div
                 key={i}
-                className="flex items-center p-3 mb-2 bg-white border-b border-gray-300 rounded-md shadow-sm hover:bg-gray-100 transition duration-300"
+                className="flex text-xs items-center p-3 mb-2 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 transition duration-300"
               >
                 <FontAwesomeIcon
                   icon={faComment}
