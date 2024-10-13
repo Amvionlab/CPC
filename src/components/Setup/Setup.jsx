@@ -20,9 +20,8 @@ function Setup() {
   const topics = {
     MAIN: [
       { title: "Access Matrix", sub: "User's Access Matrix", icon: <SecurityIcon />, path: "/setup/access" },
-      { title: "Location", sub: "Location Name", icon: <PinDropIcon />, path: "/setup/location" },
+      { title: "Location", sub: "Location Name", icon: <LanguageIcon />, path: "/setup/location" },
       { title: "Template", sub: "Template for Asset Types", icon: <TemplateIcon />, path: "/setup/template" },
-      { title: "IP Details", sub: "IP details ( range )", icon: <LanguageIcon />, path: "/setup/ip_address" },
       { title: "User", sub: "Software Users", icon: <PersonIcon />, path: "/setup/user" },
     ],
     ASSET: [

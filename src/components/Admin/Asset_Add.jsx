@@ -313,7 +313,7 @@ const handleRowsPerPageChange = (e) => {
       <h1 className="text-lg">Single Asset Add</h1>
       <button
         onClick={handleImportClick}
-        className="flex text-xs items-center px-3 py-1 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110"
+        className="flex text-xs items-center px-3 py-2 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110"
       >
         <FontAwesomeIcon icon={faDownload} className="mr-2" />
         Bulk Import

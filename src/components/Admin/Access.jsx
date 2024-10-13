@@ -7,7 +7,7 @@ import "./Access.css";
 const Form = () => {
   const { user } = useContext(UserContext);
   const [users, setUsers] = useState([]);
-
+  console.log(user);
   useEffect(() => {
     const fetchData = async () => {
       try {

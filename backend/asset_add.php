@@ -74,7 +74,7 @@ if ($result->num_rows > 0) {
     // Build the dynamic SQL insert statement
     $columns = array_merge([
         'name', 'manufacturer', 'model', 'serial_number', 'location', 
-        'user_name', 'asset_value', 'vendor_name', 'purchase_date', 
+        'user_id', 'asset_value', 'vendor_name', 'purchase_date', 
         'po_number', 'amc_from', 'amc_to', 'amc_interval', 'last_amc', 
         'procure_by', 'warranty_upto', 'post_date', 'is_active'
     ], array_keys($extra_data));
@@ -120,7 +120,41 @@ if ($result->num_rows > 0) {
             $update_stmt->bind_param("si", $tagged_value, $inserted_id);
 
             if ($update_stmt->execute()) {
-                echo json_encode(["message" => "Asset added successfully with tag."]);
+                // Prepare to insert into unapproved_assets
+                $unapproved_columns = [
+                    'tag', 'name', 'manufacturer', 'model', 'serial_number', 'location',
+                    'user_id', 'asset_value', 'vendor_name', 'purchase_date',
+                    'po_number', 'amc_from', 'amc_to', 'amc_interval', 'last_amc',
+                    'procure_by', 'warranty_upto', 'type', 'is_active'
+                ];
+
+                // Assuming unapproved_assets needs similar information plus 'type'
+                $unapproved_values = [
+                    $tagged_value, $name, $manufacturer, $model, $serial_number, $location,
+                    $user_name, $asset_value, $vendor_name, $purchase_date,
+                    $po_number, $amc_from, $amc_to, $amc_interval, $last_amc,
+                    $procure_by, $warranty_upto, $type, 1
+                ];
+
+                $unapproved_placeholders = implode(', ', array_fill(0, count($unapproved_columns), '?'));
+                $unapproved_column_names = implode(', ', $unapproved_columns);
+
+                $unapproved_sql = "INSERT INTO unapproved_assets ($unapproved_column_names) VALUES ($unapproved_placeholders)";
+                $unapproved_stmt = $conn->prepare($unapproved_sql);
+                
+                if (!$unapproved_stmt) {
+                    echo json_encode(['message' => 'Error preparing unapproved_assets insert statement']);
+                    exit;
+                }
+                
+                $unapproved_types = str_repeat('s', count($unapproved_values));
+                $unapproved_stmt->bind_param($unapproved_types, ...$unapproved_values);
+
+                if ($unapproved_stmt->execute()) {
+                    echo json_encode(["message" => "Asset added successfully with tag and copied to unapproved assets."]);
+                } else {
+                    echo json_encode(["message" => "Error inserting into unapproved assets: " . $unapproved_stmt->error]);
+                }
             } else {
                 echo json_encode(["message" => "Error updating tag: " . $update_stmt->error]);
             }

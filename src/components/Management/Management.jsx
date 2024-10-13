@@ -39,7 +39,7 @@ function Management() {
     <div className="lg:flex h-full flex-col p-1 gap-1 w-full lg:grid-cols-2 grid-cols-1 bg-second">
       <div className="p-4 w-full bg-box rounded-md flex flex-col">
         <div className="text-lg font-bold m-2">Asset Group</div>
-        <div className="flex gap-1 flex-wrap">
+        <div className="flex gap-2 flex-wrap">
           {type.map(
             (item, i) =>
               item.group && (
@@ -48,8 +48,8 @@ function Management() {
                   key={i}
                   className="flex-1"
                 >
-                  <div className="m-2 group transform transition-transform duration-300 hover:scale-105 bg-prime shadow-md rounded-lg p-4 flex items-center justify-center cursor-pointer">
-                    <p className="font-medium text-base text-white text-center">
+                  <div className="m-2 group transform transition-transform duration-300 hover:scale-105 border-2 rounded-lg p-4 flex items-center justify-center cursor-pointer">
+                    <p className="font-medium text-base text-prime text-center">
                       {item.group}
                     </p>
                   </div>

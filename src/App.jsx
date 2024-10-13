@@ -132,13 +132,10 @@ function App() {
                       <Route path="*" element={<Navigate to="/dashboard" />} />
                     )}
 
-                    <>
-                      <Route path="/setup/user" element={<User />} />
-                      <Route path="/admin/customer" element={<Customer />} />
-                      <Route path="/setup/access" element={<Access />} />
-                      <Route path="/management" element={<Management />} />
-                      <Route path="/setup" element={<Setup />} />
-                      <Route
+                    {user && user.dashboard === "1" && (
+                      <>
+                    <Route path="/management" element={<Management />} />
+                    <Route
                         path="/management/:group"
                         element={<AssetType />}
                       />
@@ -150,34 +147,21 @@ function App() {
                         path="/management/:group/:type/:tag"
                         element={<SingleAsset />}
                       />
+                      </>
+                    )}
+                    {user && user.add === "1" && (
                       <Route
                         path="/approval"
                         element={<Approval />}
-                      />
-                      <Route
-                        path="/admin/department"
-                        element={<Department />}
-                      />
-                      <Route path="/admin/sla" element={<Sla />} />
-                      <Route path="/admin/domain" element={<Domain />} />
-                      <Route path="/admin/location" element={<Location />} />
-                      <Route
-                        path="/admin/ticket_status"
-                        element={<Ticket_status />}
-                      />
-                      <Route
-                        path="/admin/ticket_service"
-                        element={<Ticket_service />}
-                      />
-                      <Route
-                        path="/admin/ticket_type"
-                        element={<Ticket_type />}
-                      />
-                      <Route
-                        path="/admin/ticket_noc"
-                        element={<Ticket_noc />}
-                      />
-                      <Route path="/admin/subdomain" element={<SubDomain />} />
+                      />  
+                    )}
+
+{user && user.setup === "1" && ( 
+
+                    <>
+                      <Route path="/setup/user" element={<User />} />
+                     <Route path="/setup/access" element={<Access />} />  
+                      <Route path="/setup" element={<Setup />} /> 
                       <Route path="/Setup/location" element={<Location />} />
                       <Route path="/Setup/group" element={<Group />} />
                       <Route path="/Setup/type" element={<Type />} />
@@ -192,6 +176,7 @@ function App() {
                       <Route path="/Setup/asset_add" element={<Asset_Add />} />
                       <Route path="/Setup/asset_import" element={<Asset_Import />} />
                     </>
+)}
                   </Routes>
                 </TicketProvider>
               </div>

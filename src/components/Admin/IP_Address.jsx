@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { baseURL } from '../../config.js';
 import { FaFilter } from "react-icons/fa";
 import * as XLSX from 'xlsx';
+import { useNavigate } from "react-router-dom";
 import jsPDF from 'jspdf';
 import ReactPaginate from 'react-paginate';
 import html2canvas from 'html2canvas';
@@ -15,6 +16,7 @@ const Form = () => {
     to_ip: ''
   });
   const { user } = useContext(UserContext);
+  const navigate = useNavigate();
   const [locations, setLocations] = useState([]);
   const [ipDetails, setIpDetails] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -43,7 +45,9 @@ const Form = () => {
     const location = locations.find((loc) => loc.id === locationId);
     return location ? location.name : 'Unknown';
   };
-
+  const handleImportClick = () => {
+    navigate('/setup/location');
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -259,6 +263,15 @@ const Form = () => {
               <button onClick={exportExcel} className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none">Excel</button>
               <button onClick={exportPDF} className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none">PDF</button>
             </span>
+
+            <button
+        onClick={handleImportClick}
+        className="flex text-xs items-center px-3 py-2 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110"
+      >
+       
+        Location
+      </button>
+
           </h3>
 
           <table className="min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">

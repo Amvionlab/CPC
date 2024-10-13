@@ -13,6 +13,7 @@ import TablePagination from "@mui/material/TablePagination";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { baseURL } from "../../config.js";
+import Barcode from "react-barcode"; // Ensure Barcode import
 
 function TypeTable() {
   const { type, group } = useParams();
@@ -122,6 +123,14 @@ function TypeTable() {
     setSelectedRows(newSelecteds);
   };
 
+  const toggleRowSelection = (rowIndex) => {
+    setSelectedRows(prev => 
+      prev.includes(rowIndex)
+        ? prev.filter(id => id !== rowIndex)
+        : [...prev, rowIndex]
+    );
+  };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
     setSelectedRows([]); // Clear selection on page change
@@ -148,6 +157,25 @@ function TypeTable() {
     document.body.removeChild(link);
   };
 
+  const handlePrintBarcodes = () => {
+    const selectedTags = selectedRows.map(index => sortedData()[index].tag);
+    console.log(selectedTags)
+    // Open a new window and generate barcodes for print
+    if (selectedTags.length > 0) {
+      const printWindow = window.open("", "", "height=600,width=800");
+      printWindow.document.write("<html><head><title>Print Barcodes</title></head><body>");
+      selectedTags.forEach(tag => {
+        printWindow.document.write(`<div style="margin: 20px; text-align: center;">`);
+        printWindow.document.write(`<div>Tag: ${tag}</div>`);
+        printWindow.document.write(`<div><img src="https://barcode.tec-it.com/barcode.ashx?data=${tag}&code=Code128" alt="Barcode for ${tag}" /></div>`);
+        printWindow.document.write(`</div>`);
+      });
+      printWindow.document.write("</body></html>");
+      printWindow.document.close();
+      printWindow.print();
+    }
+  };
+
   if (!allData || !allData.active_columns) {
     return <p className="text-center text-red-600">Loading...</p>;
   }
@@ -163,7 +191,14 @@ function TypeTable() {
             <p>&nbsp; / {type}</p>
           </div>
 
-          <div className="flex gap-1">
+          <div className="flex gap-1 items-center">
+            <button
+              onClick={handlePrintBarcodes}
+              className="px-2 py-1 bg-second rounded border text-xs shadow-md transform hover:scale-110 transition-transform duration-200 ease-in-out"
+            >
+              Print Barcodes
+            </button>
+
             <TablePagination
               className="compact-pagination"
               rowsPerPageOptions={[10, 25, 50, 100, 500, 1000]}

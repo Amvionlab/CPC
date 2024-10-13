@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBox,
@@ -12,19 +12,21 @@ import {
 import { Link, useLocation } from "react-router-dom";  
 import logo from "../../image/S1.svg";
 import sampatName from "../../image/S2.svg";
+import { UserContext } from "../UserContext/UserContext";
 
 const SideMenu = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [hoveredItem, setHoveredItem] = useState(null);
   const location = useLocation();
+  const { user } = useContext(UserContext);
 
   const menuItems = [
-    { title: "Dashboard", icon: faTachometerAlt, to: "/dashboard" },
-    { title: "Asset Inventory", icon: faBox, to: "/management" },
-    { title: "Approval Handling", icon: faCheckCircle, to: "/approval" },
-    { title: "Assets Lifecycle", icon: faSyncAlt, to: "#" },
-    { title: "Reports", icon: faFileAlt, to: "#" },
-    { title: "Setup Wizard", icon: faWrench, to: "/setup" },
+    { title: "Dashboard", icon: faTachometerAlt, to: "/dashboard", key: "dashboard" },
+    { title: "Asset Inventory", icon: faBox, to: "/management", key: "dashboard" },
+    { title: "Approval Handling", icon: faCheckCircle, to: "/approval", key: "add" },
+    { title: "Assets Lifecycle", icon: faSyncAlt, to: "#", key: "alc"  },
+    { title: "Reports", icon: faFileAlt, to: "#", key: "report"  },
+    { title: "Setup Wizard", icon: faWrench, to: "/setup", key: "setup" },
   ];
 
   const handleMouseEnter = (title) => {
@@ -65,7 +67,9 @@ const SideMenu = () => {
               </Link>
             </li>
 
-            {menuItems.map(({ title, icon, to }) => (
+            {menuItems.map(({ title, icon, to, key }) => (
+              user &&
+              user[key] === "1" && (
               <li key={title}>
                 <Link
                   to={to}
@@ -91,7 +95,7 @@ const SideMenu = () => {
                   )}
                 </Link>
               </li>
-            ))}
+            )))}
 
             <li>
               <Link
