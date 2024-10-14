@@ -145,22 +145,22 @@ function AssetConnections() {
         </div>
       )}
 
-      <div className="mt-5 flex gap-5 capitalize font-medium mb-2">
+      <div className="mt-5 flex gap-2 capitalize font-medium mb-2">
         <div
-          className={`px-4 p-2 bg-prime text-white rounded-md ${
+          className={`px-4 p-2  rounded-md ${
             table == "linkWith"
               ? "bg-prime text-white "
-              : "bg-black/70 text-white "
+              : "bg-black text-white scale-75"
           }`}
           onClick={() => setTable("linkWith")}
         >
           <p className="cursor-pointer">Link With</p>
         </div>
         <div
-          className={`px-4 p-2 bg-prime text-white rounded-md ${
+          className={`px-4 p-2  rounded-md ${
             table == "linkTo"
               ? "bg-prime text-white "
-              : "bg-black/70 text-white "
+              : "bg-black text-white scale-75"
           }`}
           onClick={() => setTable("linkTo")}
         >
@@ -169,7 +169,7 @@ function AssetConnections() {
       </div>
       <div>
         <Paper sx={{ width: "100%", overflow: "hidden", p: 0 }}>
-          <TableContainer sx={{ maxHeight: 300, p: 0 }}>
+          <TableContainer sx={{ maxHeight: 270, p: 0 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
