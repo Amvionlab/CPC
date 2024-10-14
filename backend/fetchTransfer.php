@@ -103,6 +103,33 @@ elseif ($action == 'approve') {
         echo json_encode(["success" => false, "error" => "ID and user are required."]);
     }
 }
+elseif ($action == 'approvesel') {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if (isset($data['selectedRows']) && is_array($data['selectedRows']) && isset($data['user'])) {
+        $ids = array_map([$conn, 'real_escape_string'], $data['selectedRows']);
+        $user = $conn->real_escape_string($data['user']);
+
+        // Convert IDs array into a comma-separated string
+        $idList = "'" . implode("','", $ids) . "'";
+
+        // Prepare the SQL update statement
+        $sql = "UPDATE transfer 
+                SET approved_by='$user', approved_on=NOW(), status=2 
+                WHERE id IN ($idList)";
+
+        if ($conn->query($sql) === TRUE) {
+            echo json_encode(["success" => true, "message" => "Transfers approved successfully."]);
+        } else {
+            echo json_encode(["success" => false, "error" => $conn->error]);
+        }
+        
+        $conn->close();
+    } else {
+        echo json_encode(["success" => false, "error" => "Selected rows and user are required."]);
+    }
+}
+
 elseif ($action == 'receive') {
     $data = json_decode(file_get_contents('php://input'), true);
 
@@ -126,6 +153,7 @@ elseif ($action == 'receive') {
         echo json_encode(["success" => false, "error" => "ID and user are required."]);
     }
 }
+
 elseif ($action == 'ofd') {
     $data = json_decode(file_get_contents('php://input'), true);
 
@@ -172,6 +200,33 @@ elseif ($action == 'reject') {
     } else {
         echo json_encode(["success" => false, "error" => "ID and user are required."]);
     }
-} else {
+} 
+elseif ($action == 'rejectsel') {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if (isset($data['selectedRows']) && is_array($data['selectedRows']) && isset($data['user'])) {
+        $ids = array_map([$conn, 'real_escape_string'], $data['selectedRows']);
+        $user = $conn->real_escape_string($data['user']);
+
+        // Convert IDs array into a comma-separated string
+        $idList = "'" . implode("','", $ids) . "'";
+
+        // Prepare the SQL update statement
+        $sql = "UPDATE transfer 
+                SET rejected_by='$user', rejected_on=NOW(), is_active=0
+                WHERE id IN ($idList)";
+
+        if ($conn->query($sql) === TRUE) {
+            echo json_encode(["success" => true, "message" => "Transfers Rejected successfully."]);
+        } else {
+            echo json_encode(["success" => false, "error" => $conn->error]);
+        }
+        
+        $conn->close();
+    } else {
+        echo json_encode(["success" => false, "error" => "Selected rows and user are required."]);
+    }
+}
+else {
     echo json_encode(["error" => "Invalid action. Use 'fetch' or 'add'."]);
 }

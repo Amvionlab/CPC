@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { baseURL } from "../../config.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faPrint } from "@fortawesome/free-solid-svg-icons";
+import Barcode from "react-barcode";
 
 function Detailed() {
   const { group, type, tag } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const decodedGroup = decodeURIComponent(group);
@@ -35,6 +37,20 @@ function Detailed() {
       });
   }, [group, type, tag]);
 
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+  
+  const handlePrint = () => {
+    const printContent = document.getElementById("barcode-container").innerHTML;
+    const printWindow = window.open("", "", "height=400,width=600");
+    printWindow.document.write('<html><head><title>Print Barcode</title>');
+    printWindow.document.write('</head><body >');
+    printWindow.document.write(printContent);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.print();
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -51,13 +67,17 @@ function Detailed() {
       .map(([key, value]) => (
         <div
           key={key}
-          className=" p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex flex-col "
+          className="p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex flex-col"
         >
+<<<<<<< HEAD
           <div className="p-2 border shadow-md cursor-pointer border-gray-300 hover:border-flo rounded-md transition-transform hover:border transform hover:scale-95 ">
+=======
+          <div className="p-2 shadow cursor-pointer border hover:border-flo rounded-md transition-transform transform hover:scale-95">
+>>>>>>> 8a2a6bbb15684473dace604076bcdf2e7248d1fd
             <h3 className="text-sm font-bold text-prime capitalize text-center">
               {key.replace(/_/g, " ")}
             </h3>
-            <p className="text-xs text-gray-500 font-bold m-1 text-center">
+            <p className="text-xs text-flo font-semibold m-1 text-center">
               {value}
             </p>
           </div>
@@ -68,11 +88,19 @@ function Detailed() {
   return (
     <div className="font-sui">
       <div className="flex font-bold justify-between items-center mb-3">
-        <h1 className="text-lg ">Detailed View</h1>
-        <button className="flex text-xs items-center px-3 py-1 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-">
-          <FontAwesomeIcon icon={faEdit} className="mr-2" />
-          Edit
-        </button>
+        <h1 className="text-lg">Detailed View</h1>
+        <div className="flex">
+          <button
+            onClick={openModal}
+            className="flex text-xs items-center px-3 py-1 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform mr-3"
+          >
+            View Barcode
+          </button>
+          <button className="flex text-xs items-center px-3 py-1 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform">
+            <FontAwesomeIcon icon={faEdit} className="mr-2" />
+            Edit
+          </button>
+        </div>
       </div>
 
       {data ? (
@@ -89,6 +117,37 @@ function Detailed() {
         </div>
       ) : (
         <div>No data available.</div>
+      )}
+
+      {/* Modal using Tailwind CSS */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-box p-3 rounded-md shadow-lg max-w-xs w-full">
+            <div id="barcode-container" className="text-center">
+              <h3 className="font-bold mb-2">Barcode</h3>
+              {data && data.tag && (
+                <div className="flex justify-center items-center">
+                  <Barcode value={data.tag} />
+                </div>
+              )}
+            </div>
+            <div className="mt-3 flex justify-end font-semibold text-xs">
+              <button
+                onClick={handlePrint}
+                className="mr-2 px-3 py-1  text-second hover:text-box  bg-prime rounded border transition-colors"
+              >
+                <FontAwesomeIcon icon={faPrint} className="mr-1" />
+                Print
+              </button>
+              <button
+                onClick={closeModal}
+                className="px-3 py-1 bg-gray-300 text-black hover:text-box rounded hover:bg-gray-400 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

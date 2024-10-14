@@ -1,4 +1,4 @@
-import React, { useState, lazy, Suspense } from "react";
+import React, { useState, lazy, Suspense, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
   faPaperPlane , faClipboardCheck,  faForward
@@ -23,14 +23,22 @@ const PurpleTooltip = styled(({ className, ...props }) => (
 });
 
 function SingleAsset() {
-
   const menuItems = [
-      { title: "Asset", icon: faClipboardCheck, component: <AssetApproval /> }, // Represents confirming/checking something
-      { title: "Transfer", icon: faPaperPlane , component: <TransferApproval /> } // Represents checking or validating a transfer
+      { title: "Asset", icon: faClipboardCheck, component: <AssetApproval /> },
+      { title: "Transfer", icon: faPaperPlane, component: <TransferApproval /> }
   ];
 
-  const [data, setData] = useState(menuItems[0]);
+  const getInitialData = () => {
+    const savedTitle = sessionStorage.getItem("selectedTab");
+    return menuItems.find(item => item.title === savedTitle) || menuItems[0];
+  };
+
+  const [data, setData] = useState(getInitialData);
   const [isExpanded, setIsExpanded] = useState(true);
+
+  useEffect(() => {
+    sessionStorage.setItem("selectedTab", data.title);
+  }, [data]);
 
   return (
     <div className="flex h-full bg-second p-1 gap-1">
@@ -96,10 +104,9 @@ function SingleAsset() {
                       className="mr-2"
                       style={{ width: '24px', textAlign: "center" }}
                     />
-                 
                 </button>
-                </PurpleTooltip>
-                )}
+              </PurpleTooltip>
+              )}
               </div>
             ))}
           </nav>

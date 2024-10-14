@@ -1,22 +1,29 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { baseURL } from '../../config.js';
-import { toast } from "react-toastify";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
-import { CheckCircle, Cancel } from '@mui/icons-material';
+import { toast } from 'react-toastify';
+import { 
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
+  TablePagination, IconButton, Dialog, DialogActions, DialogContent, 
+  DialogContentText, DialogTitle, Button, Checkbox 
+} from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 import { CSVLink } from 'react-csv';
-import { UserContext } from "../UserContext/UserContext";
-import { Tooltip, tooltipClasses } from "@mui/material";
+import { UserContext } from '../UserContext/UserContext';
+import { Tooltip, tooltipClasses } from '@mui/material';
 import { styled } from '@mui/system';
+
 function Transfer() {
   const { group, type, tag } = useParams();
   const [data, setData] = useState([]);
-  const [detdata, setdetData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
+  const [selectedRows, setSelectedRows] = useState([]);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const { user } = useContext(UserContext);
+  
   const PurpleTooltip = styled(({ className, ...props }) => (
     <Tooltip {...props} classes={{ popper: className }} />
   ))({
@@ -29,10 +36,15 @@ function Transfer() {
       color: 'purple',
     },
   });
+
   // Dialog states
   const [open, setOpen] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+
+  // Mass action dialog states
+  const [isMassActionOpen, setIsMassActionOpen] = useState(false);
+  const [massActionType, setMassActionType] = useState(null);
 
   // Search and filter state
   const [searchTerm, setSearchTerm] = useState('');
@@ -188,6 +200,125 @@ function Transfer() {
     }
   };
 
+  const sortedData = () => {
+    return filterData; // Adjust this if you require actual sorting logic
+  };
+
+  const handleSelectAllClick = (event) => {
+    const currentFilteredData = sortedData().slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+    if (event.target.checked) {
+      const newSelecteds = currentFilteredData.map((n) => n.id);
+      setSelectedRows(newSelecteds);
+      return;
+    }
+    setSelectedRows([]);
+  };
+
+  const toggleRowSelection = (id) => {
+    const selectedIndex = selectedRows.indexOf(id);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selectedRows, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selectedRows.slice(1));
+    } else if (selectedIndex === selectedRows.length - 1) {
+      newSelected = newSelected.concat(selectedRows.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selectedRows.slice(0, selectedIndex),
+        selectedRows.slice(selectedIndex + 1)
+      );
+    }
+
+    setSelectedRows(newSelected);
+  };
+
+  const handleApproveSelected = async() => {
+    console.log('Approving selected rows:', selectedRows);
+    const payload = {
+      selectedRows,
+      user: user.firstname,
+    };
+
+    try {
+      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=approvesel`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        toast.success(`Selected Transfers are Approved.`);
+        fetchData();
+      } else {
+        toast.error(`Failed to Approve Transfers. ${result.error || ''}`);
+      }
+    } catch (error) {
+      console.error('Error approving transfer:', error);
+      toast.error('An error occurred while approving the transfer.');
+    }
+    finally {
+      setSelectedRows([]);
+    }
+  };
+
+  const handleRejectSelected = async() => {
+    console.log('Rejecting selected rows:', selectedRows);
+    const payload = {
+      selectedRows,
+      user: user.firstname,
+    };
+    console.log(payload);
+    try {
+      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=rejectsel`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        toast.success(`Selected Transfers are Rejected.`);
+        fetchData();
+      } else {
+        toast.error(`Failed to Reject Transfers. ${result.error || ''}`);
+      }
+    } catch (error) {
+      console.error('Error approving transfer:', error);
+      toast.error('An error occurred while Rejecting the transfer.');
+    }  
+    finally {
+      setSelectedRows([]);
+    }
+  };
+
+  const handleMassActionConfirm = () => {
+    if (massActionType === 'approve') {
+      handleApproveSelected();
+    } else if (massActionType === 'reject') {
+      handleRejectSelected();
+    }
+    handleMassActionClose();
+  };
+
+  const handleMassActionOpen = (actionType) => {
+    setMassActionType(actionType);
+    setIsMassActionOpen(true);
+  };
+
+  const handleMassActionClose = () => {
+    setIsMassActionOpen(false);
+    setMassActionType(null);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -203,16 +334,26 @@ function Transfer() {
       </div>
 
       {/* Search bar and dropdown */}
-      <div className="flex justify-between items-center">
+      <div className="w-full border-b h-10 flex text-sm justify-between items-center font-semibold mb-2">
+         {selectedRows.length > 0 && (
+          <div className="flex capitalize ml-4 text-xl font-semibold">
+            <IconButton onClick={() => handleMassActionOpen('approve')} sx={{ color: 'green' }}>
+              <CheckCircleIcon />
+            </IconButton>
+            <IconButton onClick={() => handleMassActionOpen('reject')} sx={{ color: 'red', ml: 1 }}>
+              <CancelIcon />
+            </IconButton>
+          </div>
+        )}
         <div className='flex font-medium'>
           <select
             value={searchField}
             className='text-xs border p-1 mr-2 rounded-md'
             onChange={(e) => setSearchField(e.target.value)}
-            style={{ height: '30px' }}
+            style={{ height: '30px', width: '75px' }}
           >
+            
             <option value="all">All</option>
-            <option value="id">ID</option>
             <option value="from_location">Transfer From</option>
             <option value="to_location">Transfer To</option>
             <option value="description">Description</option>
@@ -227,7 +368,7 @@ function Transfer() {
             className='text-xs border p-2 rounded-md'
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ height: '30px', width: '100px' }}
+            style={{ height: '30px', width: '150px' }}
           />
         </div>
 
@@ -240,61 +381,81 @@ function Transfer() {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
+        
         <CSVLink
           data={filterData}
           headers={headers}
-          filename={`asset-approvals.csv`}
-          className="flex text-xs items-center px-3 py-1 bg-box border border-gray-400 font-bold shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110"
+          filename={`transfer-approvals.csv`}
+          className="px-2 py-1 bg-second rounded border text-xs shadow-md transform hover:scale-110 transition-transform duration-200 ease-in-out"
         >
           CSV
         </CSVLink>
       </div>
 
       {/* Table section */}
-      <TableContainer sx={{ maxHeight: 440 }}>
+      <TableContainer sx={{ maxHeight: "calc(100vh - 100px)" }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>ID</TableCell>
-              <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>Transfer From</TableCell>
-              <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>Transfer To</TableCell>
-              <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>Description</TableCell>
-              <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>Request By</TableCell>
-              <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>Request On</TableCell>
-              <TableCell align="center" sx={{ whiteSpace: 'nowrap' }}>Action</TableCell>
+              <TableCell padding="checkbox" sx={{ padding: '1px', fontSize: '12px' }}>
+                <Checkbox
+                  indeterminate={selectedRows.length > 0 && selectedRows.length < data.length}
+                  checked={selectedRows.length > 0 && selectedRows.length === sortedData().slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).length}
+                  onChange={handleSelectAllClick}
+                />
+              </TableCell>
+              <TableCell align="center" sx={{ minWidth: 50, fontWeight: 600, fontSize: '12px' }}>
+                ID
+              </TableCell>
+              {['Transfer From', 'Transfer To', 'Description', 'Request By', 'Request On', 'Action'].map((column) => (
+                <TableCell
+                  className="capitalize text-nowrap"
+                  key={column}
+                  align="center"
+                  sx={{ minWidth: 120, fontWeight: 600, fontSize: '12px' }}
+                >
+                  {column.toUpperCase()}
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody sx={{ padding: '2px' }}>
             {filterData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row, rowIndex) => (
-                <TableRow hover role="checkbox" tabIndex={-1} key={row.id} className="text-xs">
-                  <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>{rowIndex + 1}</TableCell>
-                  <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>{row.from_location}</TableCell>
-                  <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>{row.to_location}</TableCell>
-                  <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>{row.description}</TableCell>
-                  <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>{row.request_by}</TableCell>
-                  <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>
+                <TableRow hover role="checkbox" tabIndex={-1} key={row.id} selected={selectedRows.includes(row.id)}>
+                  <TableCell padding="checkbox" sx={{ padding: '1px', fontSize: '10px' }}>
+                    <Checkbox
+                      checked={selectedRows.includes(row.id)}
+                      onChange={() => toggleRowSelection(row.id)}
+                    />
+                  </TableCell>
+                  <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>{rowIndex + 1 + page * rowsPerPage}</TableCell>
+                  <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>{row.from_location}</TableCell>
+                  <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>{row.to_location}</TableCell>
+                  <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>{row.description}</TableCell>
+                  <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>{row.request_by}</TableCell>
+                  <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>
                     {isValidDate(row.request_on) ? new Date(row.request_on).toLocaleString() : ''}
                   </TableCell>
-                  <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>
-                  <PurpleTooltip 
-               title="Approve" 
-               placement="bottom" 
-               arrow 
-             >
-                    <IconButton aria-label="approve" color="success" onClick={() => handleOpen('approve', row.id)}>
-                      <CheckCircle />
-                    </IconButton>
+                  <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>
+                    <PurpleTooltip 
+                      title="Approve" 
+                      placement="bottom" 
+                      arrow 
+                    >
+                      <IconButton aria-label="approve" color="success" onClick={() => handleOpen('approve', row.id)}>
+                        <CheckCircleIcon />
+                      </IconButton>
                     </PurpleTooltip>
                     <PurpleTooltip 
-               title="Reject" 
-               placement="bottom" 
-               arrow 
-             >
-                    <IconButton aria-label="reject" color="error" onClick={() => handleOpen('reject', row.id)}>
-                      <Cancel />
-                    </IconButton>
+                      title="Reject" 
+                      placement="bottom" 
+                      arrow 
+                    >
+                      <IconButton aria-label="reject" color="error" onClick={() => handleOpen('reject', row.id)}>
+                        <CancelIcon />
+                      </IconButton>
                     </PurpleTooltip>
                   </TableCell>
                 </TableRow>
@@ -303,7 +464,7 @@ function Transfer() {
         </Table>
       </TableContainer>
 
-      {/* Confirmation Dialog */}
+      {/* Single Confirmation Dialog */}
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Confirm Action</DialogTitle>
         <DialogContent>
@@ -316,6 +477,24 @@ function Transfer() {
             Cancel
           </Button>
           <Button onClick={handleConfirm} color="primary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Mass Action Confirmation Dialog */}
+      <Dialog open={isMassActionOpen} onClose={handleMassActionClose}>
+        <DialogTitle>Confirm Mass Action</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to {massActionType} {selectedRows.length} selected transfers?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleMassActionClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleMassActionConfirm} color="primary" autoFocus>
             Confirm
           </Button>
         </DialogActions>

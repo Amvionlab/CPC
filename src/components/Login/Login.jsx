@@ -36,7 +36,7 @@ const Login = ({ onLogin }) => {
           alc: result.alc,
           report: result.report,
           setup: result.setup,
-          
+          inventory: result.inventory,
         });
         onLogin();
         navigate("/dashboard");
