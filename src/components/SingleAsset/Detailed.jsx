@@ -39,14 +39,14 @@ function Detailed() {
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  
+
   const handlePrint = () => {
     const printContent = document.getElementById("barcode-container").innerHTML;
     const printWindow = window.open("", "", "height=400,width=600");
-    printWindow.document.write('<html><head><title>Print Barcode</title>');
-    printWindow.document.write('</head><body >');
+    printWindow.document.write("<html><head><title>Print Barcode</title>");
+    printWindow.document.write("</head><body >");
     printWindow.document.write(printContent);
-    printWindow.document.write('</body></html>');
+    printWindow.document.write("</body></html>");
     printWindow.document.close();
     printWindow.print();
   };
@@ -69,11 +69,7 @@ function Detailed() {
           key={key}
           className="p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex flex-col"
         >
-<<<<<<< HEAD
-          <div className="p-2 border shadow-md cursor-pointer border-gray-300 hover:border-flo rounded-md transition-transform hover:border transform hover:scale-95 ">
-=======
           <div className="p-2 shadow cursor-pointer border hover:border-flo rounded-md transition-transform transform hover:scale-95">
->>>>>>> 8a2a6bbb15684473dace604076bcdf2e7248d1fd
             <h3 className="text-sm font-bold text-prime capitalize text-center">
               {key.replace(/_/g, " ")}
             </h3>
