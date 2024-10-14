@@ -274,10 +274,10 @@ const Form = () => {
   const currentTickets = filteredUsers.slice(offset, offset + ticketsPerPage);
 
   return (
-    <div className="bg-second max-h-5/6 max-w-full text-xs mx-auto p-2 lg:overflow-y-hidden h-auto ticket-scroll font-poppins">
+    <div className="bg-second h-full max-w-full text-xs mx-auto p-1 lg:overflow-y-hidden ticket-scroll font-poppins">
      
       {showForm && (
-        <div className="max-w-full m-2 mb-4 p-4 bg-box rounded-lg font-mont " >
+        <div className="max-w-full mb-1 p-4 bg-box font-mont " >
           <div className="ticket-table mt-2">
             <form onSubmit={handleSubmit} className="space-y-4 text-label">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
@@ -317,7 +317,7 @@ const Form = () => {
           </div>
         )}
        
-      <div className="max-w-1/2 m-2 bg-box p-4 rounded-lg font-mont">
+      <div className="bg-box h-full p-4 font-mont">
      
         {/* Table displaying fetched user data */}
         <div className="ticket-table mt-4">

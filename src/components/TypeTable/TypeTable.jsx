@@ -176,6 +176,7 @@ function TypeTable() {
     }
   };
 
+  
   if (!allData || !allData.active_columns) {
     return <p className="text-center text-red-600">Loading...</p>;
   }
