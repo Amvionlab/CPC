@@ -77,20 +77,18 @@ function AssetConnections() {
   return (
     <div className="asset-connections font-poppins inset-0 w-full">
       <div className="top flex justify-between items-center">
-        <h1 className="font-semibold text-lg">Asset Connections (Links)</h1>
-        <div className="capitalize flex gap-2 font-medium">
-          <div className="p-2 bg-yellow-200 rounded-md cursor-pointer">
-            <p>Asset Details</p>
-          </div>
+        <h1 className="font-bold text-base">Asset Connections (Links)</h1>
+        <div className="capitalize flex gap-2 text-xs">
+         
           <div
-            className="p-2 bg-pink-200 rounded-md cursor-pointer"
+            className="p-2 font-semibold border hover:bg-prime shadow hover:text-box text-prime rounded cursor-pointer"
             onClick={() => setAddLinkTo(!addLinkTo)}
           >
             <p>Add Link To</p>
           </div>
 
           <div
-            className="p-2 bg-prime text-white rounded-md cursor-pointer"
+            className="p-2 hover:bg-prime hover:text-box shadow font-semibold border text-prime  rounded cursor-pointer"
             onClick={() => setAddLinkWith(!addLinkWith)}
           >
             <p>Add Link with</p>
@@ -145,30 +143,26 @@ function AssetConnections() {
         </div>
       )}
 
-      <div className="mt-5 flex gap-5 capitalize font-medium mb-2">
-        <div
-          className={`px-4 p-2 bg-prime text-white rounded-md ${
-            table == "linkWith"
-              ? "bg-prime text-white "
-              : "bg-black/70 text-white "
-          }`}
-          onClick={() => setTable("linkWith")}
-        >
-          <p className="cursor-pointer">Link With</p>
-        </div>
-        <div
-          className={`px-4 p-2 bg-prime text-white rounded-md ${
-            table == "linkTo"
-              ? "bg-prime text-white "
-              : "bg-black/70 text-white "
-          }`}
-          onClick={() => setTable("linkTo")}
-        >
-          <p className="cursor-pointer">Link To</p>
-        </div>
-      </div>
+<div className="mt-5 flex gap-5 capitalize font-semibold text-xs mb-2">
+  <div
+    className={`px-4 py-2 rounded cursor-pointer transition ${
+      table === "linkWith" ? "bg-flo text-white" : "bg-second text-flo"
+    }`}
+    onClick={() => setTable("linkWith")}
+  >
+    <p>Link With</p>
+  </div>
+  <div
+    className={`px-4 py-2 rounded cursor-pointer text-xs transition ${
+      table === "linkTo" ? "bg-flo text-white" : "bg-second text-flo"
+    }`}
+    onClick={() => setTable("linkTo")}
+  >
+    <p>Link To</p>
+  </div>
+</div>
+
       <div>
-        <Paper sx={{ width: "100%", overflow: "hidden", p: 0 }}>
           <TableContainer sx={{ maxHeight: 300, p: 0 }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
@@ -225,7 +219,7 @@ function AssetConnections() {
             onRowsPerPageChange={handleChangeRowsPerPage}
             sx={{ padding: "0 16px" }} // Adjusted padding
           />
-        </Paper>
+        
       </div>
     </div>
   );

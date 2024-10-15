@@ -1,41 +1,38 @@
 import React, { useState, useEffect, useContext } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { baseURL } from '../../config.js';
+import { baseURL } from "../../config.js";
 import { FaFilter } from "react-icons/fa";
-import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-
-import ReactPaginate from 'react-paginate';
-import html2canvas from 'html2canvas';
-import { UserContext } from '../UserContext/UserContext.jsx';
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import { UserContext } from "../UserContext/UserContext.jsx";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TablePagination,
+} from "@mui/material";
 
 const Form = () => {
-  const [formData, setFormData] = useState({
-    domain: "",
-   
-
-  });
+  const [formData, setFormData] = useState({ domain: "" });
   const { user } = useContext(UserContext);
-  console.log('DashBoard context value:', user);
-  const [ticketsPerPage, setTicketsPerPage] = useState(10); // default to 10 rows per page
+  const navigate = useNavigate();
+  const [ticketsPerPage, setTicketsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
-  let i=1;
-
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [attachment, setAttachment] = useState(null);
+  const [attachmentError, setAttachmentError] = useState("");
   const [submissionStatus, setSubmissionStatus] = useState(null);
   const [filters, setFilters] = useState({});
-  const [showFilter, setShowFilter] = useState({
-    id: false,
-    name: false,
-  });
-
+  const [showFilter, setShowFilter] = useState({ id: false, name: false });
   const [showForm, setShowForm] = useState(false);
-  const handleImportClick = () => {
-    navigate('/setup/ip_address');
-  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -50,15 +47,6 @@ const Form = () => {
 
     fetchData();
   }, []);
-
-  const navigate = useNavigate();
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -77,73 +65,61 @@ const Form = () => {
   };
 
   const handleRowsPerPageChange = (e) => {
-    const value = parseInt(e.target.value, 10); // Parse the input value as an integer
-    if (!isNaN(value) && value >= 1) {
-      setTicketsPerPage(value);
-      setCurrentPage(0); // Update state only if value is a valid number >= 1
-    } else {
-      setTicketsPerPage(1);
-      setCurrentPage(0); // Default to 1 if input is cleared or set to invalid value
-    }
-  };
-
-
-  const handlePageClick = ({ selected }) => {
-    setCurrentPage(selected);
+    const value = parseInt(e.target.value, 10);
+    setTicketsPerPage(value);
+    setCurrentPage(0);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     const form = new FormData();
     for (const key in formData) {
-        form.append(key, formData[key]);
+      form.append(key, formData[key]);
     }
     if (attachment) {
-        form.append("attachment", attachment);
+      form.append("attachment", attachment);
     }
 
     try {
-        const response = await fetch(`${baseURL}/backend/employee_add.php`, {
-            method: "POST",
-            body: form
-        });
+      const response = await fetch(`${baseURL}/backend/employee_add.php`, {
+        method: "POST",
+        body: form,
+      });
 
-        // Check if response is ok and then parse JSON
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText || "Something went wrong");
-        }
-        
-        const result = await response.json();
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Something went wrong");
+      }
 
-        // Handle response based on the message
-        if (result.message === 'Location already exists.') {
-            setSubmissionStatus({ success: false, message: result.message });
-            toast.error(result.message); // Display error message
-        } else if (result.message === 'Location added successfully.') {
-            setSubmissionStatus({ success: true, message: result.message });
-            toast.success(result.message); // Display success message
-            // Optionally reload or update the UI
-            // location.reload(); // Uncomment this line if you want to reload the page
-        } else {
-            throw new Error("Unexpected response message.");
-        }
+      const result = await response.json();
+
+      if (result.message === "Location already exists.") {
+        setSubmissionStatus({ success: false, message: result.message });
+        toast.error(result.message);
+      } else if (result.message === "Location added successfully.") {
+        setSubmissionStatus({ success: true, message: result.message });
+        toast.success(result.message);
+      } else {
+        throw new Error("Unexpected response message.");
+      }
     } catch (error) {
-        setSubmissionStatus({
-            success: false,
-            message: "There was a problem with your fetch operation: " + error.message,
-        });
-        toast.error("There was a problem with your fetch operation: " + error.message); // Display error message
+      setSubmissionStatus({
+        success: false,
+        message: "There was a problem with your fetch operation: " + error.message,
+      });
+      toast.error("There was a problem with your fetch operation: " + error.message);
     }
-};
+  };
 
+  const handleChangePage = (event, newPage) => {
+    setCurrentPage(newPage);
+  };
 
   const handleFilterChange = (e, field, type) => {
-    const value = e.target.value.toLowerCase(); // convert filter value to lowercase
+    const value = e.target.value.toLowerCase();
     setFilters((prevFilters) => ({
       ...prevFilters,
-      [field]: { type, value }
+      [field]: { type, value },
     }));
   };
 
@@ -154,25 +130,21 @@ const Form = () => {
       if (value) {
         filtered = filtered.filter((ticket) => {
           const fieldValue = ticket[field];
- 
+
           if (fieldValue == null) {
             if (type === "contain" || type === "equal to") return false;
-            if (type === "not contain") return true; if (type === "more than" || type === "less than") return false;
+            if (type === "not contain") return true; 
+            if (type === "more than" || type === "less than") return false;
           }
- 
+
           const fieldValueStr = fieldValue.toString().toLowerCase();
           const valueStr = value.toLowerCase();
- 
-          if (type === "contain")
-            return fieldValueStr.includes(valueStr);
-          if (type === "not contain")
-            return !fieldValueStr.includes(valueStr);
-          if (type === "equal to")
-            return fieldValueStr === valueStr;
-          if (type === "more than")
-            return parseFloat(fieldValue) > parseFloat(value);
-          if (type === "less than")
-            return parseFloat(fieldValue) < parseFloat(value);
+
+          if (type === "contain") return fieldValueStr.includes(valueStr);
+          if (type === "not contain") return !fieldValueStr.includes(valueStr);
+          if (type === "equal to") return fieldValueStr === valueStr;
+          if (type === "more than") return parseFloat(fieldValue) > parseFloat(value);
+          if (type === "less than") return parseFloat(fieldValue) < parseFloat(value);
           return true;
         });
       }
@@ -181,30 +153,17 @@ const Form = () => {
   }, [filters, users]);
 
   const exportCSV = () => {
-    // Get table headers
-    const tableHeaders = Array.from(document.querySelectorAll(".header span"))
-      .map(header => header.textContent.trim());
- 
-    // Get table data values, excluding the header row
-    const tableRows = Array.from(document.querySelectorAll("table tr"));
-   
-    // Skip the first row if it is the header row
-    const tableData = tableRows.slice(1).map(row =>
-      Array.from(row.querySelectorAll("td")).map(cell => cell.textContent.trim())
+    const headers = Array.from(document.querySelectorAll(".header span")).map(header => header.textContent.trim());
+    const rows = Array.from(document.querySelectorAll("table tr")).slice(1).map(row =>
+      Array.from(row.querySelectorAll("td")).map(td => td.textContent.trim())
     );
- 
-    // Filter out rows that contain filter content
-    const filteredTableData = tableData.filter(row =>
-      !row.some(cell => cell.includes("Contains") || cell.includes("Does Not Contain") || cell.includes("Equal To") || cell.includes("More Than") || cell.includes("Less Than"))
+
+    const filteredRows = rows.filter(row =>
+      !row.some(cell => cell.includes("Contains") || cell.includes("Does Not Contain"))
     );
- 
-    // Create CSV content
-    const csvContent = [
-      tableHeaders.join(","),
-      ...filteredTableData.map(row => row.join(","))
-    ].join("\n");
- 
-    // Create and download CSV file
+
+    const csvContent = [headers.join(","), ...filteredRows.map(row => row.join(","))].join("\n");
+
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
@@ -213,241 +172,171 @@ const Form = () => {
     link.click();
     document.body.removeChild(link);
   };
- 
+
   const exportExcel = () => {
-    const table = document.querySelector('.filter-table');
+    const table = document.querySelector(".filter-table");
     if (!table) return;
- 
-    // Extract table headers
+
     const headers = Array.from(document.querySelectorAll(".header span")).map(header => header.textContent.trim());
- 
-    // Extract table data values
-    const rows = Array.from(table.querySelectorAll('tbody tr')).map(row =>
-      Array.from(row.querySelectorAll('td')).map(td => td.innerText.trim())
+    const rows = Array.from(table.querySelectorAll("tbody tr")).map(row =>
+      Array.from(row.querySelectorAll("td")).map(td => td.innerText.trim())
     );
- 
-    // Filter out rows that contain filter content
+
     const filteredRows = rows.filter(row =>
-      !row.some(cell => cell.includes("Contains") || cell.includes("Does Not Contain") || cell.includes("Equal To") || cell.includes("More Than") || cell.includes("Less Than"))
+      !row.some(cell => cell.includes("Contains") || cell.includes("Does Not Contain"))
     );
- 
+
     const data = [headers, ...filteredRows];
     const worksheet = XLSX.utils.aoa_to_sheet(data);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-    XLSX.writeFile(workbook, 'Location.xlsx');
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.writeFile(workbook, "Location.xlsx");
   };
- 
- 
+
   const exportPDF = () => {
-    const table = document.querySelector('.filter-table');
+    const table = document.querySelector(".filter-table");
     if (!table) return;
- 
-    // Create a copy of the table
+
     const tableClone = table.cloneNode(true);
- 
-    // Remove filter dropdowns and inputs from the cloned table
-    tableClone.querySelectorAll('.filter').forEach(filter => filter.remove());
- 
-    // Center-align all table cell contents
-    tableClone.querySelectorAll('th, td').forEach(cell => {
-      cell.style.textAlign = 'center';
-    });
- 
-    // Append the cloned table to the body (temporarily)
+    tableClone.querySelectorAll(".filter").forEach(filter => filter.remove());
     document.body.appendChild(tableClone);
- 
-    // Use html2canvas to convert the cloned table to an image
+
     html2canvas(tableClone).then(canvas => {
-      const imgData = canvas.toDataURL('image/png');
+      const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF();
       const imgWidth = 210;
       const imgHeight = canvas.height * imgWidth / canvas.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-      pdf.save('Location.pdf');
- 
-      // Remove the cloned table from the document
+
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      pdf.save("Location.pdf");
       document.body.removeChild(tableClone);
     });
   };
+
+  // Calculate the current offset based on current page and rows per page
   const offset = currentPage * ticketsPerPage;
   const currentTickets = filteredUsers.slice(offset, offset + ticketsPerPage);
 
   return (
-    <div className="bg-second h-full max-w-full text-xs mx-auto p-1 lg:overflow-y-hidden ticket-scroll font-poppins">
-     
+    <div className="bg-second h-full max-w-full text-xs mx-auto p-1 lg:overflow-y-hidden font-poppins">
       {showForm && (
-        <div className="max-w-full mb-1 p-4 bg-box font-mont " >
-          <div className="ticket-table mt-2">
-            <form onSubmit={handleSubmit} className="space-y-4 text-label">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-                <div className="font-mont font-semibold text-2xl mb-4">
-                  Add Location :
-                </div>
-              </div>
- 
-              {/* Additional Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Enter Location Name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
-                  <button
+        <div className="max-w-full mb-1 p-4 bg-box font-mont">
+          <form onSubmit={handleSubmit} className="space-y-4 text-label">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
+              <div className="font-mont font-semibold text-2xl mb-4">Add Location :</div>
+              <div className="flex items-center mb-2 mr-4">
+                <label className="text-sm font-semibold text-prime mr-2 w-32">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Enter Location Name"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                  className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                />
+                <button
                   type="submit"
                   className="ml-5 bg-prime font-mont font-semibold text-md text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
                 >
                   Submit
                 </button>
-                </div>
-               
-               
               </div>
-             
-            </form>
-          </div>
-          </div>
-        )}
-       
+            </div>
+          </form>
+        </div>
+      )}
+
       <div className="bg-box h-full p-4 font-mont">
-     
-        {/* Table displaying fetched user data */}
-        <div className="ticket-table mt-4">
         <h3 className="text-2xl font-bold text-prime mb-4 flex justify-between items-center">
-  <span>
-    Location Data
-    <button
-      onClick={() => setShowForm(!showForm)}
-      className="ml-4 bg-second hover:bg-prime hover:text-box font-mont font-bold text-sm text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
-    >
-      {showForm ? "Close" : "+ Add Location"}
-    </button>
-  </span>
-  <span className="text-xs flex items-center gap-2">
-    <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
-      Rows per page:
-    </label>
-    <input
-      type="number"
-      id="rowsPerPage"
-      placeholder={ticketsPerPage}
-      onChange={handleRowsPerPageChange}
-      className="w-16 px-2 py-2 border-2 rounded text-gray-900 ml-2 mr-2"
-      min="0"
-    />
-    <button
-            onClick={exportCSV}
-            className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
-          >
-            CSV
-          </button>
-          <button
-            onClick={exportExcel}
-            className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
-          >
-            Excel
-          </button>
-          <button
-            onClick={exportPDF}
-            className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
-          >
-            PDF
-          </button>
-  </span>
-
-  <button
-        onClick={handleImportClick}
-        className="flex text-xs items-center px-3 py-2 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110"
-      >
-       
-        Ip Details
-      </button>
-
-</h3> 
-       
-
-        <table className=" min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
-       
-  <thead className="bg-second border-2 border-prime  text-prime font-semibold font-poppins text-fontadd">
- 
-    <tr>
-      {["Id", "Name"].map((header, index) => (
-        <td key={index} className="w-1/6 py-4 px-4">
-          <div className="flex items-center justify-center">
-          <div className="header flex">
-            <span>{header}</span>
-            <FaFilter
-              className="cursor-pointer ml-3"
-              onClick={() => setShowFilter(prevState => ({
-                ...prevState,
-                [header.toLowerCase().replace(" ", "")]: !prevState[header.toLowerCase().replace(" ", "")]
-              }))}
-            />
-          </div>
-        </div>
-        {showFilter[header.toLowerCase().replace(" ", "")] && (
-          <div className="mt-2 bg-prime p-2 rounded shadow-md filter">
-            <select
-              onChange={(e) => handleFilterChange(e, header.toLowerCase().replace(" ", ""), e.target.value)}
-              className="mb-2 p-1 border text-prime rounded w-full"
+          <span>
+            Location Data
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="ml-4 bg-second hover:bg-prime hover:text-box font-mont font-bold text-sm text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
             >
-              <option value="contain">Contains</option>
-              <option value="not contain">Does Not Contain</option>
-              <option value="equal to">Equal To</option>
-              <option value="more than">More Than</option>
-              <option value="less than">Less Than</option>
-            </select>
+              {showForm ? "Close" : "+ Add Location"}
+            </button>
+          </span>
+          <span className="text-xs flex items-center gap-2">
+            <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
+              Rows per page:
+            </label>
             <input
-              type="text"
-              placeholder="Enter value"
-              onChange={(e) => handleFilterChange(e, header.toLowerCase().replace(" ", ""), filters[header.toLowerCase().replace(" ", "")]?.type || "contain")}
-              className="p-1 border rounded text-prime w-full"
+              type="number"
+              id="rowsPerPage"
+              value={ticketsPerPage}
+              onChange={handleRowsPerPageChange}
+              className="w-16 px-2 py-2 border-2 rounded text-gray-900 ml-2 mr-2"
+              min="0"
             />
-          </div>
-        )}
+            <button
+              onClick={exportCSV}
+              className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
+            >
+              CSV
+            </button>
+            <button
+              onClick={exportExcel}
+              className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
+            >
+              Excel
+            </button>
+            <button
+              onClick={exportPDF}
+              className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
+            >
+              PDF
+            </button>
+          </span>
+          <button
+            onClick={() => navigate("/setup/ip_address")}
+            className="flex text-xs items-center px-3 py-2 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110"
+          >
+            Ip Details
+          </button>
+        </h3>
 
-        </td>
-      ))}
-    </tr>
-  </thead>
-  <tbody>
-    {currentTickets.map((user) => (
-      <tr key={user.id} className="bg-box text-fontadd text-center font-medium">
-        <td className="border-t py-3 px-3">{(i++)+(offset)}</td>
-        <td className="border-t py-3 px-3">{user.name}</td>
+        <TableContainer component={Paper}>
+          <Table className="filter-table">
+            <TableHead className="font-bold">
+              <TableRow>
+                {["Id", "Name"].map((header, index) => (
+                  <TableCell key={index} align="center">
+                    <div className="flex items-center justify-center header">
+                      <span>{header}</span>
+                      
+                    </div>
+                    
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {currentTickets.map((user, index) => (
+                <TableRow key={user.id} className="bg-box text-fontadd text-center font-medium">
+                  <TableCell className="border-t py-3 px-3" align="center">
+                    {index + 1 + offset}
+                  </TableCell>
+                  <TableCell className="border-t py-3 px-3" align="center">
+                    {user.name}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-      </tr>
-    ))}
-  </tbody>
-</table>
-        </div>
-         {/* Pagination Controls */}
-         <div className="pagination mt-4 flex justify-center font-semibold">
-          <ReactPaginate
-            previousLabel={"Previous"}
-            nextLabel={"Next"}
-            breakLabel={"..."}
-            pageCount={Math.ceil(filteredUsers.length / ticketsPerPage)}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={5}
-            onPageChange={handlePageClick}
-            containerClassName={"pagination-container"}
-            pageClassName={"pagination-page"}
-            pageLinkClassName={"pagination-link"}
-            previousClassName={"pagination-previous"}
-            nextClassName={"pagination-next"}
-            breakClassName={"pagination-break"}
-            activeClassName={"pagination-active"}
-          />
-          </div>
+        <TablePagination
+          component="div"
+          count={filteredUsers.length}
+          page={currentPage}
+          onPageChange={handleChangePage}
+          rowsPerPage={ticketsPerPage}
+          onRowsPerPageChange={handleRowsPerPageChange}
+          labelRowsPerPage="Rows per page"
+          rowsPerPageOptions={[5, 10, 25, 50]}
+        />
       </div>
     </div>
   );
