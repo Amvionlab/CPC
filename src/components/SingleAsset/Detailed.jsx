@@ -39,14 +39,14 @@ function Detailed() {
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  
+
   const handlePrint = () => {
     const printContent = document.getElementById("barcode-container").innerHTML;
     const printWindow = window.open("", "", "height=400,width=600");
-    printWindow.document.write('<html><head><title>Print Barcode</title>');
-    printWindow.document.write('</head><body >');
+    printWindow.document.write("<html><head><title>Print Barcode</title>");
+    printWindow.document.write("</head><body >");
     printWindow.document.write(printContent);
-    printWindow.document.write('</body></html>');
+    printWindow.document.write("</body></html>");
     printWindow.document.close();
     printWindow.print();
   };

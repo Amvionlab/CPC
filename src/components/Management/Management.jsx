@@ -7,11 +7,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 
 function Management() {
-  const data = [
-    { id: 0, value: 10, label: "Series A" },
-    { id: 1, value: 15, label: "Series B" },
-    { id: 2, value: 20, label: "Series C" },
-  ];
   const [type, setType] = useState([]);
   const [error, setError] = useState(null);
 
@@ -33,8 +28,8 @@ function Management() {
     };
     fetchData();
   }, []);
-  console.log(type);
 
+  const data = type.map((val, i) => ({ id: i, value: 1, label: val.group }));
   return (
     <div className="lg:flex h-full flex-col p-1 gap-1 w-full lg:grid-cols-2 grid-cols-1 bg-second">
       <div className="p-4 w-full bg-box rounded-md flex flex-col">
@@ -67,12 +62,15 @@ function Management() {
             series={[
               {
                 data,
+                innerRadius: 50, // Adjust this value to control the size of the center space
+                outerRadius: 150,
                 highlightScope: { faded: "global", highlighted: "item" },
                 faded: {
                   innerRadius: 30,
                   additionalRadius: -30,
                   color: "gray",
                 },
+                // paddingAngle: 50,
               },
             ]}
             height={300}
