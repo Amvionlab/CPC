@@ -77,6 +77,7 @@ const Form = () => {
                   "Name",
                   "Dashboard",
                   "Inventory",
+                  "Asset Add",
                   "Add Approval",
                   "Transfer Approval",
                   "Asset LifeCycle",
@@ -98,7 +99,7 @@ const Form = () => {
                 >
                   <TableCell align="center" sx={{ padding: '4px', fontSize: '12px' }}>{user.id}</TableCell>
                   <TableCell align="center" sx={{ padding: '4px', fontSize: '12px' }}>{user.name}</TableCell>
-                  {["dashboard", "inventory", "add", "transfer", "alc", "report", "setup", "is_active"].map((field) => (
+                  {["dashboard", "inventory","assetadd", "add", "transfer", "alc", "report", "setup", "is_active"].map((field) => (
                     <TableCell key={field} align="center" sx={{ padding: '4px', fontSize: '12px' }}>
                       <Switch className="text-flo"
                         checked={user[field] === "1"}

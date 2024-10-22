@@ -47,7 +47,21 @@ if ($resultLocations->num_rows > 0) {
     }
 }
 
-$sqlIpdetails = "SELECT id, `ip_from`, `ip_to`, `location_id` FROM ip_details WHERE is_active = 1";
+$sqlStatuses = "SELECT id, `name` FROM asset_status WHERE is_active = 1";
+$resultStatuses = $conn->query($sqlStatuses);
+
+$statuses = array();
+
+if ($resultStatuses->num_rows > 0) {
+    while ($row = $resultStatuses->fetch_assoc()) {
+        $statuses[] = array(
+            "id" => $row["id"],
+            "name" => $row["name"]
+        );
+    }
+}
+
+$sqlIpdetails = "SELECT id, `ip_from`, `region`, `ip_to`, `location_id` FROM ip_details WHERE is_active = 1";
 $resultIpdetails = $conn->query($sqlIpdetails);
 
 $Ipdetails = array();
@@ -56,6 +70,7 @@ if ($resultIpdetails->num_rows > 0) {
     while ($row = $resultIpdetails->fetch_assoc()) {
         $Ipdetails[] = array(
             "id" => $row["id"],
+            "region" => $row["region"],
             "ip_from" => $row["ip_from"],
             "ip_to" => $row["ip_to"],
             "location_id" => $row["location_id"]
@@ -63,6 +78,25 @@ if ($resultIpdetails->num_rows > 0) {
         );
     }
 }
+
+
+
+$sqlSubstatus = "SELECT id, `name`, `is_transfer`, `status_id` FROM asset_substatus WHERE is_active = 1";
+$resultSubstatus = $conn->query($sqlSubstatus);
+
+$Substatus = array();
+
+if ($resultSubstatus->num_rows > 0) {
+    while ($row = $resultSubstatus->fetch_assoc()) {
+        $Substatus[] = array(
+            "id" => $row["id"],
+            "name" => $row["name"],
+            "is_transfer" => $row["is_transfer"],
+            "status_id" => $row["status_id"]
+        );
+    }
+}
+
 //Employee
 $sqlEmpdetails = "SELECT `id`,'firstname' , `lastname`, `employee_id`, `department`, `designation`, `authority_id`, `location`, `mobile`, `email`, `state`, `country`, `building`, `block`, `floor` FROM employee WHERE is_active = 1";
 $resultEmpdetails = $conn->query($sqlEmpdetails);
@@ -95,6 +129,8 @@ $response = array(
     "groups" => $groups,
     "types" => $types,
     "locations"=>$locations,
+    "statuses"=>$statuses,
+    "substatuses"=>$Substatus,
     "Ipdetails"=>$Ipdetails,
     "Empdetails"=>$Empdetails
 );

@@ -92,43 +92,55 @@ function AMC() {
         <h1 className="text-xl">AMC Details</h1>
       </div>
       <div className="grid grid-cols-4 gap-x-12 gap-y-4 p-4">
-        {intervals.map((interval, index) => {
-          const intervalDate = interval;
-          let backgroundColor = "";
+      {intervals.map((interval, index) => {
+  const intervalDate = interval;
+  let nextIntervalDate;
+  if (index + 1 < intervals.length) {
+    nextIntervalDate = intervals[index + 1];
+  } else {
+    nextIntervalDate = endDate; // Use the end date if it's the last interval
+  }
 
-          if (intervalDate < currentDate) {
-            backgroundColor =
-              "bg-red-200 hover:bg-red-300";
-          } else if (
-            intervalDate.getFullYear() === currentDate.getFullYear() &&
-            intervalDate.getMonth() === currentDate.getMonth()
-          ) {
-            backgroundColor = "bg-white";
-          } else {
-            backgroundColor =
-              "bg-green-200 hover:bg-green-300";
-          }
+  let backgroundColor = "";
 
-          return (
-            <div
-              key={index}
-              className={`p-4 ${backgroundColor} text-sm font-semibold shadow-sm
-              hover:text-sm transition-all duration-700 text-center rounded-lg
-              hover:rounded-3xl 
-              cursor-pointer`}
-              onClick={() => handleIntervalClick(intervalDate)}
-            >
-              <p>{intervalDate.toLocaleDateString()}</p>
-              <p>{intervalDate.toLocaleDateString()}</p>
-            </div>
-          );
+  if (intervalDate < currentDate) {
+    backgroundColor = "bg-red-200 hover:bg-red-300";
+  } else if (
+    intervalDate.getFullYear() === currentDate.getFullYear() &&
+    intervalDate.getMonth() === currentDate.getMonth()
+  ) {
+    backgroundColor = "bg-white";
+  } else {
+    backgroundColor = "bg-green-200 hover:bg-green-300";
+  }
+
+  // Format dates in a human-readable format
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const intervalStart = intervalDate.toLocaleDateString(undefined, options);
+  const intervalEnd = new Date(nextIntervalDate - 1).toLocaleDateString(undefined, options);
+
+  return (
+    <div
+      key={index}
+      className={`p-4 ${backgroundColor} text-sm font-semibold shadow-sm
+        hover:text-sm transition-all duration-700 text-center rounded-lg
+        hover:rounded-3xl 
+        cursor-pointer`}
+      onClick={() => handleIntervalClick(intervalDate)}
+    >
+      <p>{intervalStart}</p>
+      <p>to</p>
+      <p>{intervalEnd}</p>
+    </div>
+  );
+
         })}
       </div>
 
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-4 rounded-lg shadow-lg w-1/4">
-            <h2 className="text-lg font-bold">AMC Date Notes</h2>
+            <h2 className="text-lg font-bold">AMC  Notes</h2>
             <p>Date: {selectedDate && selectedDate.toLocaleDateString()}</p>
             {/* Add additional content or logic here to fetch/display notes specific to the date */}
             <button

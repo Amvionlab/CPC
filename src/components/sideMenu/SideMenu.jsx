@@ -7,8 +7,10 @@ import {
   faSyncAlt,      // Lifecycle
   faFileAlt,      // Report
   faWrench,
+  faPlusSquare,
   faTachometerAlt  // Setup
 } from "@fortawesome/free-solid-svg-icons";
+import AddBoxIcon from "@mui/icons-material/AddBox";
 import { Link, useLocation } from "react-router-dom";  
 import logo from "../../image/S1.svg";
 import sampatName from "../../image/S2.svg";
@@ -27,6 +29,7 @@ const SideMenu = () => {
     { title: "Assets Lifecycle", icon: faSyncAlt, to: "#", key: "alc"  },
     { title: "Reports", icon: faFileAlt, to: "#", key: "report"  },
     { title: "Setup Wizard", icon: faWrench, to: "/setup", key: "setup" },
+    { title: "Add Asset", icon: faPlusSquare, to: "/single_assetadd", key: "assetadd" },
   ];
 
   const handleMouseEnter = (title) => {

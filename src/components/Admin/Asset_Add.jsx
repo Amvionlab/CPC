@@ -51,7 +51,7 @@ const Form = () => {
   });
   
   const handleImportClick = () => {
-    navigate('/setup/asset_import');
+    navigate('/bulk_assetadd');
   };
 
   const [showForm, setShowForm] = useState(false);
@@ -364,20 +364,19 @@ const handleRowsPerPageChange = (e) => {
                     </select>
                 </div>
 
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
+                  {/* <label className="text-sm font-semibold text-prime mr-2 w-32">
                     Name<span className="text-red-600 text-md font-bold">*</span>
-                  </label>
+                  </label> */}
                   <input
-                    type="text"
+                    type="hidden"
                     name="name"
                     placeholder="Enter Name"
-                    value={formData.name}
+                    value={formData.type}
                     onChange={handleChange}
                     required
                     className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150 focus:shadow-sm"
                   />
-                </div>
+               
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">
                     Manufacturer <span className="text-red-600 text-md font-bold">*</span>
@@ -442,7 +441,7 @@ const handleRowsPerPageChange = (e) => {
                 </div>
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    User Name
+                    Employee Name
                   </label>
                   <input
                     type="text"
@@ -536,7 +535,7 @@ const handleRowsPerPageChange = (e) => {
                 </div>  
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    AMC Interval
+                    AMC - PMS
                   </label>
                   <input
                     type="text"
@@ -549,7 +548,7 @@ const handleRowsPerPageChange = (e) => {
                 </div> 
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Last AMC
+                    Last AMC Visit
                   </label>
                   <input
                     type="text"

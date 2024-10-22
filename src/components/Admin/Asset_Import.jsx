@@ -205,7 +205,7 @@ const Form = () => {
     };
   
     const handleImportClick = () => {
-        navigate('/setup/asset_add');
+        navigate('/single_assetadd');
       };
     return (
         <div className="bg-box h-full p-3">

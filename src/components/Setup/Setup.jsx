@@ -1,10 +1,7 @@
 // Setup.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import PinDropIcon from "@mui/icons-material/PinDrop"; // Location icon
 import SecurityIcon from "@mui/icons-material/Security"; // Access Matrix icon
-import AddBoxIcon from "@mui/icons-material/AddBox"; // Single Asset Add icon
-import FileUploadIcon from "@mui/icons-material/FileUpload"; // Multiple Asset Import via CSV icon
 import DevicesIcon from "@mui/icons-material/Devices"; // Asset Group icon
 import CategoryIcon from "@mui/icons-material/Category"; // Asset Type icon
 import LanguageIcon from "@mui/icons-material/Language"; // IP Details icon
@@ -13,7 +10,7 @@ import PeopleIcon from "@mui/icons-material/People"; // Employee icon
 import BusinessIcon from "@mui/icons-material/Business"; // Vendor icon
 import PersonIcon from "@mui/icons-material/Person"; // User icon
 import EmailIcon from "@mui/icons-material/Email"; // Email Config icon
-
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 function Setup() {
   const navigate = useNavigate();
 
@@ -21,13 +18,13 @@ function Setup() {
     MAIN: [
       { title: "Access Matrix", sub: "User's Access Matrix", icon: <SecurityIcon />, path: "/setup/access" },
       { title: "Location", sub: "Location Name", icon: <LanguageIcon />, path: "/setup/location" },
-      { title: "Template", sub: "Template for Asset Types", icon: <TemplateIcon />, path: "/setup/template" },
       { title: "User", sub: "Software Users", icon: <PersonIcon />, path: "/setup/user" },
     ],
     ASSET: [
       { title: "Group", sub: "Asset Group", icon: <DevicesIcon />, path: "/setup/group" },
       { title: "Type", sub: "Asset Type and detail", icon: <CategoryIcon />, path: "/setup/type" },
-      { title: "Asset Add", sub: "Single Asset Add", icon: <FileUploadIcon />, path: "/setup/asset_add" },
+      { title: "Template", sub: "Template for Asset Types", icon: <TemplateIcon />, path: "/setup/template" },
+      { title: "Status", sub: "Asset Status and Sub status", icon: <CheckCircleIcon />, path: "/setup/status" },
       ],
     BASIC: [
       { title: "Employee", sub: "Employee's Name and Details", icon: <PeopleIcon />, path: "/setup/employee" },

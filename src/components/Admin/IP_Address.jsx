@@ -12,6 +12,7 @@ import { UserContext } from '../UserContext/UserContext.jsx';
 const Form = () => {
   const [formData, setFormData] = useState({
     location: '',
+    region:'',
     from_ip: '',
     to_ip: ''
   });
@@ -125,10 +126,10 @@ const Form = () => {
   }, [filters, ipDetails]);
 
   const exportCSV = () => {
-    const headers = ["Id", "Location", "Ip_from", "Ip_to"];
+    const headers = ["Id", "Location","Region", "Ip_from", "Ip_to"];
     const csvContent = [
       headers.join(","),
-      ...filteredUsers.map(ipDetail => `${ipDetail.id},${getLocationName(ipDetail.location_id)},${ipDetail.ip_from},${ipDetail.ip_to}`)
+      ...filteredUsers.map(ipDetail => `${ipDetail.id},${getLocationName(ipDetail.location_id)},${ipDetail.region},${ipDetail.ip_from},${ipDetail.ip_to}`)
     ].join("\n");
 
     const link = document.createElement("a");
@@ -168,9 +169,9 @@ const Form = () => {
   const currentTickets = filteredUsers.slice(offset, offset + ticketsPerPage);
 
   return (
-    <div className="bg-second max-h-5/6 max-w-full text-xs mx-auto p-2 lg:overflow-y-hidden h-auto ticket-scroll font-poppins">
+    <div className="bg-second max-w-full text-xs mx-auto p-1  h-full ticket-scroll font-poppins">
       {showForm && (
-        <div className="max-w-full m-2 mb-4 p-4 bg-box rounded-lg font-mont">
+        <div className="max-w-full mb-1 p-4 bg-box rounded font-mont">
           <div className="ticket-table mt-2">
             <form onSubmit={handleSubmit} className="space-y-4 text-label">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
@@ -179,7 +180,7 @@ const Form = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 ml-10 pr-10 mb-0">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-x-10 ml-10 pr-10 mb-0">
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">Location</label>
                   <select
@@ -196,6 +197,18 @@ const Form = () => {
                       </option>
                     ))}
                   </select>
+                </div>
+                <div className="flex items-center mb-2 mr-4">
+                  <label className="text-sm font-semibold text-prime mr-2 w-32">Region</label>
+                  <input
+                    type="text"
+                    name="region"
+                    placeholder="Enter Region"
+                    value={formData.region}
+                    onChange={handleChange}
+                    required
+                    className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                  />
                 </div>
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">From_IP</label>
@@ -221,6 +234,7 @@ const Form = () => {
                     className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
                   />
                 </div>
+                <div/>
                 <div className="flex items-center mb-2 mt-4 ml-8 mr-4">
                   <button
                     type="submit"
@@ -235,7 +249,7 @@ const Form = () => {
         </div>
       )}
 
-      <div className="max-w-1/2 m-2 bg-box p-4 rounded-lg font-mont">
+      <div className="max-w-1/2 bg-box p-4 rounded h-full font-mont">
         <div className="ticket-table mt-4">
           <h3 className="text-2xl font-bold text-prime mb-4 flex justify-between items-center">
             <span>
@@ -277,7 +291,7 @@ const Form = () => {
           <table className="min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
             <thead className="bg-second border-2 border-prime text-prime font-semibold font-poppins text-fontadd">
               <tr>
-                {["Id", "Location", "Ip_from", "Ip_to"].map((header, index) => (
+                {["Id", "Location", "Region", "Ip_from", "Ip_to"].map((header, index) => (
                   <td key={index} className="w-1/6 py-4 px-4">
                     <div className="flex items-center justify-center">
                       <div className="header flex">
@@ -326,6 +340,7 @@ const Form = () => {
                 <tr key={ipDetail.id} className="bg-white text-fontadd text-center font-medium">
                   <td className="border-t py-3 px-3">{index + 1 + offset}</td>
                   <td className="border-t py-3 px-3">{getLocationName(ipDetail.location_id)}</td>
+                  <td className="border-t py-3 px-3">{ipDetail.region}</td>
                   <td className="border-t py-3 px-3">{ipDetail.ip_from}</td>
                   <td className="border-t py-3 px-3">{ipDetail.ip_to}</td>
                 </tr>

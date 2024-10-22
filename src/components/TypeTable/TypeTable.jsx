@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
@@ -6,6 +6,7 @@ import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
+import { UserContext } from "../UserContext/UserContext";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Checkbox from "@mui/material/Checkbox";
@@ -17,7 +18,13 @@ import Barcode from "react-barcode"; // Ensure Barcode import
 
 function TypeTable() {
   const { type, group } = useParams();
+  const [showPopup, setShowPopup] = useState(false);
+  const [showPopup1, setShowPopup1] = useState(false);
   const [allData, setAllData] = useState(null);
+  const [statuses, setStatuses] = useState([]);
+  const [substatuses, setSubStatuses] = useState([]);
+  const [toStatus, setTostatus] = useState('');
+  const [toSubstatus, setTosubstatus] = useState('');
   const [inactiveColumns, setInactiveColumns] = useState([]);
   const [typeData, setTypeData] = useState([]);
   const [page, setPage] = useState(0);
@@ -28,12 +35,91 @@ function TypeTable() {
   const [columns, setColumns] = useState([]);
   const [selectedColumn, setSelectedColumn] = useState("");
   const [inputValue, setInputValue] = useState("");
+  const [toLocation, setToLocation] = useState('');
   const [filterText, setFilterText] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const [newNote, setNewNote] = useState('');
+  const { user } = useContext(UserContext);
 
+  const togglePopup = () => {
+    setShowPopup(!showPopup);
+  };
+  const togglePopup1 = () => {
+    setShowPopup1(!showPopup1);
+  };
   // Sorting state
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("id");
+
+const handleAddNote = (e) => {
+    e.preventDefault();
+    
+    if (!newNote.trim()) return;
+    const selectedTags = selectedRows.map(index => sortedData()[index].tag);
+
+    const noteData = {
+      tags: selectedTags,
+      notes: newNote,
+      toLocation: toLocation,
+      user: user.firstname
+    };
+    fetch(`${baseURL}/backend/fetchTransfer.php?action=add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(noteData),
+    })
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        setToLocation('');
+        togglePopup();
+        fetchAndUpdateData();
+        toast.success("Transfer Request Added");
+      } else {
+        console.error('Failed to add note:', result.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error adding note:', error);
+    });
+  };
+
+  const handleAddNote1 = (e) => {
+    e.preventDefault();
+  
+    const selectedTags = selectedRows.map(index => sortedData()[index].tag);
+
+    const noteData1 = {
+      tags: selectedTags,
+      status: toStatus,
+      substatus: toSubstatus,
+      user: user.firstname
+    };
+    console.log(noteData1);
+    fetch(`${baseURL}/backend/fetchTransfer.php?action=add`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(noteData1),
+    })
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        setStatuses('');
+        setSubStatuses('');
+        togglePopup1();
+        toast.success("Status Changed");
+      } else {
+        console.error('Failed to add note:', result.error);
+      }
+    })
+    .catch(error => {
+      console.error('Error adding note:', error);
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,6 +162,21 @@ function TypeTable() {
     setFilteredData(filtered);
   }, [selectedColumn, filterText, typeData]);
 
+  const [locations, setLocations] = useState([]); 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${baseURL}/backend/dropdown.php`);
+        const data = await response.json();
+        setLocations(data.locations);
+        setStatuses(data.statuses);
+        setSubStatuses(data.substatuses);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
   const handleRequestSort = (property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -93,7 +194,8 @@ function TypeTable() {
       return 0;
     });
   };
-
+  //const filteredLocations = locations.filter(location => location.name !== detdata.location); 
+ 
   const toggleColumnStatus = async (columnId, action) => {
     try {
       const url = new URL(`${baseURL}/backend/updateColumnStatus.php`);
@@ -177,6 +279,9 @@ function TypeTable() {
     document.body.removeChild(link);
   };
 
+  const filteredsubstatuses = substatuses.filter(
+    (substatus) => substatus.status_id === toStatus
+  );
   const handlePrintBarcodes = () => {
     const selectedTags = selectedRows.map(index => sortedData()[index].tag);
     console.log(selectedTags)
@@ -220,13 +325,152 @@ function TypeTable() {
           </div>
 
           <div className="flex gap-1 items-center">
+          {selectedRows.length > 0 && (
+            <div className="gap-2 flex">
             <button
               onClick={handlePrintBarcodes}
-              className="px-2 py-1 bg-second rounded border text-xs shadow-md transform hover:scale-110 transition-transform duration-200 ease-in-out"
+              className="px-2 py-1 bg-flo border-flo hover:bg-box hover:text-flo text-box font-bold rounded border text-xs shadow-sm transform hover:scale-110 transition-transform duration-200 ease-in-out"
             >
-              Print Barcodes
+              Barcode
             </button>
 
+            <button
+              onClick={togglePopup}
+              className="px-2 py-1 bg-flo border-flo  hover:bg-box hover:text-flo text-box font-bold rounded border text-xs shadow-md transform hover:scale-110 transition-transform duration-200 ease-in-out"
+            >
+              Transfer
+            </button>
+            <button
+              onClick={togglePopup1}
+              className="px-2 py-1 bg-flo border-flo hover:bg-box text-box hover:text-flo font-bold rounded border text-xs shadow-md transform hover:scale-110 transition-transform duration-200 ease-in-out"
+            >
+              Status
+            </button>
+            </div>
+          )}
+          {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-black bg-opacity-50 absolute inset-0"></div>
+          <div className="bg-white p-6 rounded-lg shadow-lg z-10 w-2/6">
+            <h2 className="text-xl font-semibold mb-4">New Transfer</h2>
+            <form onSubmit={handleAddNote}>
+              <div className='flex gap-4'>
+                <div className="mb-4 w-1/2">
+                  <label>From</label>
+                  <input
+                    //value={detdata.location}
+                    onChange={(e) => setFromLocation(e.target.value)}
+                    className="w-full px-3 py-2 border text-xs rounded-lg"
+                    disabled
+                  />
+                </div>
+                <div className="mb-4 w-1/2 gap-2">
+                  <label>To</label>
+                  <select
+                    //value={toLocation}
+                    onChange={(e) => setToLocation(e.target.value)}
+                    className="w-full px-3 py-2 text-xs border rounded-lg"
+                    required
+                  >
+                    <option value="">Select Location</option>
+                    {locations.map((location) => (
+                      <option key={location} value={location.name}>{location.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="mb-4">
+                <textarea
+                  className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-prime"
+                  rows="4"
+                  placeholder="Enter description here..."
+                  value={newNote}
+                  onChange={(e) => setNewNote(e.target.value)}
+                  required
+                />
+              </div>
+             
+              <div className="flex justify-end">
+                <button 
+                  type="button"
+                  className="bg-red-500 text-white px-4 py-2 rounded-md mr-2"
+                  onClick={togglePopup}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  className="bg-prime text-white px-4 py-2 rounded-md"
+                >
+                  Transfer
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+
+{showPopup1 && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-black bg-opacity-50 absolute inset-0"></div>
+          <div className="bg-white p-6 rounded-lg shadow-lg z-10 w-2/6">
+            <h2 className="text-xl font-semibold mb-4">Change Status</h2>
+            <form onSubmit={handleAddNote1}>
+              <div className='flex gap-4'>
+                <div className="mb-4 w-1/2">
+                  <label>Status</label>
+                  <select
+                    //value={detdata.location}
+                    onChange={(e) => setTostatus(e.target.value)}
+                    className="w-full px-3 py-2 text-xs border rounded-lg"
+                    required
+                    >
+                    <option value="">Select Status</option>
+                    {statuses.map((status) => (
+                      <option key={status.id} value={status.id}>
+                        {status.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="mb-4 w-1/2 gap-2">
+                  <label>Sub Status</label>
+                  <select
+                    //value={toLocation}
+                    onChange={(e) => setTosubstatus(e.target.value)}
+                    className="w-full px-3 py-2 text-xs border rounded-lg"
+                    required
+                  >
+                    <option value="" disabled>Select Sub Status</option>
+                    {filteredsubstatuses.map((substatus) => (
+                      <option key={substatus.id} value={substatus.id}>
+                        {substatus.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+                           
+              <div className="flex justify-end">
+                <button 
+                  type="button"
+                  className="bg-red-500 text-white px-4 py-2 rounded-md mr-2"
+                  onClick={togglePopup1}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  className="bg-prime text-white px-4 py-2 rounded-md"
+                >
+                  Change
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
             <TablePagination
               className="compact-pagination"
               rowsPerPageOptions={[10, 25, 50, 100, 500, 1000]}

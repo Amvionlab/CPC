@@ -19,6 +19,7 @@ import { Tooltip, tooltipClasses } from "@mui/material";
 import { styled } from '@mui/system';
 
 const Detailed = lazy(() => import("./Detailed"));
+const DetailedLive = lazy(() => import("./DetailedLive"));
 const UserDetail = lazy(() => import("./UserDetail"));
 const AssetNotes = lazy(() => import("./AssetNotes"));
 const RelatedDoc = lazy(() => import("./RelatedDoc"));
@@ -47,6 +48,7 @@ const PurpleTooltip = styled(({ className, ...props }) => (
 function SingleAsset() {
   const menuItems = [
     { title: "Detailed View", icon: faEye, component: <Detailed /> },
+    //{ title: "Detailed", icon: faEye, component: <DetailedLive /> },
     { title: "User Detail", icon: faUser, component: <UserDetail /> },
     { title: "Asset Notes", icon: faStickyNote, component: <AssetNotes /> },
     { title: "Documents", icon: faFolderOpen, component: <RelatedDoc /> },

@@ -67,6 +67,7 @@ if (mysqli_num_rows($result) > 0) {
                 'report' => $access['report'],
                 'setup' => $access['setup'],
                 'inventory' => $access['inventory'],
+                'assetadd' => $access['assetadd'],
             ]);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'No access details found for the given usertype']);

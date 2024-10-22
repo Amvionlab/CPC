@@ -16,17 +16,8 @@ import "./App.css";
 import Header from "./components/Header/Header";
 
 import User from "./components/Admin/User";
-import Department from "./components/Admin/Department";
-import Customer from "./components/Admin/Customer";
-import Domain from "./components/Admin/Domain";
-import SubDomain from "./components/Admin/SubDomain";
-import Location from "./components/Admin/Location"; // Location component
-import Sla from "./components/Admin/Sla";
-import Ticket_noc from "./components/Admin/Ticket_noc";
+import Location from "./components/Admin/Location"; 
 import Access from "./components/Admin/Access";
-import Ticket_status from "./components/Admin/Ticket_status";
-import Ticket_service from "./components/Admin/Ticket_service";
-import Ticket_type from "./components/Admin/Ticket_type";
 import Template from "./components/Admin/Template";
 import Type from "./components/Admin/Type";
 import Group from "./components/Admin/Group"; // Your custom Group component
@@ -34,8 +25,6 @@ import IP_Address from "./components/Admin/IP_Address";
 import Employee from "./components/Admin/Employee";
 import Vendor from "./components/Admin/Vendor";
 import Smtp from "./components/Admin/Smtp";
-import Asset_Add from "./components/Admin/Asset_Add";
-import Asset_Import from "./components/Admin/Asset_Import";
 import Login from "./components/Login/Login";
 import ChangePass from "./components/Login/Change_pass";
 import { ToastContainer, toast } from "react-toastify";
@@ -45,10 +34,14 @@ import { TicketProvider } from "../src/components/UserContext/TicketContext";
 import SideMenu from "./components/sideMenu/SideMenu";
 import Management from "./components/Management/Management";
 import Setup from "./components/Setup/Setup";
+import Status from "./components/Admin/Status";
+import SubStatus from "./components/Admin/SubStatus";
 import AssetType from "./components/AssetType/AssetType";
 import TypeTable from "./components/TypeTable/TypeTable";
 import SingleAsset from "./components/SingleAsset/SingleAsset";
 import Approval from "./components/Approval/Approval";
+import SingleAdd from "./components/Admin/Asset_Add";
+import BulkAdd from "./components/Admin/Asset_Import";
 const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour
 
 function App() {
@@ -122,6 +115,9 @@ function App() {
                 <TicketProvider>
                   <Routes>
                     <Route path="/password-change" element={<ChangePass />} />
+                    {user && user.dashboard === "1" && (
+                       <Route path="*" element={<Navigate to="/dashboard" />} />
+                    )}
                     {user && user.setup === "1" && (
                       <Route
                         path="*"
@@ -155,27 +151,35 @@ function App() {
                         element={<Approval />}
                       />  
                     )}
+                     {user && user.add === "1" && (
+                      <><Route
+                        path="/single_assetadd"
+                        element={<SingleAdd />}
+                      />  
+                      <Route
+                        path="/bulk_assetadd"
+                        element={<BulkAdd />}
+                      /> 
+                      </> 
+                    )}
 
 {user && user.setup === "1" && ( 
 
                     <>
                       <Route path="/setup/user" element={<User />} />
+                      <Route path="/setup/status" element={<Status />} />
+                      <Route path="/setup/substatus" element={<SubStatus />} />
                      <Route path="/setup/access" element={<Access />} />  
                       <Route path="/setup" element={<Setup />} /> 
                       <Route path="/Setup/location" element={<Location />} />
                       <Route path="/Setup/group" element={<Group />} />
                       <Route path="/Setup/type" element={<Type />} />
-                      <Route
-                        path="/Setup/ip_address"
-                        element={<IP_Address />}
-                      />
+                      <Route path="/Setup/ip_address" element={<IP_Address />} />
                       <Route path="/Setup/employee" element={<Employee />} />
                       <Route path="/Setup/vendor" element={<Vendor />} />
                       <Route path="/Setup/smtp" element={<Smtp />} />
                       <Route path="/Setup/template" element={<Template />} />
-                      <Route path="/Setup/asset_add" element={<Asset_Add />} />
-                      <Route path="/Setup/asset_import" element={<Asset_Import />} />
-                    </>
+                        </>
 )}
                   </Routes>
                 </TicketProvider>
