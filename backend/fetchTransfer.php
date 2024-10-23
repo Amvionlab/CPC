@@ -53,7 +53,113 @@ elseif ($action == 'all') {
         $conn->close();
         echo json_encode($notes);
  
-} elseif ($action == 'add') {
+} 
+
+elseif ($action == 'multiadd') {
+    // Handle adding new notes
+    // Retrieve the request payload
+    $type = isset($_GET['type']) ? $_GET['type'] : '';
+    $tableName = "asset_" . strtolower($type);
+
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    // Check if the required fields are provided
+    if (isset($data['tags']) && isset($data['toLocation'])) {
+        $tagsArray = $data['tags'];
+        $notes = $conn->real_escape_string($data['notes']);
+        $user = $conn->real_escape_string($data['user']);
+        $to = $conn->real_escape_string($data['toLocation']);
+
+        $allSuccess = true;  // To track overall success
+        $errors = [];  // Array to collect errors
+
+        foreach ($tagsArray as $tag) {
+            $escapedTag = $conn->real_escape_string($tag);
+
+            // Get the current location from the database
+            $locationQuery = "SELECT location FROM $tableName WHERE tag = '$escapedTag'";
+            $result = $conn->query($locationQuery);
+
+            if ($result && $result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $from = $conn->real_escape_string($row['location']);  // Fetching 'fromLocation'
+
+                // Prepare the INSERT statement
+                $sql = "INSERT INTO transfer (tag, from_location, to_location, description, request_on, request_by, status, is_active) 
+                        VALUES ('$escapedTag', '$from', '$to', '$notes', NOW(), '$user', 1, 1)";
+
+                // Execute the INSERT statement
+                if ($conn->query($sql) !== TRUE) {
+                    $allSuccess = false;  // Update overall success if any query fails
+                    $errors[] = "Error with tag $tag: " . $conn->error;  // Capture specific errors
+                }
+            } else {
+                $allSuccess = false;  // Update overall success if location query fails
+                $errors[] = "No location found for tag $tag.";
+            }
+        }
+
+        $conn->close();
+
+        if ($allSuccess) {
+            echo json_encode(["success" => true, "message" => "All notes added successfully."]);
+        } else {
+            echo json_encode(["success" => false, "errors" => $errors]);  // Return the errors array
+        }
+
+    } else {
+        echo json_encode(["success" => false, "error" => "Tags and toLocation are required."]);
+    }
+}
+
+
+elseif ($action == 'status') {
+    // Retrieve the request payload
+    $type = isset($_GET['type']) ? $_GET['type'] : '';
+    $tableName = "asset_" . strtolower($type);
+
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    // Check if the required fields are provided
+    if (isset($data['tags']) && isset($data['status']) && isset($data['substatus'])) {
+        $tagsArray = $data['tags'];
+        $status = $conn->real_escape_string($data['status']);
+        $user = $conn->real_escape_string($data['user']);
+        $substatus = $conn->real_escape_string($data['substatus']);
+
+        $allSuccess = true;  // To track overall success
+        $errors = [];  // Array to collect errors
+
+        foreach ($tagsArray as $tag) {
+            $escapedTag = $conn->real_escape_string($tag);
+
+            // Update the status and substatus for the given tag
+            $sql = "UPDATE $tableName SET `status`='$status', `sub_status`='$substatus' WHERE `tag` = '$escapedTag'";
+
+            // Execute the UPDATE statement
+            if ($conn->query($sql) !== TRUE) {
+                $allSuccess = false;  // Update overall success if any query fails
+                $errors[] = "Error with tag $tag: " . $conn->error;  // Capture specific errors
+            }
+        }
+
+        $conn->close();
+
+        // Return response based on success of operations
+        if ($allSuccess) {
+            echo json_encode(["success" => true, "message" => "Status changed successfully."]);
+        } else {
+            echo json_encode(["success" => false, "errors" => $errors]);  // Return the errors array
+        }
+
+    } else {
+        echo json_encode(["success" => false, "error" => "Tags, status, and substatus are required."]);
+    }
+}
+
+
+
+elseif ($action == 'add') {
     // Handle adding a new note
     // Retrieve the request payload
     $data = json_decode(file_get_contents('php://input'), true);
