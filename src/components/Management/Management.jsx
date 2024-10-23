@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { PieChart } from "@mui/x-charts";
-import { faBell, faBroom, faComment } from "@fortawesome/free-solid-svg-icons";
 import { baseURL } from "../../config.js";
-import Tooltip from "@mui/material/Tooltip";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
+import { BarChart } from '@mui/x-charts/BarChart';
 
 function Management() {
   const [type, setType] = useState([]);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,18 +20,24 @@ function Management() {
         setType(data);
       } catch (error) {
         console.error("Error fetching data:", error);
-        // Optionally handle the error, e.g., by setting an error state
       }
     };
     fetchData();
   }, []);
 
-  const data = type.map((val, i) => ({ id: i, value: 1, label: val.group }));
+  const data = type.map((val, i) => ({ id: i, value: 10, label: val.group }));
+
+  // Prepare data for BarChart
+  const barData = type.map((group) => ({
+    x: group.group, // Use the group name for the x axis
+    y: 10 // Assigning value of 1 for each group
+  }));
+
   return (
     <div className="lg:flex h-full flex-col p-1 gap-1 w-full lg:grid-cols-2 grid-cols-1 bg-second">
-      <div className="p-4 w-full bg-box rounded-md flex flex-col">
-        <div className="text-lg font-bold m-2">Asset Group</div>
-        <div className="flex gap-2 flex-wrap">
+      <div className="p-4 w-full bg-box rounded-md flex flex-col min-h-[25%]">
+        <div className="text-base font-bold m-2">Asset Group</div>
+        <div className="h-full p-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-x-4 gap-y-2">
           {type.map(
             (item, i) =>
               item.group && (
@@ -43,8 +46,8 @@ function Management() {
                   key={i}
                   className="flex-1"
                 >
-                  <div className="m-2 group transform transition-transform duration-300 hover:scale-105 border-2 rounded-lg p-4 flex items-center justify-center cursor-pointer">
-                    <p className="font-medium text-base text-prime text-center">
+                  <div className="group text-center cursor-pointer flex flex-row justify-center items-center p-4 gap-4 bg-box border rounded-xl transition-transform shadow-sm hover:shadow">
+                    <p className="text-flo text-sm font-bold transition-transform transform group-hover:translate group-hover:scale-110">
                       {item.group}
                     </p>
                   </div>
@@ -54,23 +57,24 @@ function Management() {
         </div>
       </div>
 
-      {/* Second and Third Divs: 50% Width Each */}
-      <div className="flex gap-1">
-        {/* First Div: 50% Width */}
-        <div className="flex-1 p-6 bg-box rounded-md flex justify-center  items-center">
+      <div className="flex gap-1 min-h-[75%]">
+        {/* Pie Chart Section */}
+        <div className="flex-1 p-6 bg-box rounded-md flex justify-center items-center ">
           <PieChart
+          
             series={[
               {
                 data,
-                innerRadius: 50, // Adjust this value to control the size of the center space
-                outerRadius: 150,
-                highlightScope: { faded: "global", highlighted: "item" },
-                faded: {
-                  innerRadius: 30,
-                  additionalRadius: -30,
-                  color: "gray",
-                },
-                // paddingAngle: 50,
+                innerRadius: 30,
+      outerRadius: 140,
+      paddingAngle: 5,
+      cornerRadius: 5,
+      startAngle: -45,
+      endAngle: 290,
+      cx: 150,
+      cy: 150,
+      highlightScope: { fade: 'global', highlight: 'item' },
+          faded: { innerRadius: 30, additionalRadius: -5, color: 'gray' },
               },
             ]}
             height={300}
@@ -78,40 +82,23 @@ function Management() {
           />
         </div>
 
-        {/* Second Div: 50% Width */}
+        {/* Bar Chart Section */}
         <div className="flex-1 p-6 bg-box rounded-md flex flex-col">
-          <div className="flex items-center justify-between">
-            <div className="relative inline-block">
-              <FontAwesomeIcon icon={faBell} className="text-xl" />
-              <div className="absolute -top-2 -right-2 bg-red-600 rounded-full h-5 w-5 flex items-center justify-center text-xs">
-                <p className="text-white">1</p>
-              </div>
-            </div>
-            <p className="font-medium text-xl px-2 overflow-hidden">
-              Notifications
-            </p>
-            <Tooltip title="Clear All">
-              <FontAwesomeIcon
-                icon={faBroom}
-                className="cursor-pointer transition-transform duration-300 transform hover:rotate-180"
-              />
-            </Tooltip>
-          </div>
+        <BarChart
+  xAxis={[{ scaleType: 'band', data: barData.map((d) => d.x) }]}
+  series={[
+    {
+      data: Array(barData.length).fill(10),
+      highlightScope: { fade: 'global', highlight: 'item' },
+      color: '#B800D8', 
+      
+    }
+  ]}
+  width={550}
+  height={350}
+  barLabel="value"
+/>
 
-          <div className="scrollbar-thin p-4 mt-1 bg-box rounded-lg  transition-transform duration-500">
-            {[...Array(6)].map((_, i) => (
-              <div
-                key={i}
-                className="flex text-xs items-center p-3 mb-2 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 transition duration-300"
-              >
-                <FontAwesomeIcon
-                  icon={faComment}
-                  className="text-blue-500 mr-3"
-                />
-                <p className="text-gray-700">Notification {i + 1}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </div>

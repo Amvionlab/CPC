@@ -14,7 +14,8 @@ import TablePagination from "@mui/material/TablePagination";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { baseURL } from "../../config.js";
-import Barcode from "react-barcode"; // Ensure Barcode import
+import Barcode from "react-barcode";
+import { toast } from 'react-toastify';
 
 function TypeTable() {
   const { type, group } = useParams();
@@ -63,7 +64,8 @@ const handleAddNote = (e) => {
       toLocation: toLocation,
       user: user.firstname
     };
-    fetch(`${baseURL}/backend/fetchTransfer.php?action=add`, {
+    console.log(noteData)
+    fetch(`${baseURL}/backend/fetchTransfer.php?action=multiadd&type=${type}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -75,8 +77,8 @@ const handleAddNote = (e) => {
       if (result.success) {
         setToLocation('');
         togglePopup();
-        fetchAndUpdateData();
         toast.success("Transfer Request Added");
+        setSelectedRows([]);
       } else {
         console.error('Failed to add note:', result.error);
       }
@@ -84,6 +86,7 @@ const handleAddNote = (e) => {
     .catch(error => {
       console.error('Error adding note:', error);
     });
+    
   };
 
   const handleAddNote1 = (e) => {
@@ -98,7 +101,7 @@ const handleAddNote = (e) => {
       user: user.firstname
     };
     console.log(noteData1);
-    fetch(`${baseURL}/backend/fetchTransfer.php?action=add`, {
+    fetch(`${baseURL}/backend/fetchTransfer.php?action=status&type=${type}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -108,12 +111,14 @@ const handleAddNote = (e) => {
     .then(response => response.json())
     .then(result => {
       if (result.success) {
-        setStatuses('');
-        setSubStatuses('');
+        setTostatus('');
+        setTosubstatus('');
         togglePopup1();
         toast.success("Status Changed");
+        setSelectedRows([]);
+        fetchData();
       } else {
-        console.error('Failed to add note:', result.error);
+        console.error('Failed to change:', result.error);
       }
     })
     .catch(error => {
@@ -121,25 +126,26 @@ const handleAddNote = (e) => {
     });
   };
 
+
+  const fetchData = async () => {
+    try {
+      const fieldsResponse = await fetch(
+        `${baseURL}/backend/fetchTableFields.php?type=${type}`
+      );
+      const fieldData = await fieldsResponse.json();
+      setAllData(fieldData);
+      setInactiveColumns(fieldData.inactive_columns || []);
+      setColumns(fieldData.active_columns || []);
+      const typeResponse = await fetch(
+        `${baseURL}/backend/fetchTypedata.php?type=${type}`
+      );
+      const typedata = await typeResponse.json();
+      setTypeData(typedata);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const fieldsResponse = await fetch(
-          `${baseURL}/backend/fetchTableFields.php?type=${type}`
-        );
-        const fieldData = await fieldsResponse.json();
-        setAllData(fieldData);
-        setInactiveColumns(fieldData.inactive_columns || []);
-        setColumns(fieldData.active_columns || []);
-        const typeResponse = await fetch(
-          `${baseURL}/backend/fetchTypedata.php?type=${type}`
-        );
-        const typedata = await typeResponse.json();
-        setTypeData(typedata);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
 
     fetchData();
   }, [type]);
@@ -249,7 +255,7 @@ const handleAddNote = (e) => {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    setSelectedRows([]); // Clear selection on page change
+    setSelectedRows([]); 
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -274,7 +280,7 @@ const handleAddNote = (e) => {
     const link = document.createElement("a");
     link.setAttribute("href", encodeURI(csvContent));
     link.setAttribute("download", `${type}_data.csv`);
-    document.body.appendChild(link); // Required for FF
+    document.body.appendChild(link); 
     link.click();
     document.body.removeChild(link);
   };
@@ -285,7 +291,7 @@ const handleAddNote = (e) => {
   const handlePrintBarcodes = () => {
     const selectedTags = selectedRows.map(index => sortedData()[index].tag);
     console.log(selectedTags)
-    // Open a new window and generate barcodes for print
+
     if (selectedTags.length > 0) {
       const printWindow = window.open("", "", "height=600,width=800");
       printWindow.document.write("<html><head><title>Print Barcodes</title></head><body>");
@@ -355,17 +361,9 @@ const handleAddNote = (e) => {
             <h2 className="text-xl font-semibold mb-4">New Transfer</h2>
             <form onSubmit={handleAddNote}>
               <div className='flex gap-4'>
-                <div className="mb-4 w-1/2">
-                  <label>From</label>
-                  <input
-                    //value={detdata.location}
-                    onChange={(e) => setFromLocation(e.target.value)}
-                    className="w-full px-3 py-2 border text-xs rounded-lg"
-                    disabled
-                  />
-                </div>
-                <div className="mb-4 w-1/2 gap-2">
-                  <label>To</label>
+                
+                <div className="mb-4 w-full gap-2">
+                  <label className="mb-1">To</label>
                   <select
                     //value={toLocation}
                     onChange={(e) => setToLocation(e.target.value)}
@@ -380,6 +378,7 @@ const handleAddNote = (e) => {
                 </div>
               </div>
               <div className="mb-4">
+              <label className="mb-1">Notes</label>
                 <textarea
                   className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-prime"
                   rows="4"

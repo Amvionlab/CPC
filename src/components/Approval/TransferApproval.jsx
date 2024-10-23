@@ -98,6 +98,7 @@ function Transfer() {
     if (searchField === 'all') {
       return (
         item.id.toString().toLowerCase().includes(term) ||
+        item.tag.toLowerCase().includes(term) ||
         item.from_location.toLowerCase().includes(term) ||
         item.to_location.toLowerCase().includes(term) ||
         item.description.toLowerCase().includes(term) ||
@@ -114,7 +115,9 @@ function Transfer() {
       return item.from_location.toLowerCase().includes(term);
     } else if (searchField === 'to_location') {
       return item.to_location.toLowerCase().includes(term);
-    } else if (searchField === 'description') {
+    } else if (searchField === 'tag') {
+      return item.tag.toLowerCase().includes(term);
+    }else if (searchField === 'description') {
       return item.to_location.toLowerCase().includes(term);
     }
 
@@ -354,6 +357,7 @@ function Transfer() {
           >
             
             <option value="all">All</option>
+            <option value="tag">Tag</option>
             <option value="from_location">Transfer From</option>
             <option value="to_location">Transfer To</option>
             <option value="description">Description</option>
@@ -407,7 +411,7 @@ function Transfer() {
               <TableCell align="center" sx={{ minWidth: 50, fontWeight: 600, fontSize: '12px' }}>
                 ID
               </TableCell>
-              {['Transfer From', 'Transfer To', 'Description', 'Request By', 'Request On', 'Action'].map((column) => (
+              {['Tag','Transfer From', 'Transfer To', 'Description', 'Request By', 'Request On', 'Action'].map((column) => (
                 <TableCell
                   className="capitalize text-nowrap"
                   key={column}
@@ -431,6 +435,7 @@ function Transfer() {
                     />
                   </TableCell>
                   <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>{rowIndex + 1 + page * rowsPerPage}</TableCell>
+                  <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>{row.tag}</TableCell>
                   <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>{row.from_location}</TableCell>
                   <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>{row.to_location}</TableCell>
                   <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>{row.description}</TableCell>
