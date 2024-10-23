@@ -25,7 +25,8 @@ const Form = () => {
         procure_by: "",
         warranty_upto: "",
         group: "",
-        type: ""
+        type: "",
+        user_id: ''
         
     });
 
@@ -43,6 +44,8 @@ const Form = () => {
   const [filters, setFilters] = useState({});
   const [extraFields, setExtraFields] = useState([]);
   const [dynamicFields, setDynamicFields] = useState([]);
+  const [employeeList, setEmployeeList] = useState([]);
+  const [empDetails, setEmpDetails] = useState([]);
 
   const [showFilter, setShowFilter] = useState({
     id: false,
@@ -118,6 +121,60 @@ useEffect(() => {
 }, []);
 
 useEffect(() => {
+  const fetchEmpDetails = async () => {
+    try {
+      const response = await fetch(`${baseURL}/backend/Dropdown.php`);
+      const data = await response.json();
+      setEmpDetails(data.Empdetails); // Assuming "Empdetails" is the key containing the array of employees
+    } catch (error) {
+      console.error("Error fetching employee details:", error);
+    }
+  };
+
+  fetchEmpDetails();
+}, []);
+
+useEffect(() => {
+  const fetchEmployeeData = async () => {
+    try {
+      const response = await fetch(`${baseURL}/backend/Dropdown.php`);
+      const result = await response.json();
+
+      // Assuming the response contains an array called "Empdetails"
+      const employees = result.Empdetails.map((employee) => ({
+        user_id: employee.id, // Fetch user_id for storage
+        firstname: employee.firstname,
+        lastname: employee.lastname,
+      }));
+
+      setEmployeeList(employees); // Save employee details to state
+    } catch (error) {
+      console.error('Error fetching employee data:', error);
+    }
+  };
+
+  fetchEmployeeData();
+}, []);
+
+useEffect(() => {
+  // Fetch data from Dropdown.php
+  const fetchEmployees = async () => {
+    try {
+      const response = await fetch('path-to/Dropdown.php');
+      const data = await response.json();
+
+      if (data.Empdetails) {
+        setEmployees(data.Empdetails);
+      }
+    } catch (error) {
+      console.error('Error fetching employee details:', error);
+    }
+  };
+
+  fetchEmployees();
+}, []);
+
+useEffect(() => {
   if (formData.type) {
     const fetchDynamicFields = async () => {
       try {
@@ -160,33 +217,75 @@ useEffect(() => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
+  
+    // Handle group change: reset type and dynamic fields when group changes
     if (name === 'group') {
-        setFormData({
-            group: value, // Keep the newly selected group
-            type: '',
-        });
-
-        setDynamicFields([]); // Reset dynamic fields to an empty array or default columns if needed
-    }
-    else if ( value=='select') {
-     
       setFormData({
-          group: formData.group, 
-          type: '', 
+        group: value,  // Keep the newly selected group
+        type: '',      // Reset the type field
       });
-
-     
-      setDynamicFields([]); 
-  }
-    else {
-       
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+      setDynamicFields([]);  // Reset dynamic fields to an empty array
     }
-};
+  
+    // Handle the case when 'select' is chosen
+    else if (value === 'select') {
+      setFormData({
+        group: formData.group, // Keep the current group
+        type: '',              // Reset type when 'select' is chosen
+      });
+      setDynamicFields([]);    // Reset dynamic fields to an empty array
+    }
+  
+    // Handle changes to the 'amc_warranty_type' field
+    else if (name === 'amc_warranty_type') {
+      if (value === 'AMC') {
+        // Reset Warranty related fields if AMC is selected
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          amc_warranty_type: value,
+          warranty_upto: '', // Clear Warranty field when AMC is selected
+        }));
+      } else if (value === 'Warranty') {
+        // Reset AMC related fields if Warranty is selected
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          amc_warranty_type: value,
+          amc_from: '',
+          amc_to: '',
+          amc_interval: '',
+          last_amc: '',  // Clear AMC fields when Warranty is selected
+        }));
+      } else {
+        // Handle no valid selection (if empty or invalid option is chosen)
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          amc_warranty_type: '',
+          amc_from: '',
+          amc_to: '',
+          amc_interval: '',
+          last_amc: '',
+          warranty_upto: '',
+        }));
+      }
+    }
+  
+    // Handle updates for other form fields normally
+    else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value, // Update the respective field with its value
+      }));
+    }
+  };  
+
+  const handleUserSelect = (e) => {
+    const selectedUserId = e.target.value;
+    
+    setFormData({
+      ...formData,
+      user_id: selectedUserId, // Store user_id instead of the name
+    });
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -223,42 +322,47 @@ const handleRowsPerPageChange = (e) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = new FormData();
+
+  
+
+    // Append all formData fields to the FormData object
     for (const key in formData) {
-        form.append(key, formData[key]);
+      form.append(key, formData[key]);
     }
 
     try {
-        const response = await fetch(`${baseURL}/backend/asset_add.php`, {
-            method: "POST",
-            body: form,
-        });
+      // Fetch call to backend
+      const response = await fetch(`${baseURL}/backend/asset_add.php`, {
+        method: 'POST',
+        body: form,
+      });
 
-        const result = await response.json();
+      const result = await response.json();
+      console.log("Response:", result); // Log the response to check its format
 
-        console.log("Response:", result); // Log the response to check its format
+      if (!response.ok) {
+        throw new Error(result.message || "Something went wrong");
+      }
 
-        if (!response.ok) {
-            throw new Error(result.message || "Something went wrong");
-        }
-
-        if (result.message === "Asset Already Exists") {
-            setSubmissionStatus({ success: false, message: result.message });
-            toast.error(result.message); // Display error message
-        } else if (result.message === "Asset added successfully with tag.") {
-            setSubmissionStatus({ success: true, message: result.message });
-            toast.success(result.message); // Display success message
-            location.reload(); // Reload the page to reflect changes
-        } else {
-            throw new Error("Unexpected response message.");
-        }
+      // Check response messages and display relevant toast notifications
+      if (result.message === "Asset Already Exists") {
+        setSubmissionStatus({ success: false, message: result.message });
+        toast.error(result.message); // Display error message
+      } else if (result.message === "Asset added successfully with tag and copied to unapproved assets.") {
+        setSubmissionStatus({ success: true, message: result.message });
+        toast.success(result.message); // Display success message
+        location.reload(); // Reload the page to reflect changes
+      } else {
+        throw new Error("Unexpected response message.");
+      }
     } catch (error) {
-        setSubmissionStatus({
-            success: false,
-            message: "There was a problem with your fetch operation: " + error.message,
-        });
-        toast.error("There was a problem with your fetch operation: " + error.message); // Display error message
+      setSubmissionStatus({
+        success: false,
+        message: "There was a problem with your fetch operation: " + error.message,
+      });
+      toast.error("There was a problem with your fetch operation: " + error.message); // Display error message
     }
-};
+  };
 
   const pageCount = Math.ceil(filteredUsers.length / ticketsPerPage);
 
@@ -433,25 +537,33 @@ const handleRowsPerPageChange = (e) => {
                     {locations
                     .filter(location => location.name) // Ensure that only locations with a name are shown
                     .map((location) => (
-                        <option key={location.id} value={location.name}>
+                        <option key={location.id} value={location.id}>
                         {location.name}
                         </option>
                     ))}
                 </select>
                 </div>
+
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">
                     Employee Name
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="user_name"
-                    placeholder="Enter User Name"
-                    value={formData.user_name}
+                    value={formData.user_id}
                     onChange={handleChange}
-                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
-                  />
+                    className="flex-grow text-xs border p-2 rounded-md outline-none transition ease-in-out delay-150 focus:shadow-sm"
+                  >
+                    <option value="">Select Employee</option>
+                    {empDetails.map((emp) => (
+                      <option key={emp.id} value={emp.employee_id}>
+                        {emp.firstname} {emp.lastname}
+
+                      </option>
+                    ))}
+                  </select>
                 </div>
+
                 <div className="flex items-center mb-2 mr-4">
                 <label className="text-sm font-semibold text-prime mr-2 w-32">
                     Asset Value
@@ -486,14 +598,14 @@ const handleRowsPerPageChange = (e) => {
                     Purchase Date
                   </label>
                   <input
-                    type="text"
+                    type="date"  // Change from 'text' to 'date' to allow calendar date selection
                     name="purchase_date"
-                    placeholder="Enter Purchase Date"
                     value={formData.purchase_date}
                     onChange={handleChange}
-                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
+                    className="flex-grow text-xs border p-2 rounded-md outline-none transition ease-in-out delay-150 focus:shadow-sm"
                   />
                 </div>
+
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">
                     PO Number
@@ -509,101 +621,128 @@ const handleRowsPerPageChange = (e) => {
                 </div>
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    AMC From
+                    Type
                   </label>
-                  <input
-                    type="text"
-                    name="amc_from"
-                    placeholder="Enter Amc From Date"
-                    value={formData.amc_from}
+                  <select
+                    name="amc_warranty_type"
+                    value={formData.amc_warranty_type}
                     onChange={handleChange}
-                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
-                  />
+                    className="flex-grow text-xs border p-2 rounded-md outline-none transition ease-in-out delay-150 focus:shadow-sm"
+                  >
+                    <option value="">Select Type</option>
+                    <option value="AMC">AMC</option>
+                    <option value="Warranty">Warranty</option>
+                  </select>
                 </div>
-                <div className="flex items-center mb-2 mr-4">
+
+                {/* Conditionally render fields based on AMC or Warranty selection */}
+                {formData.amc_warranty_type === 'AMC' && (
+                  <>
+                    <div className="flex items-center mb-2 mr-4">
+                      <label className="text-sm font-semibold text-prime mr-2 w-32">
+                        AMC From
+                      </label>
+                      <input
+                        type="date"  // Change from 'text' to 'date' to allow calendar date selection
+                        name="amc_from"
+                        value={formData.amc_from}
+                        onChange={handleChange}
+                        className="flex-grow text-xs border p-2 rounded-md outline-none transition ease-in-out delay-150 focus:shadow-sm"
+                      />
+                    </div>
+
+
+                    <div className="flex items-center mb-2 mr-4">
+                      <label className="text-sm font-semibold text-prime mr-2 w-32">
+                        AMC To
+                      </label>
+                      <input
+                        type="date"  // Change from 'text' to 'date' to enable calendar date selection
+                        name="amc_to"
+                        value={formData.amc_to}
+                        onChange={handleChange}
+                        className="flex-grow text-xs border p-2 rounded-md outline-none transition ease-in-out delay-150 focus:shadow-sm"
+                      />
+                    </div>
+
+                    <div className="flex items-center mb-2 mr-4">
+                      <label className="text-sm font-semibold text-prime mr-2 w-32">
+                        AMC - PMS
+                      </label>
+                      <input
+                        type="number"  // Change from 'text' to 'number' to make it a number input
+                        name="amc_interval"
+                        placeholder="Enter AMC Interval"
+                        value={formData.amc_interval}
+                        onChange={handleChange}
+                        min="0"  // Set the minimum value to 0
+                        className="flex-grow text-xs border p-2 rounded-md outline-none transition ease-in-out delay-150 focus:shadow-sm"
+                      />
+                    </div>
+
+                    <div className="flex items-center mb-2 mr-4">
+                      <label className="text-sm font-semibold text-prime mr-2 w-32">
+                        Last AMC Visit
+                      </label>
+                      <input
+                        type="date"  // Change from 'text' to 'date' to allow calendar date selection
+                        name="last_amc"
+                        value={formData.last_amc}
+                        onChange={handleChange}
+                        className="flex-grow text-xs border p-2 rounded-md outline-none transition ease-in-out delay-150 focus:shadow-sm"
+                      />
+                    </div>
+
+                  </>
+                )}
+
+                {formData.amc_warranty_type === 'Warranty' && (
+                  <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    AMC To
+                    Warranty Upto
                   </label>
                   <input
-                    type="text"
-                    name="amc_to"
-                    placeholder="Enter AMC To Date"
-                    value={formData.amc_to}
+                    type="date"  // Change from 'text' to 'date' to allow calendar date selection
+                    name="warranty_upto"
+                    value={formData.warranty_upto}
                     onChange={handleChange}
-                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
+                    className="flex-grow text-xs border p-2 rounded-md outline-none transition ease-in-out delay-150 focus:shadow-sm"
                   />
-                </div>  
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    AMC - PMS
-                  </label>
-                  <input
-                    type="text"
-                    name="amc_interval"
-                    placeholder="Enter AMC Interval Date"
-                    value={formData.amc_interval}
-                    onChange={handleChange}
-                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
-                  />
-                </div> 
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Last AMC Visit
-                  </label>
-                  <input
-                    type="text"
-                    name="last_amc"
-                    placeholder="Enter Last AMC Date"
-                    value={formData.last_amc}
-                    onChange={handleChange}
-                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
-                  />
-                </div>
+                </div>                
+                )}
+
+                {/* Procure By is always shown */}
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">
                     Procure By
                   </label>
                   <input
-                    type="text"
+                    type="date"  // Change from 'text' to 'date' to allow calendar date selection
                     name="procure_by"
-                    placeholder="Enter Procure By Date"
                     value={formData.procure_by}
                     onChange={handleChange}
-                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
+                    className="flex-grow text-xs border p-2 rounded-md outline-none transition ease-in-out delay-150 focus:shadow-sm"
                   />
-                </div>  
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Warranty Upto
-                  </label>
-                  <input
-                    type="text"
-                    name="warranty_upto"
-                    placeholder="Enter Warranty Upto Date"
-                    value={formData.warranty_upto}
-                    onChange={handleChange}
-                    className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
-                  />
-                </div>  
-                
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-3 ml-10 pr-10 mb-0">
-    {dynamicFields.map((field, index) => (
-        <div key={field || index} className="flex items-center mb-2 mr-4">
-            <label className="capitalize text-sm font-semibold text-prime mr-2 w-32">
-                {field.replace('_', ' ')}
-            </label>
-            <input
-                type="text"
-                name={field}
-                placeholder={`Enter ${field.replace('_', ' ')}`}
-                value={formData[field]}
-                onChange={handleChange}
-                className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
-            />
-        </div>
-    ))}
-</div>
+                </div>
+                          
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-3 ml-10 pr-10 mb-0">
+              {dynamicFields.map((field, index) => (
+                  <div key={field || index} className="flex items-center mb-2 mr-4">
+                      <label className="capitalize text-sm font-semibold text-prime mr-2 w-32">
+                          {field.replace('_', ' ')}
+                      </label>
+                      <input
+                          type="text"
+                          name={field}
+                          placeholder={`Enter ${field.replace('_', ' ')}`}
+                          value={formData[field]}
+                          onChange={handleChange}
+                          className="flex-grow text-xs  border p-2  rounded-md outline-none transition ease-in-out delay-150  focus:shadow-sm"
+                      />
+                  </div>
+              ))}
+          </div>
               <div className="flex justify-center">
                 <button
                   type="submit"
