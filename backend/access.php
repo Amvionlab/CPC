@@ -62,10 +62,12 @@ if (mysqli_num_rows($result) > 0) {
                 'name' => $access['name'],
                 'add' => $access['add'],
                 'transfer' => $access['transfer'],
+                'scrap' => $access['scrap'],
                 'dashboard' => $access['dashboard'],
                 'alc' => $access['alc'],
                 'report' => $access['report'],
                 'setup' => $access['setup'],
+                'area' => $access['area'],
                 'inventory' => $access['inventory'],
                 'assetadd' => $access['assetadd'],
             ]);
