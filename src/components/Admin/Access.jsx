@@ -102,8 +102,8 @@ const Form = () => {
       <div className="bg-box p-4 h-full w-full rounded-lg font-medium">
         <h2 className="text-2xl font-bold text-prime mb-5">Access Matrix</h2>
         <TableContainer>
-          <Table className="min-w-full" aria-label="simple table">
-            <TableHead>
+  <Table className="min-w-full" aria-label="simple table">
+    <TableHead>
               <TableRow>
                 {[
                   "Id",
@@ -111,8 +111,8 @@ const Form = () => {
                   "Area Access",
                   "Dashboard",
                   "Inventory",
-                  "Asset Add",
-                  "Add",
+                  "Add Asset",
+                  "Asset",
                   "Transfer",
                   "Scrap",
                   "ALC",
@@ -120,62 +120,64 @@ const Form = () => {
                   "Setup",
                   "Active",
                 ].map((header, index) => (
-                  <TableCell key={index} align="center" sx={{ paddingX: '4px',paddingY: '10px', fontSize: '14px', textAlign: 'left' }}>
+                  <TableCell key={index} align="center" sx={{ paddingX: '4px',paddingY: '10px', fontSize: '14px', textAlign: 'left',fontWeight: 800,  }}>
                     <p className="font-bold">{header}</p>
                   </TableCell>
                 ))}
               </TableRow>
             </TableHead>
-            <TableBody>
-              {users.map((user) => (
-                <TableRow
-                  key={user.id}
-                  className="hover:bg-gray-100 bg-box text-fontadd text-left font-medium"
-                >
-                  <TableCell align="center" sx={{ padding: '4px', fontSize: '12px', fontWeight: 700, textAlign: 'left',minWidth: 40 }}>{user.id}</TableCell>
-                  <TableCell align="center" sx={{ padding: '4px', fontSize: '12px', fontWeight: 700, textAlign: 'left' }}>{user.name}</TableCell>
-                  <TableCell align="center" sx={{ padding: '4px', fontSize: '12px', textAlign: 'left' }}>
-                    <Select
-                      value={user.area_access}
-                      onChange={(e) => handleDropdownChange(user.id, e.target.value)}
-                      variant="standard"
-                      sx={{
-                        minWidth: 100,
-                        fontSize: '12px',
-                        '& .MuiSelect-root': {
-                          border: 'none',
-                        },
-                        '&:before': {
-                          borderBottom: 'none',
-                        },
-                        '&:after': {
-                          borderBottom: 'none',
-                        },
-                        '&:hover:not(.Mui-disabled):before': {
-                          borderBottom: 'none',
-                        },
-                      }}
-                    >
-                      <MenuItem value="0">None</MenuItem>
-                      <MenuItem value="1">All</MenuItem>
-                      <MenuItem value="2">Location</MenuItem>
-                      <MenuItem value="3">Branch</MenuItem>
-                    </Select>
+    <TableBody>
+      {users.map((user) => (
+        <TableRow
+          key={user.id}
+          className="hover:bg-gray-100 bg-box text-fontadd font-medium"
+        >
+          <TableCell sx={{ padding: '4px', fontSize: '12px', fontWeight: 700, textAlign: 'left', minWidth: 40 }}>{user.id}</TableCell>
+          <TableCell sx={{ padding: '4px', fontSize: '12px', fontWeight: 700, textAlign: 'left' }}>{user.name}</TableCell>
+          <TableCell sx={{ padding: '4px', fontSize: '12px', textAlign: 'left' }}>
+            <Select
+              value={user.area_access}
+              onChange={(e) => handleDropdownChange(user.id, e.target.value)}
+              variant="standard"
+              sx={{
+                minWidth: 100,
+                color: '#1976D2',
+                fontWeight: 550,
+                fontSize: '12px',
+                '& .MuiSelect-root': {
+                  border: 'none',
+                },
+                '&:before': {
+                  borderBottom: 'none',
+                },
+                '&:after': {
+                  borderBottom: 'none',
+                },
+                '&:hover:not(.Mui-disabled):before': {
+                  borderBottom: 'none',
+                },
+              }}
+            >
+              <MenuItem value="0">None</MenuItem>
+              <MenuItem value="1">All</MenuItem>
+              <MenuItem value="2">Location</MenuItem>
+              <MenuItem value="3">Branch</MenuItem>
+            </Select>
+          </TableCell>
+          {["dashboard", "inventory", "assetadd", "add", "transfer", "scrap", "alc", "report", "setup", "is_active"].map((field) => (
+            <TableCell key={field} sx={{ padding: '4px', fontSize: '12px', textAlign: 'left' }}>
+              <Switch
+                checked={user[field] === "1"}
+                onChange={() => handleToggle(user.id, field, user[field])}
+              />
+            </TableCell>
+          ))}
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</TableContainer>
 
-                  </TableCell>
-                  {["dashboard", "inventory", "assetadd", "add", "transfer", "scrap", "alc", "report", "setup", "is_active"].map((field) => (
-                    <TableCell key={field} align="center" sx={{ padding: '4px', fontSize: '12px', textAlign: 'left' }}>
-                      <Switch className="text-flo"
-                        checked={user[field] === "1"}
-                        onChange={() => handleToggle(user.id, field, user[field])}
-                      />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
       </div>
     </div>
   );
