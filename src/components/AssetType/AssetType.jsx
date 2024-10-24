@@ -90,7 +90,7 @@ const AssetType = () => {
     {
       data: Array(barData.length).fill(10),
       highlightScope: { fade: 'global', highlight: 'item' },
-      color: '#B800D8', 
+      color: '#2E96FF', 
       
     }
   ]}

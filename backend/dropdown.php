@@ -47,6 +47,21 @@ if ($resultLocations->num_rows > 0) {
     }
 }
 
+$sqlBranches = "SELECT id, `name`, `location_id` FROM branch WHERE is_active = 1";
+$resultBranches = $conn->query($sqlBranches);
+
+$branches = array();
+
+if ($resultBranches->num_rows > 0) {
+    while ($row = $resultBranches->fetch_assoc()) {
+        $branches[] = array(
+            "id" => $row["id"],
+            "name" => $row["name"],
+            "location_id" => $row["name"],
+        );
+    }
+}
+
 $sqlStatuses = "SELECT id, `name` FROM asset_status WHERE is_active = 1";
 $resultStatuses = $conn->query($sqlStatuses);
 
@@ -61,7 +76,7 @@ if ($resultStatuses->num_rows > 0) {
     }
 }
 
-$sqlIpdetails = "SELECT id, `ip_from`, `region`, `ip_to`, `location_id` FROM ip_details WHERE is_active = 1";
+$sqlIpdetails = "SELECT id, `ip_from`,`ip_to`, `branch_id`, `location_id` FROM ip_details WHERE is_active = 1";
 $resultIpdetails = $conn->query($sqlIpdetails);
 
 $Ipdetails = array();
@@ -70,9 +85,9 @@ if ($resultIpdetails->num_rows > 0) {
     while ($row = $resultIpdetails->fetch_assoc()) {
         $Ipdetails[] = array(
             "id" => $row["id"],
-            "region" => $row["region"],
             "ip_from" => $row["ip_from"],
             "ip_to" => $row["ip_to"],
+            "branch_id" => $row["branch_id"],
             "location_id" => $row["location_id"]
 
         );
@@ -129,6 +144,7 @@ $response = array(
     "groups" => $groups,
     "types" => $types,
     "locations"=>$locations,
+    "branches"=>$branches,
     "statuses"=>$statuses,
     "substatuses"=>$Substatus,
     "Ipdetails"=>$Ipdetails,

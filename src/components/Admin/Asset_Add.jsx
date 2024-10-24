@@ -621,7 +621,7 @@ const handleRowsPerPageChange = (e) => {
                 </div>
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Type
+                    Maintenance Type
                   </label>
                   <select
                     name="amc_warranty_type"
