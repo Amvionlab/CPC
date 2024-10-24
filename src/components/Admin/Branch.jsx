@@ -36,7 +36,7 @@ const Form = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${baseURL}/backend/fetchLocation.php`);
+        const response = await fetch(`${baseURL}/backend/fetchBranch.php`);
         const data = await response.json();
         setUsers(data);
         setFilteredUsers(data);
@@ -81,7 +81,7 @@ const Form = () => {
     }
 
     try {
-      const response = await fetch(`${baseURL}/backend/location_add.php`, {
+      const response = await fetch(`${baseURL}/backend/branch_add.php`, {
         method: "POST",
         body: form,
       });
@@ -93,10 +93,10 @@ const Form = () => {
 
       const result = await response.json();
 
-      if (result.message === "Location already exists.") {
+      if (result.message === "Branch already exists.") {
         setSubmissionStatus({ success: false, message: result.message });
         toast.error(result.message);
-      } else if (result.message === "Location added successfully.") {
+      } else if (result.message === "Branch added successfully.") {
         setSubmissionStatus({ success: true, message: result.message });
         toast.success(result.message);
       } else {
@@ -167,7 +167,7 @@ const Form = () => {
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.setAttribute("download", "Location.csv");
+    link.setAttribute("download", "Branch.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -190,7 +190,7 @@ const Form = () => {
     const worksheet = XLSX.utils.aoa_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    XLSX.writeFile(workbook, "Location.xlsx");
+    XLSX.writeFile(workbook, "Branch.xlsx");
   };
 
   const exportPDF = () => {
@@ -208,7 +208,7 @@ const Form = () => {
       const imgHeight = canvas.height * imgWidth / canvas.width;
 
       pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-      pdf.save("Location.pdf");
+      pdf.save("Branch.pdf");
       document.body.removeChild(tableClone);
     });
   };
@@ -223,13 +223,13 @@ const Form = () => {
         <div className="max-w-full mb-1 p-4 bg-box font-mont">
           <form onSubmit={handleSubmit} className="space-y-4 text-label">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-              <div className="font-mont font-semibold text-2xl mb-4">Add Location :</div>
+              <div className="font-mont font-semibold text-2xl mb-4">Add Branch :</div>
               <div className="flex items-center mb-2 mr-4">
                 <label className="text-sm font-semibold text-prime mr-2 w-32">Name</label>
                 <input
                   type="text"
                   name="name"
-                  placeholder="Enter Location Name"
+                  placeholder="Enter Branch Name"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
@@ -250,12 +250,12 @@ const Form = () => {
       <div className="bg-box h-full p-4 font-mont">
         <h3 className="text-2xl font-bold text-prime mb-4 flex justify-between items-center">
           <span>
-            Location Data
+            Branch Data
             <button
               onClick={() => setShowForm(!showForm)}
               className="ml-4 bg-second hover:bg-prime hover:text-box font-mont font-bold text-sm text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
             >
-              {showForm ? "Close" : "+ Add Location"}
+              {showForm ? "Close" : "+ Add Branch"}
             </button>
           </span>
           <span className="text-xs flex items-center gap-2">
@@ -290,10 +290,10 @@ const Form = () => {
             </button>
           </span>
           <button
-            onClick={() => navigate("/setup/branch")}
+            onClick={() => navigate("/setup/location")}
             className="flex text-xs items-center px-3 py-2 bg-box border border-gray-400 shadow-inner text-prime rounded hover:shadow-md hover:border-prime transition-transform transform hover:scale-110"
           >
-            Branch
+            Location
           </button>
           <button
             onClick={() => navigate("/setup/ip_address")}

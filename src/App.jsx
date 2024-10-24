@@ -17,6 +17,7 @@ import Header from "./components/Header/Header";
 
 import User from "./components/Admin/User";
 import Location from "./components/Admin/Location"; 
+import Branch from "./components/Admin/Branch"; 
 import Access from "./components/Admin/Access";
 import Template from "./components/Admin/Template";
 import Type from "./components/Admin/Type";
@@ -172,6 +173,7 @@ function App() {
                      <Route path="/setup/access" element={<Access />} />  
                       <Route path="/setup" element={<Setup />} /> 
                       <Route path="/Setup/location" element={<Location />} />
+                      <Route path="/Setup/branch" element={<Branch />} />
                       <Route path="/Setup/group" element={<Group />} />
                       <Route path="/Setup/type" element={<Type />} />
                       <Route path="/Setup/ip_address" element={<IP_Address />} />
