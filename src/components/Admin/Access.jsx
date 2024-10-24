@@ -115,12 +115,12 @@ const Form = () => {
                   "Add",
                   "Transfer",
                   "Scrap",
-                  "Asset LifeCycle",
+                  "ALC",
                   "Report",
                   "Setup",
                   "Active",
                 ].map((header, index) => (
-                  <TableCell key={index} align="center" sx={{ padding: '10px', fontSize: '14px' }}>
+                  <TableCell key={index} align="center" sx={{ paddingX: '4px',paddingY: '10px', fontSize: '14px', textAlign: 'left' }}>
                     <p className="font-bold">{header}</p>
                   </TableCell>
                 ))}
@@ -130,11 +130,11 @@ const Form = () => {
               {users.map((user) => (
                 <TableRow
                   key={user.id}
-                  className="hover:bg-gray-100 bg-box text-fontadd text-center font-medium"
+                  className="hover:bg-gray-100 bg-box text-fontadd text-left font-medium"
                 >
-                  <TableCell align="center" sx={{ padding: '4px', fontSize: '12px' }}>{user.id}</TableCell>
-                  <TableCell align="center" sx={{ padding: '4px', fontSize: '12px' }}>{user.name}</TableCell>
-                  <TableCell align="center" sx={{ padding: '4px', fontSize: '12px' }}>
+                  <TableCell align="center" sx={{ padding: '4px', fontSize: '12px', fontWeight: 700, textAlign: 'left',minWidth: 40 }}>{user.id}</TableCell>
+                  <TableCell align="center" sx={{ padding: '4px', fontSize: '12px', fontWeight: 700, textAlign: 'left' }}>{user.name}</TableCell>
+                  <TableCell align="center" sx={{ padding: '4px', fontSize: '12px', textAlign: 'left' }}>
                     <Select
                       value={user.area_access}
                       onChange={(e) => handleDropdownChange(user.id, e.target.value)}
@@ -164,7 +164,7 @@ const Form = () => {
 
                   </TableCell>
                   {["dashboard", "inventory", "assetadd", "add", "transfer", "scrap", "alc", "report", "setup", "is_active"].map((field) => (
-                    <TableCell key={field} align="center" sx={{ padding: '4px', fontSize: '12px' }}>
+                    <TableCell key={field} align="center" sx={{ padding: '4px', fontSize: '12px', textAlign: 'left' }}>
                       <Switch className="text-flo"
                         checked={user[field] === "1"}
                         onChange={() => handleToggle(user.id, field, user[field])}
