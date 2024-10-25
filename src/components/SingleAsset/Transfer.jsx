@@ -42,6 +42,31 @@ function Transfer() {
   const [selectedAction, setSelectedAction] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
 
+  const [branches, setBranches] = useState([]);
+
+  useEffect(() => {
+    const fetchBranch = async () => {
+      try {
+        const response = await fetch(`${baseURL}/backend/dropdown.php`);
+        const data = await response.json();
+        if (data) {
+          setBranches(data.branches || []);
+          
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchBranch();
+  }, []);
+
+  const getBranchNameById = (id) => {
+    const branch = branches.find((branch) => branch.id === id);
+    return branch ? branch.name : '-';
+  };
+
+
   const togglePopup = () => {
     setShowPopup(!showPopup);
   };
@@ -480,8 +505,12 @@ function Transfer() {
               .map((row) => (
                 <TableRow hover role="checkbox" tabIndex={-1} key={row.id} className="text-xs">
                   <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>{row.id}</TableCell>
-                  <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>{row.from_location}</TableCell>
-                  <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>{row.to_location}</TableCell>
+                  <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>
+            {getBranchNameById(row.from_location)}
+          </TableCell>
+          <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>
+            {getBranchNameById(row.to_location)}
+          </TableCell>
                   <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>{row.description}</TableCell>
                   <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>{row.request_by}</TableCell>
                   <TableCell align="center" sx={{ padding: '10px', whiteSpace: 'nowrap' }}>
@@ -525,10 +554,10 @@ function Transfer() {
               </PurpleTooltip>
            
           )}
-          {(row.status === '3') && (
+          {(row.status === '3' && !(row.to_location == user.branch)) && (
                       'Not Received'
                     )}
-          {(row.status === '5') && (  // Assuming status '3' implies ready to receive
+          {((row.status === '3') && (row.to_location == user.branch)) && (  // Assuming status '3' implies ready to receive
                       <PurpleTooltip 
                         title="Receive" 
                         placement="bottom" 

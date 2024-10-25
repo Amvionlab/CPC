@@ -31,6 +31,7 @@ function TypeTable() {
   // Assuming you use the context for user
   const { user } = useContext(UserContext);
 
+
   const fetchData = async () => {
     try {
       const typeResponse = await fetch(`${baseURL}/backend/fetchUnApprovedata.php?action=all`);

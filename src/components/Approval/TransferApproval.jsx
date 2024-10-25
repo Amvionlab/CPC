@@ -37,6 +37,32 @@ function Transfer() {
     },
   });
 
+  const [branches, setBranches] = useState([]);
+
+  useEffect(() => {
+    const fetchBranch = async () => {
+      try {
+        const response = await fetch(`${baseURL}/backend/dropdown.php`);
+        const data = await response.json();
+        if (data) {
+          setBranches(data.branches || []);
+          
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchBranch();
+  }, []);
+
+
+  const getBranchNameById = (id) => {
+    const branch = branches.find((branch) => branch.id === id);
+    return branch ? branch.name : '-';
+  };
+
+
   // Dialog states
   const [open, setOpen] = useState(false);
   const [selectedAction, setSelectedAction] = useState(null);
@@ -436,8 +462,12 @@ function Transfer() {
                   </TableCell>
                   <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>{rowIndex + 1 + page * rowsPerPage}</TableCell>
                   <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>{row.tag}</TableCell>
-                  <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>{row.from_location}</TableCell>
-                  <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>{row.to_location}</TableCell>
+                  <TableCell align="center" sx={{ padding: '1px', whiteSpace: 'nowrap' }}>
+            {getBranchNameById(row.from_location)}
+          </TableCell>
+          <TableCell align="center" sx={{ padding: '1px', whiteSpace: 'nowrap' }}>
+            {getBranchNameById(row.to_location)}
+          </TableCell>
                   <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>{row.description}</TableCell>
                   <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>{row.request_by}</TableCell>
                   <TableCell align="center" sx={{  padding: '1px', whiteSpace: 'nowrap' }}>

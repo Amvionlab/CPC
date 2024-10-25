@@ -11,11 +11,14 @@ import {
   TableRow,
   Paper,
   Switch,
-} from "@mui/material"; // Import MUI components
+  Select,
+  MenuItem,
+} from "@mui/material"; // Import necessary MUI components
 import "./Access.css";
 
 const Form = () => {
   const { user } = useContext(UserContext);
+  console.log(user)
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -64,54 +67,118 @@ const Form = () => {
     }
   };
 
+  const handleDropdownChange = async (userId, newValue) => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) =>
+        user.id === userId ? { ...user, area_access: newValue } : user
+      )
+    );
+
+    try {
+      const response = await fetch(`${baseURL}/backend/updateAccess.php`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: userId,
+          field: "area_access",
+          value: newValue,
+        }),
+      });
+
+      if (!response.ok) {
+        toast.error("Update failed");
+      } else {
+        toast.success("Update successful");
+      }
+    } catch (error) {
+      console.error("Error updating data:", error);
+      toast.error("Update failed");
+    }
+  };
+
   return (
     <div className="bg-second w-full text-xs mx-auto p-1 lg:overflow-y-hidden h-full ticket-scroll">
       <div className="bg-box p-4 h-full w-full rounded-lg font-medium">
         <h2 className="text-2xl font-bold text-prime mb-5">Access Matrix</h2>
-        <TableContainer >
-          <Table className="min-w-full" aria-label="simple table">
-            <TableHead>
+        <TableContainer>
+  <Table className="min-w-full" aria-label="simple table">
+    <TableHead>
               <TableRow>
                 {[
                   "Id",
                   "Name",
+                  "Area Access",
                   "Dashboard",
                   "Inventory",
-                  "Asset Add",
-                  "Add Approval",
-                  "Transfer Approval",
-                  "Asset LifeCycle",
+                  "Add Asset",
+                  "Asset",
+                  "Transfer",
+                  "Scrap",
+                  "ALC",
                   "Report",
                   "Setup",
                   "Active",
                 ].map((header, index) => (
-                  <TableCell key={index} align="center" sx={{ padding: '10px', fontSize: '14px' }}>
+                  <TableCell key={index} align="center" sx={{ paddingX: '4px',paddingY: '10px', fontSize: '14px', textAlign: 'left',fontWeight: 800,  }}>
                     <p className="font-bold">{header}</p>
                   </TableCell>
                 ))}
               </TableRow>
             </TableHead>
-            <TableBody>
-              {users.map((user) => (
-                <TableRow
-                  key={user.id}
-                  className="hover:bg-gray-100 bg-box text-fontadd text-center font-medium"
-                >
-                  <TableCell align="center" sx={{ padding: '4px', fontSize: '12px' }}>{user.id}</TableCell>
-                  <TableCell align="center" sx={{ padding: '4px', fontSize: '12px' }}>{user.name}</TableCell>
-                  {["dashboard", "inventory","assetadd", "add", "transfer", "alc", "report", "setup", "is_active"].map((field) => (
-                    <TableCell key={field} align="center" sx={{ padding: '4px', fontSize: '12px' }}>
-                      <Switch className="text-flo"
-                        checked={user[field] === "1"}
-                        onChange={() => handleToggle(user.id, field, user[field])}
-                      />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+    <TableBody>
+      {users.map((user) => (
+        <TableRow
+          key={user.id}
+          className="hover:bg-gray-100 bg-box text-fontadd font-medium"
+        >
+          <TableCell sx={{ padding: '4px', fontSize: '12px', fontWeight: 700, textAlign: 'left', minWidth: 40 }}>{user.id}</TableCell>
+          <TableCell sx={{ padding: '4px', fontSize: '12px', fontWeight: 700, textAlign: 'left' }}>{user.name}</TableCell>
+          <TableCell sx={{ padding: '4px', fontSize: '12px', textAlign: 'left' }}>
+            <Select
+              value={user.area_access}
+              onChange={(e) => handleDropdownChange(user.id, e.target.value)}
+              variant="standard"
+              sx={{
+                minWidth: 100,
+                color: '#1976D2',
+                fontWeight: 550,
+                fontSize: '12px',
+                '& .MuiSelect-root': {
+                  border: 'none',
+                },
+                '&:before': {
+                  borderBottom: 'none',
+                },
+                '&:after': {
+                  borderBottom: 'none',
+                },
+                '&:hover:not(.Mui-disabled):before': {
+                  borderBottom: 'none',
+                },
+              }}
+            >
+              <MenuItem value="0">None</MenuItem>
+              <MenuItem value="1">All</MenuItem>
+              <MenuItem value="2">Location</MenuItem>
+              <MenuItem value="3">Branch</MenuItem>
+            </Select>
+          </TableCell>
+          {["dashboard", "inventory", "assetadd", "add", "transfer", "scrap", "alc", "report", "setup", "is_active"].map((field) => (
+            <TableCell key={field} sx={{ padding: '4px', fontSize: '12px', textAlign: 'left' }}>
+              <Switch
+                checked={user[field] === "1"}
+                onChange={() => handleToggle(user.id, field, user[field])}
+              />
+            </TableCell>
+          ))}
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</TableContainer>
+
       </div>
     </div>
   );

@@ -41,6 +41,31 @@ function TypeTable() {
   const [filteredData, setFilteredData] = useState([]);
   const [newNote, setNewNote] = useState('');
   const { user } = useContext(UserContext);
+  const [branches, setBranches] = useState([]);
+  const [status, setStatus] = useState([]);
+  const [substatus, setSubstatus] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${baseURL}/backend/dropdown.php`);
+        const data = await response.json();
+        if (data) {
+          setBranches(data.branches || []);
+          setStatus(data.statuses || []);
+          setSubstatus(data.substatuses || []);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+console.log(branches);
+console.log(status);
+console.log(substatus);
 
   const togglePopup = () => {
     setShowPopup(!showPopup);
@@ -174,7 +199,7 @@ const handleAddNote = (e) => {
       try {
         const response = await fetch(`${baseURL}/backend/dropdown.php`);
         const data = await response.json();
-        setLocations(data.locations);
+        setLocations(data.branches);
         setStatuses(data.statuses);
         setSubStatuses(data.substatuses);
       } catch (error) {
@@ -316,6 +341,12 @@ const handleAddNote = (e) => {
     (column) => column.type === type
   );
 
+
+  const getNameById = (id, list) => {
+    const item = list.find(element => element.id === id);
+    return item ? item.name : '-';
+  };
+
   return (
     <div className="lg:flex p-1 gap-4 w-full h-full lg:grid-cols-2 grid-cols-1 bg-slate-200">
       <div className="w-full bg-white p-1 rounded-md h-full flex flex-col">
@@ -371,8 +402,8 @@ const handleAddNote = (e) => {
                     required
                   >
                     <option value="">Select Location</option>
-                    {locations.map((location) => (
-                      <option key={location} value={location.name}>{location.name}</option>
+                    {branches.map((location) => (
+                      <option key={location} value={location.id}>{location.name}</option>
                     ))}
                   </select>
                 </div>
@@ -612,15 +643,29 @@ const handleAddNote = (e) => {
                       </Link>
                     </TableCell>
 
-                    {columnsToShow.map((column, colIndex) => (
-                      <TableCell
-                        align="center"
-                        key={colIndex}
-                        sx={{ padding: "1px", fontSize: "12px" }}
-                      >
-                        {row[column.column_name] || "-"}
-                      </TableCell>
-                    ))}
+                    {columnsToShow.map((column, colIndex) => {
+              const columnValue = row[column.column_name];
+
+              // Check if the current column is of type branch, status, or substatus
+              let displayValue = columnValue || "-";
+              if (column.column_name === "branch") {
+                displayValue = getNameById(columnValue, branches);
+              } else if (column.column_name === "status") {
+                displayValue = getNameById(columnValue, statuses);
+              } else if (column.column_name === "sub_status") {
+                displayValue = getNameById(columnValue, substatuses);
+              }
+
+              return (
+                <TableCell
+                  align="center"
+                  key={colIndex}
+                  sx={{ padding: "1px", fontSize: "12px" }}
+                >
+                  {displayValue}
+                </TableCell>
+              );
+            })}
                   </TableRow>
                 ))}
             </TableBody>
