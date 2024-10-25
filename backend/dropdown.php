@@ -113,7 +113,7 @@ if ($resultSubstatus->num_rows > 0) {
 }
 
 //Employee
-$sqlEmpdetails = "SELECT `id`,`firstname` , `lastname`, `employee_id`, `department`, `designation`, `authority_id`, `location`, `mobile`, `email`, `state`, `country`, `building`, `block`, `floor` FROM employee WHERE is_active = 1";
+$sqlEmpdetails = "SELECT `id`,`firstname` , `lastname`, `employee_id`, `department`, `designation`, `authority_id`, `branch`, `mobile`, `email`, `state`, `country`, `building`, `block`, `floor` FROM employee WHERE is_active = 1";
 $resultEmpdetails = $conn->query($sqlEmpdetails);
 
 $Empdetails = array();
@@ -128,7 +128,7 @@ if ($resultEmpdetails->num_rows > 0) {
             "department" => $row["department"],
             "designation" => $row["designation"],
             "authority_id" => $row["authority_id"],
-            "location" => $row["location"],
+            "branch" => $row["branch"],
             "mobile" => $row["mobile"],
             "email" => $row["email"],
             "state" => $row["state"],

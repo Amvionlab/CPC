@@ -18,6 +18,7 @@ import "./Access.css";
 
 const Form = () => {
   const { user } = useContext(UserContext);
+  console.log(user)
   const [users, setUsers] = useState([]);
 
   useEffect(() => {

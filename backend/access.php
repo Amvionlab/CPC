@@ -58,6 +58,7 @@ if (mysqli_num_rows($result) > 0) {
                 'mobile' => $user['mobile'],
                 'firstname' => $user['firstname'],
                 'lastname' => $user['lastname'],
+                'branch' => $user['branch'],
                 'photo' => $user['photo'],
                 'name' => $access['name'],
                 'add' => $access['add'],
@@ -67,7 +68,7 @@ if (mysqli_num_rows($result) > 0) {
                 'alc' => $access['alc'],
                 'report' => $access['report'],
                 'setup' => $access['setup'],
-                'area' => $access['area'],
+                'area' => $access['area_access'],
                 'inventory' => $access['inventory'],
                 'assetadd' => $access['assetadd'],
             ]);

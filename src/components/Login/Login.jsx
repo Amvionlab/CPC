@@ -27,10 +27,12 @@ const Login = ({ onLogin }) => {
           lastname: result.lastname,
           email: result.email,
           mobile: result.mobile,
+          branch: result.branch,
           photo: result.photo,
           accessId: result.accessid,
           add: result.add,
           transfer: result.transfer,
+          scrap: result.scrap,
           usertype: result.name,
           dashboard: result.dashboard,
           alc: result.alc,
@@ -38,6 +40,7 @@ const Login = ({ onLogin }) => {
           setup: result.setup,
           inventory: result.inventory,
           assetadd: result.assetadd,
+          area:result.area,
         });
         onLogin();
         navigate("/dashboard");

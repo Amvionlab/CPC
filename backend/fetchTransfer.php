@@ -68,7 +68,7 @@ elseif ($action == 'multiadd') {
         $tagsArray = $data['tags'];
         $notes = $conn->real_escape_string($data['notes']);
         $user = $conn->real_escape_string($data['user']);
-        $to = $conn->real_escape_string($data['toLocation']);
+        $to = (int)$data['toLocation'];  // Cast to integer
 
         $allSuccess = true;  // To track overall success
         $errors = [];  // Array to collect errors
@@ -77,12 +77,12 @@ elseif ($action == 'multiadd') {
             $escapedTag = $conn->real_escape_string($tag);
 
             // Get the current location from the database
-            $locationQuery = "SELECT location FROM $tableName WHERE tag = '$escapedTag'";
+            $locationQuery = "SELECT branch FROM $tableName WHERE tag = '$escapedTag'";
             $result = $conn->query($locationQuery);
 
             if ($result && $result->num_rows > 0) {
                 $row = $result->fetch_assoc();
-                $from = $conn->real_escape_string($row['location']);  // Fetching 'fromLocation'
+                $from = (int)$row['branch'];  // Cast to integer
 
                 // Prepare the INSERT statement
                 $sql = "INSERT INTO transfer (tag, from_location, to_location, description, request_on, request_by, status, is_active) 
@@ -111,6 +111,7 @@ elseif ($action == 'multiadd') {
         echo json_encode(["success" => false, "error" => "Tags and toLocation are required."]);
     }
 }
+
 
 
 elseif ($action == 'status') {
