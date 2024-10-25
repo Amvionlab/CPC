@@ -1,7 +1,11 @@
 <?php
 include 'config.php';
 // Function to fetch users from database
-    $sql = "SELECT *,location.name AS location_name  FROM branch JOIN location WHERE location.id=branch.location_id";
+
+    $sql = "SELECT branch.*, location.name AS location_name
+FROM branch
+JOIN location ON location.id = branch.location_id;
+";
     $result = $conn->query($sql);
 
     $users = array();

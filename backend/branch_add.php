@@ -30,28 +30,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
-    $locationname = trim($_POST['name']); // Trim to avoid accidental spaces
+    $branchName = trim($_POST['name']); // Trim to avoid accidental spaces
+    $locationId = trim($_POST['location']); // Get location ID from dropdown
     $active = "1";
 
-    // Check if the location name already exists in the 'location' table
-    $checkSql = "SELECT id FROM location WHERE name = ?";
+    // Check if the branch name already exists in the 'branch' table
+    $checkSql = "SELECT id FROM branch WHERE name = ?";
     $stmt = $conn->prepare($checkSql);
-    $stmt->bind_param("s", $locationname);
+    $stmt->bind_param("s", $branchName);
     $stmt->execute();
     $stmt->store_result();
-    if ($stmt->num_rows > 0) {
-        // Location already exists
-        $response = array('success' => false, 'message' => 'Location already exists.');
-        echo json_encode($response);
     
+    if ($stmt->num_rows > 0) {
+        // Branch already exists
+        $response = array('success' => false, 'message' => 'Branch already exists.');
+        echo json_encode($response);
     } else {
-        // Insert the new location into the 'location' table
-        $sql = "INSERT INTO location (name, is_active) VALUES (?, ?)";
+        // Insert the new branch into the 'branch' table with the selected location ID
+        $sql = "INSERT INTO branch (name, location_id, is_active) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ss", $locationname, $active);
+        $stmt->bind_param("sss", $branchName, $locationId, $active);
 
         if ($stmt->execute()) {
-            $response = array('success' => true, 'message' => 'Location added successfully.');
+            $response = array('success' => true, 'message' => 'Branch added successfully.');
             echo json_encode($response);
         } else {
             $response = array('success' => false, 'message' => 'Error: ' . $stmt->error);

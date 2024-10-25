@@ -57,7 +57,7 @@ if ($resultBranches->num_rows > 0) {
         $branches[] = array(
             "id" => $row["id"],
             "name" => $row["name"],
-            "location_id" => $row["name"],
+            "location_id" => $row["location_id"],
         );
     }
 }

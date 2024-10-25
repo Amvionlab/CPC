@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 
 const Form = () => {
-  const [formData, setFormData] = useState({ domain: "" });
+  const [formData, setFormData] = useState({ name: "" });
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const [ticketsPerPage, setTicketsPerPage] = useState(10);
@@ -33,18 +33,18 @@ const Form = () => {
   const [showFilter, setShowFilter] = useState({ id: false, name: false });
   const [showForm, setShowForm] = useState(false);
 
+  
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`${baseURL}/backend/fetchLocation.php`);
+      const data = await response.json();
+      setUsers(data);
+      setFilteredUsers(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${baseURL}/backend/fetchLocation.php`);
-        const data = await response.json();
-        setUsers(data);
-        setFilteredUsers(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -98,7 +98,11 @@ const Form = () => {
         toast.error(result.message);
       } else if (result.message === "Location added successfully.") {
         setSubmissionStatus({ success: true, message: result.message });
+        setFormData({
+          name: "",
+        });
         toast.success(result.message);
+        fetchData();
       } else {
         throw new Error("Unexpected response message.");
       }

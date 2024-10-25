@@ -4,13 +4,14 @@ include 'config.php';
 // Process form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $location_id = $_POST['location'];
+    $branch_id = $_POST['branch'];
     $from_ip = trim($_POST['from_ip']);
     $to_ip = trim($_POST['to_ip']);
 
-    // Check if the IP details already exist
-    $checkSql = "SELECT id FROM ip_details WHERE location_id = ? AND ip_from = ? AND ip_to = ?";
+    // Check if the IP details already exist with the same location and branch
+    $checkSql = "SELECT id FROM ip_details WHERE location_id = ? AND branch_id = ? AND ip_from = ? AND ip_to = ?";
     $stmt = $conn->prepare($checkSql);
-    $stmt->bind_param("sss", $location_id, $from_ip, $to_ip);
+    $stmt->bind_param("ssss", $location_id, $branch_id, $from_ip, $to_ip);
     $stmt->execute();
     $stmt->store_result();
     
@@ -20,9 +21,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo json_encode($response);
     } else {
         // Insert new record into the 'ip_details' table
-        $sql = "INSERT INTO ip_details (location_id, ip_from, ip_to, is_active) VALUES (?, ?, ?, 1)";
+        $sql = "INSERT INTO ip_details (location_id, branch_id, ip_from, ip_to, is_active) VALUES (?, ?, ?, ?, 1)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sss", $location_id, $from_ip, $to_ip);
+        $stmt->bind_param("ssss", $location_id, $branch_id, $from_ip, $to_ip);
 
         if ($stmt->execute()) {
             $response = array('success' => true, 'message' => 'IP_Address added successfully.');

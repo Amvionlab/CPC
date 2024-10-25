@@ -12,7 +12,7 @@ import { UserContext } from '../UserContext/UserContext.jsx';
 const Form = () => {
   const [formData, setFormData] = useState({
     location: '',
-    region:'',
+    branch:'',
     from_ip: '',
     to_ip: ''
   });
@@ -26,32 +26,66 @@ const Form = () => {
   const [filters, setFilters] = useState({});
   const [showFilter, setShowFilter] = useState({});
   const [showForm, setShowForm] = useState(false);
+  const [branches, setBranches] = useState([]);
+  const [filteredBranches, setFilteredBranches] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`${baseURL}/backend/dropdown.php`);
+      const data = await response.json();
+      setLocations(data.locations);
+      setIpDetails(data.Ipdetails);
+      setFilteredUsers(data.Ipdetails);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    
+    fetchData();
+  }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchBranches = async () => {
       try {
         const response = await fetch(`${baseURL}/backend/dropdown.php`);
         const data = await response.json();
-        setLocations(data.locations);
-        setIpDetails(data.Ipdetails);
-        setFilteredUsers(data.Ipdetails);
+        setBranches(data.branches || []); // Ensure branches is an array
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching branches:', error);
       }
     };
-    fetchData();
-  }, []);
+
+    fetchBranches();
+  }, [baseURL]);
 
   const getLocationName = (locationId) => {
     const location = locations.find((loc) => loc.id === locationId);
     return location ? location.name : 'Unknown';
+  };
+  const getBranchName = (branchId) => {
+    const branch = branches.find((br) => br.id === branchId);
+    return branch ? branch.name : 'Unknown';
   };
   const handleImportClick = () => {
     navigate('/setup/location');
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+
+    // Filter branches based on selected location
+    if (name === "location") {
+      const filtered = branches.filter(branch => branch.location_id === value);
+      setFilteredBranches(filtered);
+      setFormData((prevState) => ({
+        ...prevState,
+        branch: "", // Reset branch when location changes
+      }));
+    }
   };
 
   const handleRowsPerPageChange = (e) => {
@@ -86,8 +120,9 @@ const Form = () => {
         toast.error(result.message);
       } else if (result.message === 'IP_Address added successfully.') {
         toast.success(result.message);
-        setFormData({ location: '', from_ip: '', to_ip: '' });
-        window.location.reload();
+        setFormData({ location: '', branch: '',from_ip: '', to_ip: '' });
+        fetchData();
+      
       } else {
         throw new Error('Unexpected response message.');
       }
@@ -126,10 +161,10 @@ const Form = () => {
   }, [filters, ipDetails]);
 
   const exportCSV = () => {
-    const headers = ["Id", "Location","Region", "Ip_from", "Ip_to"];
+    const headers = ["Id", "Location","Branch", "Ip_from", "Ip_to"];
     const csvContent = [
       headers.join(","),
-      ...filteredUsers.map(ipDetail => `${ipDetail.id},${getLocationName(ipDetail.location_id)},${ipDetail.region},${ipDetail.ip_from},${ipDetail.ip_to}`)
+      ...filteredUsers.map(ipDetail => `${ipDetail.id},${getLocationName(ipDetail.location_id)},${getBranchName(ipDetail.branch_id)},${ipDetail.ip_from},${ipDetail.ip_to}`)
     ].join("\n");
 
     const link = document.createElement("a");
@@ -142,9 +177,16 @@ const Form = () => {
 
   const exportExcel = () => {
     const headers = ["Id", "Location", "Ip_from", "Ip_to"];
-    const data = [headers, ...filteredUsers.map(ipDetail => [
-      ipDetail.id, getLocationName(ipDetail.location_id), ipDetail.ip_from, ipDetail.ip_to
-    ])];
+    const data = [
+      headers,
+      ...filteredUsers.map(ipDetail => [
+        ipDetail.id,
+        getLocationName(ipDetail.location_id),
+        getBranchName(ipDetail.branch_id),
+        ipDetail.ip_from,
+        ipDetail.ip_to
+      ])
+    ];
     const worksheet = XLSX.utils.aoa_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
@@ -172,44 +214,57 @@ const Form = () => {
     <div className="bg-second max-w-full text-xs mx-auto p-1  h-full ticket-scroll font-poppins">
       {showForm && (
         <div className="max-w-full mb-1 p-4 bg-box rounded font-mont">
-          <div className="ticket-table mt-2">
-            <form onSubmit={handleSubmit} className="space-y-4 text-label">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-                <div className="font-mont font-semibold text-2xl mb-4">
-                  Add IP_Address:
-                </div>
+        <div className="ticket-table mt-2">
+          <form onSubmit={handleSubmit} className="space-y-4 text-label">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
+              <div className="font-mont font-semibold text-2xl mb-4">
+                Add IP_Address:
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-x-10 ml-10 pr-10 mb-0">
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">Location</label>
-                  <select
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    required
-                    className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  >
-                    <option value="" disabled>Select Location</option>
-                    {locations.map((location) => (
-                      <option key={location.id} value={location.id}>
-                        {location.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">Region</label>
-                  <input
-                    type="text"
-                    name="region"
-                    placeholder="Enter Region"
-                    value={formData.region}
-                    onChange={handleChange}
-                    required
-                    className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
-                </div>
+            </div>
+  
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-x-10 ml-10 pr-10 mb-0">
+              <div className="flex items-center mb-2 mr-4">
+                <label className="text-sm font-semibold text-prime mr-2 w-32">
+                  Location
+                </label>
+                <select
+                  name="location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  required
+                  className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                >
+                  <option value="" disabled>
+                    Select Location
+                  </option>
+                  {locations.map((location) => (
+                    <option key={location.id} value={location.id}>
+                      {location.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+  
+              <div className="flex items-center mb-2 mr-4">
+                <label className="text-sm font-semibold text-prime mr-2 w-32">
+                  Branch
+                </label>
+                <select
+                  name="branch"
+                  value={formData.branch}
+                  onChange={handleChange}
+                  required
+                  className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+                >
+                  <option value="">Select Branch</option>
+                  {filteredBranches.map((branch) => (
+                    <option key={branch.id} value={branch.id}>
+                      {branch.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+         
                 <div className="flex items-center mb-2 mr-4">
                   <label className="text-sm font-semibold text-prime mr-2 w-32">From_IP</label>
                   <input
@@ -297,7 +352,7 @@ const Form = () => {
           <table className="min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
             <thead className="bg-second border-2 border-prime text-prime font-semibold font-poppins text-fontadd">
               <tr>
-                {["Id", "Location", "Region", "Ip_from", "Ip_to"].map((header, index) => (
+                {["Id", "Location", "Branch", "Ip_from", "Ip_to"].map((header, index) => (
                   <td key={index} className="w-1/6 py-4 px-4">
                     <div className="flex items-center justify-center">
                       <div className="header flex">
@@ -346,12 +401,13 @@ const Form = () => {
                 <tr key={ipDetail.id} className="bg-white text-fontadd text-center font-medium">
                   <td className="border-t py-3 px-3">{index + 1 + offset}</td>
                   <td className="border-t py-3 px-3">{getLocationName(ipDetail.location_id)}</td>
-                  <td className="border-t py-3 px-3">{ipDetail.region}</td>
+                  <td className="border-t py-3 px-3">{getBranchName(ipDetail.branch_id)}</td>
                   <td className="border-t py-3 px-3">{ipDetail.ip_from}</td>
                   <td className="border-t py-3 px-3">{ipDetail.ip_to}</td>
                 </tr>
               ))}
             </tbody>
+
           </table>
         </div>
 

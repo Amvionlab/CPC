@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 
 const Form = () => {
-  const [formData, setFormData] = useState({ domain: "" });
+  const [formData, setFormData] = useState({ domain: "", name: "", location: "" });
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const [ticketsPerPage, setTicketsPerPage] = useState(10);
@@ -32,19 +32,20 @@ const Form = () => {
   const [filters, setFilters] = useState({});
   const [showFilter, setShowFilter] = useState({ id: false, name: false });
   const [showForm, setShowForm] = useState(false);
+  const [locations, setLocations] = useState([]);  
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`${baseURL}/backend/fetchBranch.php`);
+      const data = await response.json();
+      setUsers(data);
+      setFilteredUsers(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`${baseURL}/backend/fetchBranch.php`);
-        const data = await response.json();
-        setUsers(data);
-        setFilteredUsers(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
+    
     fetchData();
   }, []);
 
@@ -73,13 +74,11 @@ const Form = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = new FormData();
+
+    // Append form data
     for (const key in formData) {
       form.append(key, formData[key]);
     }
-    if (attachment) {
-      form.append("attachment", attachment);
-    }
-
     try {
       const response = await fetch(`${baseURL}/backend/branch_add.php`, {
         method: "POST",
@@ -93,12 +92,19 @@ const Form = () => {
 
       const result = await response.json();
 
+      // Handle response messages
       if (result.message === "Branch already exists.") {
         setSubmissionStatus({ success: false, message: result.message });
         toast.error(result.message);
       } else if (result.message === "Branch added successfully.") {
         setSubmissionStatus({ success: true, message: result.message });
+        setFormData({
+          name: "",
+          domain: "",
+          location: ""
+        });
         toast.success(result.message);
+        fetchData();
       } else {
         throw new Error("Unexpected response message.");
       }
@@ -151,6 +157,37 @@ const Form = () => {
     });
     setFilteredUsers(filtered);
   }, [filters, users]);
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const form = new FormData();
+        form.append('action', 'getLocations'); // Example payload
+
+        const response = await fetch(`${baseURL}/backend/dropdown.php`, {
+          method: "POST",
+          body: form,
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch locations");
+        }
+
+        const data = await response.json();
+        
+        // Ensure data is an array before setting state
+        if (Array.isArray(data.locations)) {
+          setLocations(data.locations); // Assuming the response contains "locations"
+        } else {
+          console.error("Locations is not an array", data);
+        }
+      } catch (error) {
+        console.error("Error fetching locations:", error);
+      }
+    };
+
+    fetchLocations();
+  }, []);
 
   const exportCSV = () => {
     const headers = Array.from(document.querySelectorAll(".header span")).map(header => header.textContent.trim());
@@ -220,32 +257,61 @@ const Form = () => {
   return (
     <div className="bg-second h-full max-w-full text-xs mx-auto p-1 lg:overflow-y-hidden font-poppins">
       {showForm && (
-        <div className="max-w-full mb-1 p-4 bg-box font-mont">
-          <form onSubmit={handleSubmit} className="space-y-4 text-label">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-              <div className="font-mont font-semibold text-2xl mb-4">Add Branch :</div>
-              <div className="flex items-center mb-2 mr-4">
-                <label className="text-sm font-semibold text-prime mr-2 w-32">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Enter Branch Name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                  className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                />
-                <button
-                  type="submit"
-                  className="ml-5 bg-prime font-mont font-semibold text-md text-white py-2 px-8 rounded-md shadow-md focus:outline-none"
-                >
-                  Submit
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-      )}
+   <div className="max-w-full mb-1 p-4 bg-box font-mont">
+   <form onSubmit={handleSubmit} className="space-y-4 text-label">
+     {/* Title */}
+     <div className="font-mont font-semibold text-2xl mb-4 ml-10">Add Branch :</div>
+ 
+     {/* Grid layout for form fields */}
+     <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 ml-10 pr-10 mb-0 items-center">
+       {/* Input for Branch Name */}
+       <div className="flex items-center mb-2">
+         <label className="text-sm font-semibold text-prime mr-2 w-20">Name</label>
+         <input
+           type="text"
+           name="name"
+           placeholder="Enter Branch Name"
+           value={formData.name}
+           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+           required
+           className="flex-grow text-xs bg-second border p-2 rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
+         />
+       </div>
+ 
+       {/* Dropdown for Location */}
+       <div className="flex items-center mb-2 justify-between">
+  <label className="text-sm font-semibold text-prime mr-2 w-20">Location</label>
+  <select
+    name="location"
+    value={formData.location}
+    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+    required
+    className="flex-grow text-xs bg-second border p-2 rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm ml-auto"
+  >
+    <option value="">Select Location</option>
+    {locations.length > 0 &&
+      locations.map((location) => (
+        <option key={location.id} value={location.id}>
+          {location.name}
+        </option>
+      ))}
+  </select>
+</div>
+ 
+       {/* Submit Button */}
+       <div className="flex justify-end mb-2">
+         <button
+           type="submit"
+           className="bg-prime font-mont font-semibold text-md text-white py-2 px-5 rounded-md shadow-md focus:outline-none"
+         >
+           Submit
+         </button>
+       </div>
+     </div>
+   </form>
+ </div> 
+    )}
+
 
       <div className="bg-box h-full p-4 font-mont">
         <h3 className="text-2xl font-bold text-prime mb-4 flex justify-between items-center">
@@ -307,7 +373,7 @@ const Form = () => {
           <Table className="filter-table">
             <TableHead className="font-bold">
               <TableRow>
-                {["Id", "Name"].map((header, index) => (
+                {["Id", "Branch Name", "Location"].map((header, index) => (
                   <TableCell key={index} align="center">
                     <div className="flex items-center justify-center header">
                       <span>{header}</span>
@@ -326,6 +392,9 @@ const Form = () => {
                   </TableCell>
                   <TableCell className="border-t py-3 px-3" align="center">
                     {user.name}
+                  </TableCell>
+                  <TableCell className="border-t py-3 px-3" align="center">
+                    {user.location_name}
                   </TableCell>
                 </TableRow>
               ))}

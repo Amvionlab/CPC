@@ -24,6 +24,7 @@ const Form = () => {
         last_amc: "",
         procure_by: "",
         warranty_upto: "",
+        amc_warranty_type:"",
         group: "",
         type: "",
         user_id: ''
@@ -222,7 +223,8 @@ useEffect(() => {
     if (name === 'group') {
       setFormData({
         group: value,  // Keep the newly selected group
-        type: '',      // Reset the type field
+        type: '', 
+        amc_warranty_type:'',     // Reset the type field
       });
       setDynamicFields([]);  // Reset dynamic fields to an empty array
     }
@@ -231,7 +233,8 @@ useEffect(() => {
     else if (value === 'select') {
       setFormData({
         group: formData.group, // Keep the current group
-        type: '',              // Reset type when 'select' is chosen
+        type: '', 
+        amc_warranty_type:'',              // Reset type when 'select' is chosen
       });
       setDynamicFields([]);    // Reset dynamic fields to an empty array
     }
