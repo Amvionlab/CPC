@@ -47,7 +47,7 @@ function SingleAsset() {
           className={`transition-all duration-500 bg-white text-prime ${isExpanded ? "w-48" : "w-16"}`}
           style={{ minWidth: isExpanded ? "8rem" : "2rem", position: "relative" }}
         >
-          <nav className="flex flex-col gap-2 text-base mt-2">
+          <nav className="flex flex-col gap-3 text-base mt-2">
             {menuItems.map(({ title, icon, component }) => (
               <div 
                 key={title} 

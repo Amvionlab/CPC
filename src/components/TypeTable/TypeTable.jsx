@@ -650,7 +650,7 @@ const handleAddNote = (e) => {
                       sx={{ padding: "2px", fontSize: "12px" }}
                     >
                       <Link
-                        to={`/management/${group}/${type}/${row.tag}`}
+                        to={`/inventory/${group}/${type}/${row.tag}`}
                         className="text-flo hover:underline capitalize"
                       >
                         {rowIndex + 1}

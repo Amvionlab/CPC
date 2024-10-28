@@ -33,6 +33,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { UserContext } from "../src/components/UserContext/UserContext";
 import { TicketProvider } from "../src/components/UserContext/TicketContext";
 import SideMenu from "./components/sideMenu/SideMenu";
+import Inventory from "./components/Inventory/Inventory";
 import Management from "./components/Management/Management";
 import Setup from "./components/Setup/Setup";
 import Status from "./components/Admin/Status";
@@ -131,17 +132,17 @@ function App() {
 
                     {user && user.dashboard === "1" && (
                       <>
-                    <Route path="/management" element={<Management />} />
+                    <Route path="/inventory" element={<Inventory />} />
                     <Route
-                        path="/management/:group"
+                        path="/inventory/:group"
                         element={<AssetType />}
                       />
                       <Route
-                        path="/management/:group/:type"
+                        path="/inventory/:group/:type"
                         element={<TypeTable />}
                       />
                       <Route
-                        path="/management/:group/:type/:tag"
+                        path="/inventory/:group/:type/:tag"
                         element={<SingleAsset />}
                       />
                       </>
@@ -151,6 +152,18 @@ function App() {
                         path="/approval"
                         element={<Approval />}
                       />  
+                    )}
+                    {user && user.alc === "1" && (
+                      <>
+                      
+                      <Route path="/management" element={<Management />} /> 
+                      {/* <Route path="/management/transfer" element={<Management />} />             
+                      <Route path="/management/wait_for_approval" element={<Management />} />   
+                      <Route path="/management/out_for_delivery" element={<Management />} />  
+                      <Route path="/management/yet_to_receive" element={<Management />} />  
+                      <Route path="/management/receive" element={<Management />} />   */}
+
+                      </>
                     )}
                      {user && user.assetadd === "1" && (
                       <><Route

@@ -29,7 +29,7 @@ const AssetType = () => {
           </Link>
           <Link
             className="text-prime hover:underline"
-            to={`/management/${group}`}
+            to={`/inventory/${group}`}
           >
             / {group}
           </Link>
@@ -41,7 +41,7 @@ const AssetType = () => {
             (item, i) =>
               item.group && (
                 <Link
-                  to={`/management/${item.group}/${item.type}`}
+                  to={`/inventory/${item.group}/${item.type}`}
                   key={i}
                   className="flex-1"
                 >

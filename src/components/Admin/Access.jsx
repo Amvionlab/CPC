@@ -116,7 +116,7 @@ const Form = () => {
                   "Asset",
                   "Transfer",
                   "Scrap",
-                  "ALC",
+                  "Management",
                   "Report",
                   "Setup",
                   "Active",
