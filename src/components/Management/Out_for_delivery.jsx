@@ -60,17 +60,13 @@ function Transfer() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=management&status=2`);
+      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=out&status=2`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const result = await response.json();
       setData(result);
-      if (activeTab === 'out') {
-        setOutCount(result.length);
-      } else {
-        setInCount(result.length);
-      }
+      
       setLoading(false);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -84,7 +80,7 @@ function Transfer() {
   useEffect(() => {
     fetchData();
     setSelectedRows([]);
-  }, [activeTab]);
+  });
 
   const getBranchNameById = (id) => {
     const branch = branches.find((branch) => branch.id === id);
@@ -376,39 +372,7 @@ function Transfer() {
     <div>
       <div className="flex font-bold justify-between items-center mb-3">
         <h1 className="text-xl">Asset Transfer</h1>
-        <div>
-      <Badge badgeContent={outCount} color="primary" sx={{ marginRight: 2 }}>
-        <Button 
-          variant={activeTab === 'out' ? 'contained' : 'outlined'}
-          onClick={() => handleTabChange('out')}
-          startIcon={<NotificationsIcon fontSize="small" />}
-          sx={{
-            marginRight: 1,
-            padding: '4px 8px',
-            minWidth: '50px',
-            fontSize: '0.75rem',
-          }}
-          size="small" // Use the small size variant
-        >
-          Transfer Out
-        </Button>
-      </Badge>
-      <Badge badgeContent={inCount} color="primary">
-        <Button 
-          variant={activeTab === 'in' ? 'contained' : 'outlined'}
-          onClick={() => handleTabChange('in')}
-          startIcon={<NotificationsIcon fontSize="small" />}
-          sx={{
-            minWidth: '50px',
-            padding: '4px 8px',
-            fontSize: '0.75rem',
-          }}
-          size="small" // Use the small size variant
-        >
-         Transfer In
-        </Button>
-      </Badge>
-    </div>
+       
       </div>
 
       {/* Search bar and dropdown */}
