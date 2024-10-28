@@ -230,7 +230,6 @@ function TypeTable() {
     }
   };
   
-  
 
   const handleRejectSelected = async() => {
     console.log('Rejecting selected rows:', selectedRows);

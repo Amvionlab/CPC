@@ -161,15 +161,29 @@ const handleAddNote = (e) => {
       setAllData(fieldData);
       setInactiveColumns(fieldData.inactive_columns || []);
       setColumns(fieldData.active_columns || []);
-      const typeResponse = await fetch(
-        `${baseURL}/backend/fetchTypedata.php?type=${type}`
-      );
+  
+      let typeResponse;
+      if (user.area === '1') {
+        typeResponse = await fetch(
+          `${baseURL}/backend/fetchTypedata.php?type=${type}`
+        );
+      } else if (user.area === '2') {
+        typeResponse = await fetch(
+          `${baseURL}/backend/fetchTypedata.php?type=${type}&location=${user.location}`
+        );
+      } else if (user.area === '3') {
+        typeResponse = await fetch(
+          `${baseURL}/backend/fetchTypedata.php?type=${type}&branch=${user.branch}`
+        );
+      }
+  
       const typedata = await typeResponse.json();
       setTypeData(typedata);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+  
   useEffect(() => {
 
     fetchData();
