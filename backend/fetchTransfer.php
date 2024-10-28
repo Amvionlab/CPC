@@ -4,6 +4,8 @@ header('Content-Type: application/json');
 
 // Determine the operation based on the 'action' parameter
 $action = isset($_GET['action']) ? $_GET['action'] : '';
+$location = isset($_GET['location']) ? $_GET['location'] : '';
+$branch = isset($_GET['branch']) ? $_GET['branch'] : '';
 
 if ($action == 'fetch') {
     // Fetch the 'tag' parameter from the query string
@@ -35,29 +37,44 @@ if ($action == 'fetch') {
     }
 }
 elseif ($action == 'out') {
- 
-        $sql = "SELECT * FROM transfer WHERE (`status`=1) AND `is_active`=1";
-        $result = $conn->query($sql);
+    // Start building the SQL query for the transfer table
+    $sql = "SELECT * FROM transfer WHERE `status` = 1 AND `is_active` = 1";
 
-        $notes = array();
-        if ($result) {
-            while ($row = $result->fetch_assoc()) {
-                $notes[] = $row;
+    // Initialize location and branch filtering
+    $branchIds = [];
+
+    // Check if location is provided
+    if ($location) {
+        // Sanitize location
+        $location = $conn->real_escape_string($location);
+
+        // Fetch all equivalent 'id's for the specified location from the 'branch' table
+        $locationSql = "SELECT id FROM branch WHERE location_id = '$location'";
+        $locationResult = $conn->query($locationSql);
+
+        if ($locationResult) {
+            while ($row = $locationResult->fetch_assoc()) {
+                $branchIds[] = $row['id'];
             }
-        } else {
-            // Handle SQL errors
-            echo json_encode(["error" => $conn->error]);
-            exit;
         }
 
-        $conn->close();
-        echo json_encode($notes);
- 
-} 
+        // If there are matching branch IDs for the location, apply them as filters
+        if (!empty($branchIds)) {
+            $branchIdsStr = implode(',', $branchIds);
+            $sql .= " AND from_location IN ($branchIdsStr)"; // Updated condition
+        } else {
+            // If no matching branch IDs, return an empty result set
+            echo json_encode([]);
+            $conn->close();
+            exit;
+        }
+    } elseif ($branch) {
+        // If only branch is provided, use it as the filter
+        $branch = $conn->real_escape_string($branch);
+        $sql .= " AND from_location = '$branch'"; // Updated to match from_location
+    }
 
-elseif ($action == 'in') {
- 
-    $sql = "SELECT * FROM transfer WHERE (`status`=3) AND `is_active`=1";
+    // Execute the query
     $result = $conn->query($sql);
 
     $notes = array();
@@ -73,8 +90,65 @@ elseif ($action == 'in') {
 
     $conn->close();
     echo json_encode($notes);
+}
 
-} 
+
+elseif ($action == 'in') {
+    // Start building the SQL query for the transfer table with specific conditions
+    $sql = "SELECT * FROM transfer WHERE `status` = 3 AND `is_active` = 1";
+
+    // Initialize location and branch filtering
+    $branchIds = [];
+
+    // Check if location is provided
+    if ($location) {
+        // Sanitize location
+        $location = $conn->real_escape_string($location);
+
+        // Fetch all equivalent 'id's for the specified location from the 'branch' table
+        $locationSql = "SELECT id FROM branch WHERE location_id = '$location'";
+        $locationResult = $conn->query($locationSql);
+
+        if ($locationResult) {
+            while ($row = $locationResult->fetch_assoc()) {
+                $branchIds[] = $row['id'];
+            }
+        }
+
+        // If there are matching branch IDs for the location, apply them as filters
+        if (!empty($branchIds)) {
+            $branchIdsStr = implode(',', $branchIds);
+            $sql .= " AND to_location IN ($branchIdsStr)"; // Updated condition for 'to_location'
+        } else {
+            // If no matching branch IDs, return an empty result set
+            echo json_encode([]);
+            $conn->close();
+            exit;
+        }
+    } elseif ($branch) {
+        // If only branch is provided, use it as the filter
+        $branch = $conn->real_escape_string($branch);
+        $sql .= " AND to_location = '$branch'"; // Updated to match 'to_location'
+    }
+
+    // Execute the query
+    $result = $conn->query($sql);
+
+    $notes = array();
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $notes[] = $row;
+        }
+    } else {
+        // Handle SQL errors
+        echo json_encode(["error" => $conn->error]);
+        exit;
+    }
+
+    $conn->close();
+    echo json_encode($notes);
+}
+
 
 elseif ($action == 'multiadd') {
     // Handle adding new notes

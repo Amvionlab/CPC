@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { baseURL } from '../../config.js';
@@ -62,46 +61,92 @@ function Transfer() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=${activeTab}`);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const result = await response.json();
-      setData(result);
-      if (activeTab === 'out') {
-        setOutCount(result.length);
-      } else {
-        setInCount(result.length);
-      }
-      setLoading(false);
+        let fetchURL = `${baseURL}/backend/fetchTransfer.php?action=${activeTab}`;
+  
+        // Adjust the fetch URL based on the user's area
+        if (user.area === '2') {
+            fetchURL += `&location=${user.location}`; // Fetch by location
+        } else if (user.area === '3') {
+            fetchURL += `&branch=${user.branch}`; // Fetch by specific branch
+        }
+
+        const response = await fetch(fetchURL);
+
+        // Log the response text for debugging
+        const responseText = await response.text();
+        console.log('Server Response:', responseText); // Log the raw response
+        
+        // Check if the response is okay
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        // Parse the JSON response
+        const result = JSON.parse(responseText);
+        
+        // Check if the result is an array before setting data
+        if (Array.isArray(result)) {
+            setData(result);
+        
+            // Set counts based on the active tab
+            if (activeTab === 'out') {
+                setOutCount(result.length);
+            } else {
+                setInCount(result.length);
+            }
+        } else {
+            console.error('Unexpected response format:', result);
+            setError('Unexpected response format');
+        }
+        
+        setLoading(false);
     } catch (error) {
-      console.error('Error fetching data:', error);
-      setError(error.toString());
-      setLoading(false);
+        console.error('Error fetching data:', error);
+        setError(error.toString());
+        setLoading(false);
     }
-  };
+};
 
-  const fetchCounts = async () => {
-    try {
-      const outResponse = await fetch(`${baseURL}/backend/fetchTransfer.php?action=out`);
-      const inResponse = await fetch(`${baseURL}/backend/fetchTransfer.php?action=in`);
-
-      if (!outResponse.ok || !inResponse.ok) throw new Error('Network responses were not ok');
-
-      const outData = await outResponse.json();
-      const inData = await inResponse.json();
-
-      setOutCount(outData.length);
-      setInCount(inData.length);
-
-    } catch (error) {
-      console.error('Error fetching counts:', error);
+const fetchCounts = async () => {
+  try {
+    // Constructing the URLs based on conditions before the fetch
+    let outUrl = `${baseURL}/backend/fetchTransfer.php?action=out`;
+    if (user.area === '2') {
+      outUrl += `&location=${user.location}`;
+    } else if (user.area === '3') {
+      outUrl += `&branch=${user.branch}`;
     }
-  };
+    
+    let inUrl = `${baseURL}/backend/fetchTransfer.php?action=in`;
+    if (user.area === '2') {
+      inUrl += `&location=${user.location}`;
+    } else if (user.area === '3') {
+      inUrl += `&branch=${user.branch}`;
+    }
 
-  useEffect(() => {
-    fetchCounts(); // Fetch initial counts for 'out' and 'in'
-  }, []);
+    // Fetching data with the correctly constructed URLs
+    const outResponse = await fetch(outUrl);
+    const inResponse = await fetch(inUrl);
+
+    // Checking if both requests succeeded
+    if (!outResponse.ok || !inResponse.ok) throw new Error('Network responses were not ok');
+
+    // Parsing JSON responses
+    const outData = await outResponse.json();
+    const inData = await inResponse.json();
+
+    // Setting counts for 'out' and 'in'
+    setOutCount(outData.length);
+    setInCount(inData.length);
+
+  } catch (error) {
+    console.error('Error fetching counts:', error);
+  }
+};
+
+useEffect(() => {
+  fetchCounts(); // Fetch initial counts for 'out' and 'in'
+}, [user.area, user.location, user.branch]); // Depend on user data for dynamic updates
 
   useEffect(() => {
     fetchData();
@@ -397,28 +442,28 @@ function Transfer() {
   return (
     <div>
       <div className="flex font-bold justify-between items-center mb-3">
-        <h1 className="text-xl">Asset Transfer</h1>
-        <div>
-      <Badge badgeContent={outCount} color="primary" sx={{ marginRight: 2 }}>
-        <Button 
-          variant={activeTab === 'out' ? 'contained' : 'outlined'}
-          onClick={() => handleTabChange('out')}
-          startIcon={<NotificationsIcon fontSize="small" />}
-          sx={{
-            marginRight: 1,
-            padding: '4px 8px',
-            minWidth: '50px',
-            fontSize: '0.75rem',
-          }}
-          size="small" // Use the small size variant
-        >
-          Transfer Out
+  <h1 className="text-xl">Asset Transfer</h1>
+  <div>
+    <Badge badgeContent={outCount} color="primary" sx={{ marginRight: 2 }}>
+      <Button
+        variant={activeTab === 'out' ? 'contained' : 'outlined'}
+        onClick={() => activeTab !== 'out' && handleTabChange('out')} // Prevent double-click if already selected
+        startIcon={<NotificationsIcon fontSize="small" />}
+        sx={{
+          marginRight: 1,
+          padding: '4px 8px',
+          minWidth: '50px',
+          fontSize: '0.75rem',
+        }}
+        size="small" // Use the small size variant
+      >
+        Transfer Out
         </Button>
       </Badge>
       <Badge badgeContent={inCount} color="primary">
-        <Button 
+        <Button
           variant={activeTab === 'in' ? 'contained' : 'outlined'}
-          onClick={() => handleTabChange('in')}
+          onClick={() => activeTab !== 'in' && handleTabChange('in')} // Prevent double-click if already selected
           startIcon={<NotificationsIcon fontSize="small" />}
           sx={{
             minWidth: '50px',
@@ -427,11 +472,11 @@ function Transfer() {
           }}
           size="small" // Use the small size variant
         >
-         Transfer In
+          Transfer In
         </Button>
       </Badge>
     </div>
-      </div>
+  </div>
 
       {/* Search bar and dropdown */}
       <div className="w-full border-b h-10 flex text-sm justify-between items-center font-semibold mb-2">

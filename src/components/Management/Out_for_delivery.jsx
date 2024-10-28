@@ -60,7 +60,7 @@ function Transfer() {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=out&status=2`);
+      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=management&status=2`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
