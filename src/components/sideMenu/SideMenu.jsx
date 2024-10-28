@@ -4,7 +4,7 @@ import {
   faBox,
   faForward,
   faCheckCircle,  // Approval
-  faSyncAlt,      // Lifecycle
+  faProjectDiagram,      // Lifecycle
   faFileAlt,      // Report
   faWrench,
   faPlusSquare,
@@ -24,10 +24,10 @@ const SideMenu = () => {
 
   const menuItems = [
     { title: "Dashboard", icon: faTachometerAlt, to: "/dashboard", key: "dashboard" },
-    { title: "Asset Inventory", icon: faBox, to: "/management", key: "inventory" },
+    { title: "Asset Inventory", icon: faBox, to: "/inventory", key: "inventory" },
     { title: "Approval Handling", icon: faCheckCircle, to: "/approval", key: "add" },
-    { title: "Assets Lifecycle", icon: faSyncAlt, to: "#", key: "alc"  },
-    { title: "Reports", icon: faFileAlt, to: "#", key: "report"  },
+    { title: "Management", icon: faProjectDiagram, to: "/management", key: "alc"  },
+    { title: "Reports", icon: faFileAlt, to: "/report", key: "report"  },
     { title: "Setup Wizard", icon: faWrench, to: "/setup", key: "setup" },
     { title: "Add Asset", icon: faPlusSquare, to: "/single_assetadd", key: "assetadd" },
   ];
@@ -47,7 +47,7 @@ const SideMenu = () => {
         style={{ width: isExpanded ? "12rem" : "4.5rem" }}
       >
         <nav className="h-full">
-          <ul className="flex flex-col h-full gap-3">
+          <ul className="flex flex-col h-full gap-2">
             <li>
               <Link
                 to="/"
@@ -103,7 +103,7 @@ const SideMenu = () => {
             <li>
               <Link
                 to="#"
-                className={`flex items-center gap-2 p-3 m-1 mt-10 text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500`}
+                className={`flex items-center gap-2 p-3 m-1 mt-8 text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500`}
                 onClick={() => setIsExpanded(prev => !prev)}
               >
                 <FontAwesomeIcon
