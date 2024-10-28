@@ -9,6 +9,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Determine the table name based on the selected type
         $tableName = 'asset_' . strtolower($type);
 
+        // Function to parse date in multiple formats
+        function parseDate($dateString) {
+            $formats = [
+                'Y-m-d', 'Y-m-d H:i:s', 'm/d/Y', 'm/d/y',
+                'd/m/Y', 'd/m/y', 'd-M-Y', 'M d, Y', 
+                'M Y', 'F d, Y', 'd F Y','d-m-Y'
+            ];
+            foreach ($formats as $format) {
+                $date = DateTime::createFromFormat($format, $dateString);
+                if ($date !== false) {
+                    return $date->format('Y-m-d');
+                }
+            }
+            return null; // Return null if no format matched
+        }
+
         // Open the CSV file
         if (($handle = fopen($file, 'r')) !== false) {
             // Read the first row to get the type
@@ -57,6 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $columnsList = implode(',', $columnMapping);
             $insertStmt = $pdo->prepare("INSERT INTO $tableName ($columnsList) VALUES ($placeholders)");
 
+            // Define the date columns to be converted
+            $dateColumns = ['purchase_date', 'amc_from', 'amc_to', 'last_amc', 'warranty_upto'];
+
             // Read the CSV file and insert data
             while (($row = fgetcsv($handle)) !== false) {
                 if (count($row) < count($columns)) {
@@ -67,7 +86,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $rowData = [];
                 foreach ($columnMapping as $col) {
                     $index = array_search($col, $columns);
-                    $rowData[] = isset($row[$index]) ? $row[$index] : null;
+                    $value = isset($row[$index]) ? $row[$index] : null;
+
+                    // Check if column is a date column and format it to 'yyyy-mm-dd'
+                    if (in_array($col, $dateColumns) && $value) {
+                        $value = parseDate($value); // Use the parseDate function to handle multiple formats
+                    }
+
+                    $rowData[] = $value;
                 }
 
                 // Execute insert statement
