@@ -79,7 +79,7 @@ function Transfer() {
 
   useEffect(() => {
     fetchData();
-    setSelectedRows([]);
+    
   });
 
   const getBranchNameById = (id) => {
@@ -190,7 +190,7 @@ function Transfer() {
     };
 
     try {
-      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=approve`, {
+      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=manageapprove&status=3`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -283,7 +283,7 @@ function Transfer() {
     };
 
     try {
-      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=reject`, {
+      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=manageapprovesel&status=3`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
