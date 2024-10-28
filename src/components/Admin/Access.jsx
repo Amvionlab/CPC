@@ -165,7 +165,7 @@ const Form = () => {
               <MenuItem value="3">Branch</MenuItem>
             </Select>
           </TableCell>
-          {["dashboard", "inventory", "assetadd", "add", "transfer", "scrap", "alc", "report", "setup", "is_active"].map((field) => (
+          {["dashboard", "inventory", "assetadd", "addapprove", "transfer", "scrap", "alc", "report", "setup", "is_active"].map((field) => (
             <TableCell key={field} sx={{ padding: '4px', fontSize: '12px', textAlign: 'left' }}>
               <Switch
                 checked={user[field] === "1"}

@@ -61,7 +61,7 @@ if (mysqli_num_rows($result) > 0) {
                 'branch' => $user['branch'],
                 'photo' => $user['photo'],
                 'name' => $access['name'],
-                'add' => $access['add'],
+                'addapprove' => $access['addapprove'],
                 'transfer' => $access['transfer'],
                 'scrap' => $access['scrap'],
                 'dashboard' => $access['dashboard'],
