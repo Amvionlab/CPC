@@ -30,7 +30,7 @@ const Login = ({ onLogin }) => {
           branch: result.branch,
           photo: result.photo,
           accessId: result.accessid,
-          add: result.add,
+          add: result.addapprove,
           transfer: result.transfer,
           scrap: result.scrap,
           usertype: result.name,

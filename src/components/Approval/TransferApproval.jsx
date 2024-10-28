@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { baseURL } from '../../config.js';
@@ -5,8 +6,9 @@ import { toast } from 'react-toastify';
 import { 
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
   TablePagination, IconButton, Dialog, DialogActions, DialogContent, 
-  DialogContentText, DialogTitle, Button, Checkbox 
+  DialogContentText, DialogTitle, Button, Checkbox, Badge 
 } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { CSVLink } from 'react-csv';
@@ -38,6 +40,9 @@ function Transfer() {
   });
 
   const [branches, setBranches] = useState([]);
+  const [activeTab, setActiveTab] = useState('out');
+  const [outCount, setOutCount] = useState(0);
+  const [inCount, setInCount] = useState(0);
 
   useEffect(() => {
     const fetchBranch = async () => {
@@ -46,7 +51,6 @@ function Transfer() {
         const data = await response.json();
         if (data) {
           setBranches(data.branches || []);
-          
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -56,10 +60,62 @@ function Transfer() {
     fetchBranch();
   }, []);
 
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=${activeTab}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const result = await response.json();
+      setData(result);
+      if (activeTab === 'out') {
+        setOutCount(result.length);
+      } else {
+        setInCount(result.length);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError(error.toString());
+      setLoading(false);
+    }
+  };
+
+  const fetchCounts = async () => {
+    try {
+      const outResponse = await fetch(`${baseURL}/backend/fetchTransfer.php?action=out`);
+      const inResponse = await fetch(`${baseURL}/backend/fetchTransfer.php?action=in`);
+
+      if (!outResponse.ok || !inResponse.ok) throw new Error('Network responses were not ok');
+
+      const outData = await outResponse.json();
+      const inData = await inResponse.json();
+
+      setOutCount(outData.length);
+      setInCount(inData.length);
+
+    } catch (error) {
+      console.error('Error fetching counts:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCounts(); // Fetch initial counts for 'out' and 'in'
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+    setSelectedRows([]);
+  }, [activeTab]);
 
   const getBranchNameById = (id) => {
     const branch = branches.find((branch) => branch.id === id);
     return branch ? branch.name : '-';
+  };
+
+  const handleTabChange = (newTab) => {
+    setActiveTab(newTab);
+    setLoading(true);
   };
 
 
@@ -94,25 +150,7 @@ function Transfer() {
     setPage(0);
   };
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=all`);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const result = await response.json();
-      setData(result);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setError(error.toString());
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+ 
 
   function isValidDate(dateString) {
     return dateString && !dateString.startsWith('0000-00-00') && !isNaN(new Date(dateString).getTime());
@@ -178,7 +216,7 @@ function Transfer() {
     };
 
     try {
-      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=approve`, {
+      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=${activeTab === 'in' ? 'inapprove' : activeTab === 'out' ? 'approve' : (() => { throw new Error('Invalid activeTab value') })()}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -271,7 +309,7 @@ function Transfer() {
     };
 
     try {
-      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=approvesel`, {
+      const response = await fetch(`${baseURL}/backend/fetchTransfer.php?action=${activeTab === 'in' ? 'inapprovesel' : activeTab === 'out' ? 'approvesel' : (() => { throw new Error('Invalid activeTab value') })()}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -360,6 +398,39 @@ function Transfer() {
     <div>
       <div className="flex font-bold justify-between items-center mb-3">
         <h1 className="text-xl">Asset Transfer</h1>
+        <div>
+      <Badge badgeContent={outCount} color="primary" sx={{ marginRight: 2 }}>
+        <Button 
+          variant={activeTab === 'out' ? 'contained' : 'outlined'}
+          onClick={() => handleTabChange('out')}
+          startIcon={<NotificationsIcon fontSize="small" />}
+          sx={{
+            marginRight: 1,
+            padding: '4px 8px',
+            minWidth: '50px',
+            fontSize: '0.75rem',
+          }}
+          size="small" // Use the small size variant
+        >
+          Transfer Out
+        </Button>
+      </Badge>
+      <Badge badgeContent={inCount} color="primary">
+        <Button 
+          variant={activeTab === 'in' ? 'contained' : 'outlined'}
+          onClick={() => handleTabChange('in')}
+          startIcon={<NotificationsIcon fontSize="small" />}
+          sx={{
+            minWidth: '50px',
+            padding: '4px 8px',
+            fontSize: '0.75rem',
+          }}
+          size="small" // Use the small size variant
+        >
+         Transfer In
+        </Button>
+      </Badge>
+    </div>
       </div>
 
       {/* Search bar and dropdown */}
@@ -374,6 +445,7 @@ function Transfer() {
             </IconButton>
           </div>
         )}
+        
         <div className='flex font-medium'>
           <select
             value={searchField}

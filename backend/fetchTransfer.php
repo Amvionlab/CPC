@@ -34,9 +34,9 @@ if ($action == 'fetch') {
         echo json_encode(["error" => "tag parameter is required."]);
     }
 }
-elseif ($action == 'all') {
+elseif ($action == 'out') {
  
-        $sql = "SELECT * FROM transfer WHERE `status`=1 AND `is_active`=1";
+        $sql = "SELECT * FROM transfer WHERE (`status`=1) AND `is_active`=1";
         $result = $conn->query($sql);
 
         $notes = array();
@@ -53,6 +53,27 @@ elseif ($action == 'all') {
         $conn->close();
         echo json_encode($notes);
  
+} 
+
+elseif ($action == 'in') {
+ 
+    $sql = "SELECT * FROM transfer WHERE (`status`=3) AND `is_active`=1";
+    $result = $conn->query($sql);
+
+    $notes = array();
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $notes[] = $row;
+        }
+    } else {
+        // Handle SQL errors
+        echo json_encode(["error" => $conn->error]);
+        exit;
+    }
+
+    $conn->close();
+    echo json_encode($notes);
+
 } 
 
 elseif ($action == 'multiadd') {
@@ -93,7 +114,7 @@ elseif ($action == 'multiadd') {
                     $allSuccess = false;  // Update overall success if any query fails
                     $errors[] = "Error with tag $tag: " . $conn->error;  // Capture specific errors
                 }
-            } else {
+            } else { 
                 $allSuccess = false;  // Update overall success if location query fails
                 $errors[] = "No location found for tag $tag.";
             }
@@ -237,6 +258,57 @@ elseif ($action == 'approvesel') {
     }
 }
 
+elseif ($action == 'inapprove') {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if (isset($data['id']) && isset($data['user'])) {
+        $id = $conn->real_escape_string($data['id']);
+        $user = $conn->real_escape_string($data['user']);
+
+        // Prepare the SQL update statement
+        $sql = "UPDATE transfer 
+                SET approved_by='$user', approved_on=NOW(), status=4 
+                WHERE id='$id'";
+
+        if ($conn->query($sql) === TRUE) {
+            echo json_encode(["success" => true, "message" => "Transfer approved successfully."]);
+        } else {
+            echo json_encode(["success" => false, "error" => $conn->error]);
+        }
+        
+        $conn->close();
+    } else {
+        echo json_encode(["success" => false, "error" => "ID and user are required."]);
+    }
+}
+elseif ($action == 'inapprovesel') {
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if (isset($data['selectedRows']) && is_array($data['selectedRows']) && isset($data['user'])) {
+        $ids = array_map([$conn, 'real_escape_string'], $data['selectedRows']);
+        $user = $conn->real_escape_string($data['user']);
+
+        // Convert IDs array into a comma-separated string
+        $idList = "'" . implode("','", $ids) . "'";
+
+        // Prepare the SQL update statement
+        $sql = "UPDATE transfer 
+                SET approved_by='$user', approved_on=NOW(), status=4 
+                WHERE id IN ($idList)";
+
+        if ($conn->query($sql) === TRUE) {
+            echo json_encode(["success" => true, "message" => "Transfers approved successfully."]);
+        } else {
+            echo json_encode(["success" => false, "error" => $conn->error]);
+        }
+        
+        $conn->close();
+    } else {
+        echo json_encode(["success" => false, "error" => "Selected rows and user are required."]);
+    }
+}
+
+
 elseif ($action == 'receive') {
     $data = json_decode(file_get_contents('php://input'), true);
 
@@ -246,7 +318,7 @@ elseif ($action == 'receive') {
 
         // Prepare the SQL update statement
         $sql = "UPDATE transfer 
-                SET received_by='$user', received_on=NOW(), status=4 
+                SET received_by='$user', received_on=NOW(), status=5 
                 WHERE id='$id'";
 
         if ($conn->query($sql) === TRUE) {
