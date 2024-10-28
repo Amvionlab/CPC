@@ -152,7 +152,7 @@ function App() {
                         element={<Approval />}
                       />  
                     )}
-                     {user && user.add === "1" && (
+                     {user && user.assetadd === "1" && (
                       <><Route
                         path="/single_assetadd"
                         element={<SingleAdd />}

@@ -28,6 +28,7 @@ const Login = ({ onLogin }) => {
           email: result.email,
           mobile: result.mobile,
           branch: result.branch,
+          location: result.location,
           photo: result.photo,
           accessId: result.accessid,
           add: result.addapprove,

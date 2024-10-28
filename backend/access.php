@@ -37,10 +37,15 @@ if (mysqli_num_rows($result) > 0) {
     // Validate password
     if ($password == $user['password']) {
         $usertype = $user['usertype'];
-        
-        // Query to fetch access details with matching usertype
+        $branch = $user['branch'];
+
         $accessSql = "SELECT * FROM access WHERE id = '$usertype'";
         $accessResult = mysqli_query($conn, $accessSql);
+
+        
+        // Query to fetch access details with matching usertype
+        $branchSql = "SELECT * FROM branch WHERE id = '$branch'";
+        $branchResult = mysqli_query($conn, $branchSql);
 
         if (!$accessResult) {
             echo json_encode(['status' => 'error', 'message' => 'Database query failed: ' . mysqli_error($conn)]);
@@ -49,6 +54,7 @@ if (mysqli_num_rows($result) > 0) {
 
         if (mysqli_num_rows($accessResult) > 0) {
             $access = mysqli_fetch_assoc($accessResult);
+            $branch = mysqli_fetch_assoc($branchResult);
 
             echo json_encode([
                 'status' => 'success',
@@ -59,6 +65,7 @@ if (mysqli_num_rows($result) > 0) {
                 'firstname' => $user['firstname'],
                 'lastname' => $user['lastname'],
                 'branch' => $user['branch'],
+                'location' => $branch['location_id'],
                 'photo' => $user['photo'],
                 'name' => $access['name'],
                 'addapprove' => $access['addapprove'],
