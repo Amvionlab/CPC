@@ -491,7 +491,7 @@ elseif ($action == 'rejectsel') {
 elseif ($action == 'management') {
     $status = isset($_GET['status']) ? $_GET['status'] : '';
     // Start building the SQL query for the transfer table
-    $sql = "SELECT * FROM transfer WHERE `status` ='$status'  AND `is_active` = 1";
+    $sql = "SELECT * FROM transfer WHERE `status` =$status  AND `is_active` = 1";
 
     // Initialize location and branch filtering
     $branchIds = [];
@@ -544,6 +544,65 @@ elseif ($action == 'management') {
     $conn->close();
     echo json_encode($notes);
 }
+
+elseif ($action == 'recmanagement') {
+    $status = isset($_GET['status']) ? $_GET['status'] : '';
+    // Start building the SQL query for the transfer table
+    $sql = "SELECT * FROM transfer WHERE `status` =$status  AND `is_active` = 1";
+
+    // Initialize location and branch filtering
+    $branchIds = [];
+
+    // Check if location is provided
+    if ($location) {
+        // Sanitize location
+        $location = $conn->real_escape_string($location);
+
+        // Fetch all equivalent 'id's for the specified location from the 'branch' table
+        $locationSql = "SELECT id FROM branch WHERE location_id = '$location'";
+        $locationResult = $conn->query($locationSql);
+
+        if ($locationResult) {
+            while ($row = $locationResult->fetch_assoc()) {
+                $branchIds[] = $row['id'];
+            }
+        }
+
+        // If there are matching branch IDs for the location, apply them as filters
+        if (!empty($branchIds)) {
+            $branchIdsStr = implode(',', $branchIds);
+            $sql .= " AND to_location IN ($branchIdsStr)"; // Updated condition
+        } else {
+            // If no matching branch IDs, return an empty result set
+            echo json_encode([]);
+            $conn->close();
+            exit;
+        }
+    } elseif ($branch) {
+        // If only branch is provided, use it as the filter
+        $branch = $conn->real_escape_string($branch);
+        $sql .= " AND to_location = '$branch'"; // Updated to match from_location
+    }
+
+    // Execute the query
+    $result = $conn->query($sql);
+
+    $notes = array();
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $notes[] = $row;
+        }
+    } else {
+        // Handle SQL errors
+        echo json_encode(["error" => $conn->error]);
+        exit;
+    }
+
+    $conn->close();
+    echo json_encode($notes);
+}
+
+
 
 
 elseif ($action == 'manageapprove') {
