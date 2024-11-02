@@ -97,7 +97,7 @@ elseif ($action == 'out') {
 
 elseif ($action == 'in') {
     // Start building the SQL query for the transfer table with specific conditions
-    $sql = "SELECT * FROM transfer WHERE `status` = 3 AND `is_active` = 1";
+    $sql = "SELECT * FROM transfer WHERE `status` = 4 AND `is_active` = 1";
 
     // Initialize location and branch filtering
     $branchIds = [];
@@ -182,8 +182,8 @@ elseif ($action == 'multiadd') {
                 $from = (int)$row['branch'];  // Cast to integer
 
                 // Prepare the INSERT statement
-                $sql = "INSERT INTO transfer (tag, from_location, to_location, description, request_on, request_by, status, is_active) 
-                        VALUES ('$escapedTag', '$from', '$to', '$notes', NOW(), '$user', 1, 1)";
+                $sql = "INSERT INTO transfer (tag, type, from_location, to_location, description, request_on, request_by, status, is_active) 
+                        VALUES ('$escapedTag','$type', '$from', '$to', '$notes', NOW(), '$user', 1, 1)";
 
                 // Execute the INSERT statement
                 if ($conn->query($sql) !== TRUE) {
@@ -341,16 +341,45 @@ elseif ($action == 'inapprove') {
         $id = $conn->real_escape_string($data['id']);
         $user = $conn->real_escape_string($data['user']);
 
-        // Prepare the SQL update statement
-        $sql = "UPDATE transfer 
-                SET approved_by='$user', approved_on=NOW(), status=4 
-                WHERE id='$id'";
+       
+                 $sql = "UPDATE transfer 
+                 SET received_approved_by='$user', received_approved_on=NOW(), status='5' 
+                 WHERE id='$id'";
 
-        if ($conn->query($sql) === TRUE) {
-            echo json_encode(["success" => true, "message" => "Transfer approved successfully."]);
+    if ($conn->query($sql) === TRUE) {
+
+        $assetUpdateOccurred = false;
+            $sql_select = "SELECT type, tag, to_location FROM transfer WHERE id='$id'";
+            $result = $conn->query($sql_select);
+
+            if ($result && $result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $type = $conn->real_escape_string($row['type']);
+                $tag = $conn->real_escape_string($row['tag']);
+                $to_location = $conn->real_escape_string($row['to_location']);
+
+                $tablename = "asset_" . $type;
+
+                $sql_update = "UPDATE $tablename SET branch='$to_location' WHERE tag='$tag'";
+
+                if ($conn->query($sql_update) === TRUE) {
+                    $assetUpdateOccurred = true;
+                } else {
+                    echo json_encode(["success" => false, "error" => $conn->error]);
+                    return;
+                }
+            }
+        
+
+        if ($assetUpdateOccurred) {
+            echo json_encode(["success" => true, "message" => "Transfers and assets updated successfully."]);
         } else {
-            echo json_encode(["success" => false, "error" => $conn->error]);
+            echo json_encode(["success" => false, "error" => "No valid transfer data found for updating assets."]);
         }
+   
+} else {
+    echo json_encode(["success" => false, "error" => $conn->error]);
+}
         
         $conn->close();
     } else {
@@ -367,18 +396,47 @@ elseif ($action == 'inapprovesel') {
         // Convert IDs array into a comma-separated string
         $idList = "'" . implode("','", $ids) . "'";
 
-        // Prepare the SQL update statement
+       
         $sql = "UPDATE transfer 
-                SET approved_by='$user', approved_on=NOW(), status=4 
+                SET received_approved_by='$user', received_approved_on=NOW(), status='5' 
                 WHERE id IN ($idList)";
 
-        if ($conn->query($sql) === TRUE) {
-            echo json_encode(["success" => true, "message" => "Transfers approved successfully."]);
-        } else {
-            echo json_encode(["success" => false, "error" => $conn->error]);
+if ($conn->query($sql) === TRUE) {
+
+    $assetUpdateOccurred = false;
+    foreach ($ids as $id) {
+        $sql_select = "SELECT type, tag, to_location FROM transfer WHERE id='$id'";
+        $result = $conn->query($sql_select);
+
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $type = $conn->real_escape_string($row['type']);
+            $tag = $conn->real_escape_string($row['tag']);
+            $to_location = $conn->real_escape_string($row['to_location']);
+
+            $tablename = "asset_" . $type;
+
+            $sql_update = "UPDATE $tablename SET branch='$to_location' WHERE tag='$tag'";
+
+            if ($conn->query($sql_update) === TRUE) {
+                $assetUpdateOccurred = true;
+            } else {
+                echo json_encode(["success" => false, "error" => $conn->error]);
+                return;
+            }
         }
-        
-        $conn->close();
+    }
+
+    if ($assetUpdateOccurred) {
+        echo json_encode(["success" => true, "message" => "Transfers and assets updated successfully."]);
+    } else {
+        echo json_encode(["success" => false, "error" => "No valid transfer data found for updating assets."]);
+    }
+
+} else {
+echo json_encode(["success" => false, "error" => $conn->error]);
+}
+    
     } else {
         echo json_encode(["success" => false, "error" => "Selected rows and user are required."]);
     }
@@ -392,22 +450,47 @@ elseif ($action == 'receive') {
         $id = $conn->real_escape_string($data['id']);
         $user = $conn->real_escape_string($data['user']);
 
-        // Prepare the SQL update statement
+        // Update the transfer record
         $sql = "UPDATE transfer 
-                SET received_by='$user', received_on=NOW(), status=5 
+                SET received_by='$user', received_on=NOW(), status=4
                 WHERE id='$id'";
 
         if ($conn->query($sql) === TRUE) {
-            echo json_encode(["success" => true, "message" => "Transfer Received successfully."]);
+            // Fetch type, tag, and to_location from the transfer table
+            $sql_select = "SELECT type, tag, to_location FROM transfer WHERE id='$id'";
+            $result = $conn->query($sql_select);
+
+            if ($result && $result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $type = $conn->real_escape_string($row['type']);
+                $tag = $conn->real_escape_string($row['tag']);
+                $to_location = $conn->real_escape_string($row['to_location']);
+
+                // Determine the dynamic table name
+                $tablename = "asset_" . $type;
+
+                // Update the specific asset table
+                $sql_update = "UPDATE $tablename SET branch='$to_location' WHERE tag='$tag'";
+
+                if ($conn->query($sql_update) === TRUE) {
+                    echo json_encode(["success" => true, "message" => "Transfer and Asset updated successfully."]);
+                } else {
+                    echo json_encode(["success" => false, "error" => $conn->error]);
+                }
+            } else {
+                echo json_encode(["success" => false, "error" => "Transfer record not found."]);
+            }
         } else {
             echo json_encode(["success" => false, "error" => $conn->error]);
         }
-        
+
         $conn->close();
     } else {
         echo json_encode(["success" => false, "error" => "ID and user are required."]);
     }
 }
+
+
 
 elseif ($action == 'ofd') {
     $data = json_decode(file_get_contents('php://input'), true);
@@ -604,7 +687,6 @@ elseif ($action == 'recmanagement') {
 
 
 
-
 elseif ($action == 'manageapprove') {
     $status = isset($_GET['status']) ? $_GET['status'] : '';
     $data = json_decode(file_get_contents('php://input'), true);
@@ -612,45 +694,143 @@ elseif ($action == 'manageapprove') {
     if (isset($data['id']) && isset($data['user'])) {
         $id = $conn->real_escape_string($data['id']);
         $user = $conn->real_escape_string($data['user']);
-
-        // Prepare the SQL update statement
-        $sql = "UPDATE transfer 
-                SET approved_by='$user', approved_on=NOW(), status='$status'
-                WHERE id='$id'";
+        
+        // Determine update fields based on status
+        $sql = "";
+        switch ($status) {
+            case '2':
+                $sql = "UPDATE transfer 
+                       SET approved_by='$user', approved_on=NOW(), status='2' 
+                       WHERE id='$id'";
+                break;
+            case '3':
+                $sql = "UPDATE transfer 
+                       SET transfer_by='$user', transfer_on=NOW(), status='3' 
+                       WHERE id='$id'";
+                break;
+            case '4':
+                $sql = "UPDATE transfer 
+                       SET received_by='$user', received_on=NOW(), status='4' 
+                       WHERE id='$id'";
+                break;
+            default:
+                echo json_encode(["success" => false, "error" => "Invalid status value provided."]);
+                return;
+        }
 
         if ($conn->query($sql) === TRUE) {
-            echo json_encode(["success" => true, "message" => "Transfer approved successfully."]);
+            // Proceed with asset update only if the status is '5'
+            if ($status === '5') {
+                $sql_select = "SELECT type, tag, to_location FROM transfer WHERE id='$id'";
+                $result = $conn->query($sql_select);
+
+                if ($result && $result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $type = $conn->real_escape_string($row['type']);
+                    $tag = $conn->real_escape_string($row['tag']);
+                    $to_location = $conn->real_escape_string($row['to_location']);
+
+                    $tablename = "asset_" . $type;
+                    $sql_update = "UPDATE $tablename SET branch='$to_location' WHERE tag='$tag'";
+
+                    if ($conn->query($sql_update) === TRUE) {
+                        echo json_encode(["success" => true, "message" => "Transfer approved and Asset updated successfully."]);
+                    } else {
+                        echo json_encode(["success" => false, "error" => $conn->error]);
+                    }
+                } else {
+                    echo json_encode(["success" => false, "error" => "Transfer record not found."]);
+                }
+            } else {
+                echo json_encode(["success" => true, "message" => "Transfer approved but no asset update was necessary."]);
+            }
         } else {
             echo json_encode(["success" => false, "error" => $conn->error]);
         }
-        
+
         $conn->close();
     } else {
         echo json_encode(["success" => false, "error" => "ID and user are required."]);
     }
 }
+
+
+
+
 elseif ($action == 'manageapprovesel') {
     $status = isset($_GET['status']) ? $_GET['status'] : '';
     $data = json_decode(file_get_contents('php://input'), true);
 
     if (isset($data['selectedRows']) && is_array($data['selectedRows']) && isset($data['user'])) {
-        $ids = array_map([$conn, 'real_escape_string'], $data['selectedRows']);
         $user = $conn->real_escape_string($data['user']);
+        $ids = array_map([$conn, 'real_escape_string'], $data['selectedRows']);
 
         // Convert IDs array into a comma-separated string
         $idList = "'" . implode("','", $ids) . "'";
 
-        // Prepare the SQL update statement
-        $sql = "UPDATE transfer 
-                SET approved_by='$user', approved_on=NOW(), status='$status'
-                WHERE id IN ($idList)";
+        // Determine the SQL update fields based on the status
+        $sql = "";
+        switch ($status) {
+            case '2':
+                $sql = "UPDATE transfer 
+                        SET approved_by='$user', approved_on=NOW(), status='2' 
+                        WHERE id IN ($idList)";
+                break;
+            case '3':
+                $sql = "UPDATE transfer 
+                        SET transfer_by='$user', transfer_on=NOW(), status='3' 
+                        WHERE id IN ($idList)";
+                break;
+           
+            case '4':
+                $sql = "UPDATE transfer 
+                        SET received_by='$user', received_on=NOW(), status='4' 
+                        WHERE id IN ($idList)";
+                break;
+            default:
+                echo json_encode(["success" => false, "error" => "Invalid status value provided."]);
+                return;
+        }
 
         if ($conn->query($sql) === TRUE) {
-            echo json_encode(["success" => true, "message" => "Transfers approved successfully."]);
+            // Only perform the asset update if the status is '5'
+            if ($status === '5') {
+                $assetUpdateOccurred = false;
+                foreach ($ids as $id) {
+                    $sql_select = "SELECT type, tag, to_location FROM transfer WHERE id='$id'";
+                    $result = $conn->query($sql_select);
+
+                    if ($result && $result->num_rows > 0) {
+                        $row = $result->fetch_assoc();
+                        $type = $conn->real_escape_string($row['type']);
+                        $tag = $conn->real_escape_string($row['tag']);
+                        $to_location = $conn->real_escape_string($row['to_location']);
+
+                        $tablename = "asset_" . $type;
+
+                        $sql_update = "UPDATE $tablename SET branch='$to_location' WHERE tag='$tag'";
+
+                        if ($conn->query($sql_update) === TRUE) {
+                            $assetUpdateOccurred = true;
+                        } else {
+                            echo json_encode(["success" => false, "error" => $conn->error]);
+                            return;
+                        }
+                    }
+                }
+
+                if ($assetUpdateOccurred) {
+                    echo json_encode(["success" => true, "message" => "Transfers and assets updated successfully."]);
+                } else {
+                    echo json_encode(["success" => false, "error" => "No valid transfer data found for updating assets."]);
+                }
+            } else {
+                echo json_encode(["success" => true, "message" => "Transfers updated successfully."]);
+            }
         } else {
             echo json_encode(["success" => false, "error" => $conn->error]);
         }
-        
+
         $conn->close();
     } else {
         echo json_encode(["success" => false, "error" => "Selected rows and user are required."]);

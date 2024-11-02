@@ -1,16 +1,12 @@
 import React, { useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faBox,
   faForward,
-  faCheckCircle,  // Approval
-  faProjectDiagram,      // Lifecycle
-  faFileAlt,      // Report
+  faChartBar, 
   faWrench,
-  faPlusSquare,
-  faTachometerAlt  // Setup
+  faCrosshairs,
+  faMapMarkedAlt 
 } from "@fortawesome/free-solid-svg-icons";
-import AddBoxIcon from "@mui/icons-material/AddBox";
 import { Link, useLocation } from "react-router-dom";  
 import logo from "../../image/S1.svg";
 import sampatName from "../../image/S2.svg";
@@ -23,13 +19,10 @@ const SideMenu = () => {
   const { user } = useContext(UserContext);
 
   const menuItems = [
-    { title: "Dashboard", icon: faTachometerAlt, to: "/dashboard", key: "dashboard" },
-    { title: "Asset Inventory", icon: faBox, to: "/inventory", key: "inventory" },
-    { title: "Approval Handling", icon: faCheckCircle, to: "/approval", key: "add" },
-    { title: "Management", icon: faProjectDiagram, to: "/management", key: "alc"  },
-    { title: "Reports", icon: faFileAlt, to: "/report", key: "report"  },
+    { title: "Sales", icon: faChartBar, to: "/sales", key: "setup" },
+    { title: "Target", icon: faCrosshairs, to: "/target", key: "setup" },
+    { title: "Area Manager", icon: faMapMarkedAlt, to: "/area-manager", key: "setup" },
     { title: "Setup Wizard", icon: faWrench, to: "/setup", key: "setup" },
-    { title: "Add Asset", icon: faPlusSquare, to: "/single_assetadd", key: "assetadd" },
   ];
 
   const handleMouseEnter = (title) => {

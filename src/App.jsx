@@ -33,17 +33,9 @@ import "react-toastify/dist/ReactToastify.css";
 import { UserContext } from "../src/components/UserContext/UserContext";
 import { TicketProvider } from "../src/components/UserContext/TicketContext";
 import SideMenu from "./components/sideMenu/SideMenu";
-import Inventory from "./components/Inventory/Inventory";
-import Management from "./components/Management/Management";
 import Setup from "./components/Setup/Setup";
 import Status from "./components/Admin/Status";
 import SubStatus from "./components/Admin/SubStatus";
-import AssetType from "./components/AssetType/AssetType";
-import TypeTable from "./components/TypeTable/TypeTable";
-import SingleAsset from "./components/SingleAsset/SingleAsset";
-import Approval from "./components/Approval/Approval";
-import SingleAdd from "./components/Admin/Asset_Add";
-import BulkAdd from "./components/Admin/Asset_Import";
 const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour
 
 function App() {
@@ -130,52 +122,8 @@ function App() {
                       <Route path="*" element={<Navigate to="/dashboard" />} />
                     )}
 
-                    {user && user.dashboard === "1" && (
-                      <>
-                    <Route path="/inventory" element={<Inventory />} />
-                    <Route
-                        path="/inventory/:group"
-                        element={<AssetType />}
-                      />
-                      <Route
-                        path="/inventory/:group/:type"
-                        element={<TypeTable />}
-                      />
-                      <Route
-                        path="/inventory/:group/:type/:tag"
-                        element={<SingleAsset />}
-                      />
-                      </>
-                    )}
-                    {user && user.add === "1" && (
-                      <Route
-                        path="/approval"
-                        element={<Approval />}
-                      />  
-                    )}
-                    {user && user.alc === "1" && (
-                      <>
-                      
-                      <Route path="/management" element={<Management />} /> 
-                      {/* <Route path="/management/transfer" element={<Management />} />             
-                      <Route path="/management/wait_for_approval" element={<Management />} />   
-                      <Route path="/management/out_for_delivery" element={<Management />} />  
-                      <Route path="/management/yet_to_receive" element={<Management />} />  
-                      <Route path="/management/receive" element={<Management />} />   */}
-
-                      </>
-                    )}
-                     {user && user.assetadd === "1" && (
-                      <><Route
-                        path="/single_assetadd"
-                        element={<SingleAdd />}
-                      />  
-                      <Route
-                        path="/bulk_assetadd"
-                        element={<BulkAdd />}
-                      /> 
-                      </> 
-                    )}
+                    
+                 
 
 {user && user.setup === "1" && ( 
 
