@@ -8,8 +8,8 @@ import {
   faMapMarkedAlt 
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation } from "react-router-dom";  
-import logo from "../../image/S1.svg";
-import sampatName from "../../image/S2.svg";
+import logo from "../../image/C1.png";
+import sampatName from "../../image/C2.png";
 import { UserContext } from "../UserContext/UserContext";
 
 const SideMenu = () => {
@@ -42,25 +42,26 @@ const SideMenu = () => {
         <nav className="h-full">
           <ul className="flex flex-col h-full gap-2">
             <li>
-              <Link
-                to="/"
-                className="flex items-center transition-none whitespace-nowrap gap-2 p-2 pr-3 hover:text-prime text-white text-lg rounded-lg"
-              >
-                <img
-                  src={logo}
-                  width="40px"
-                  height="50px"  
-                  alt="Logo"
-                  style={{ minWidth: "40px", minHeight: "50px" }}
-                />
-                {isExpanded && (
-                  <img
-                    src={sampatName}
-                    alt="Sampat Name"
-                    style={{ minWidth: "110px", height: "40px" }}
-                  />
-                )}
-              </Link>
+            <Link
+      to="/"
+      className="flex items-center transition-none whitespace-nowrap gap-2 p-2 pr-3 hover:text-prime text-white text-lg rounded-lg"
+    >
+      {isExpanded ? (
+        <img
+          src={sampatName}
+          alt="Sampat Name"
+          style={{ minWidth: "110px", height: "50px" }}
+        />
+      ) : (
+        <img
+          src={logo}
+          width="40px"
+          height="50px"
+          alt="Logo"
+          style={{ minWidth: "40px", minHeight: "50px" }}
+        />
+      )}
+    </Link>
             </li>
 
             {menuItems.map(({ title, icon, to, key }) => (
