@@ -49,8 +49,9 @@ function ChangePass() {
   };
 
   return (
-    <div className="min-h-full flex items-center justify-center bg-box">
-      <form onSubmit={handleSubmit} className=" p-6 text-sm rounded-3xl shadow-lg w-full max-w-sm">
+<div className="h-full bg-second p-1">
+<div className="h-full flex items-center justify-center bg-box ">
+      <form onSubmit={handleSubmit} className=" p-6 text-sm rounded-3xl border shadow-prime shadow-lg w-full max-w-sm">
         <h2 className="text-2xl font-semibold mb-4 text-flo">Change Password</h2>
         <div className="mb-4">
           <label className="block text-prime font-medium">Username</label>
@@ -87,6 +88,7 @@ function ChangePass() {
         )}
         <button type="submit" className="w-1/2 ml-20 bg-flo hover:shadow-md hover:shadow-flo text-white py-2 rounded">Submit</button>
       </form>
+    </div>
     </div>
   );
 }
