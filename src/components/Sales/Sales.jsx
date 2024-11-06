@@ -356,7 +356,7 @@ function Reports() {
 
       <div className="main flex h-[85%] gap-1">
         <div className="section1 md:flex-col  w-[40%] bg-box rounded-md h-full">
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 justify-between w-full p-2 break-words">
+          <div className="flex flex-wrap items-center pt-5 gap-x-2 gap-y-1 justify-between w-full p-2 break-words">
             {[
               "date_invoiced",
               "bpartner_group",
@@ -372,7 +372,7 @@ function Reports() {
               "parameter_sap",
               "document",
               "customer_po_num",
-              "aop_mapping_2024",
+              "aop_2024_mapping",
             ].map((item, index) => (
               <div
                 key={index}
@@ -389,7 +389,7 @@ function Reports() {
               </div>
             ))}
           </div>
-          <div className="w-full flex-col justify-start items-center h-full rounded-md flex mb-2">
+          <div className="w-full flex-col justify-start items-center h-full rounded-md flex mb-2 px-5 pb-10">
             <PieChart
               series={[
                 {
@@ -458,7 +458,7 @@ function Reports() {
                 </CSVLink>
               </div>
             </div>
-            <TableContainer sx={{ maxHeight: "calc(100vh - 200px)" }}>
+            <TableContainer sx={{ maxHeight: "calc(110vh - 200px)" }}>
               <Table stickyHeader>
                 <TableHead>
                   <TableRow>
@@ -549,11 +549,34 @@ function Reports() {
                                 (header === "Assignees" && "N/A")
                               }
                             >
-                              {
-                                ticket[
-                                  header.toLowerCase().replaceAll(" ", "_")
-                                ]
-                              }
+                              {header === "prod name"
+                                ? (ticket.prod_name
+                                    ?.split(" ")
+                                    .slice(0, 3)
+                                    .join(" ") || "N/A") +
+                                  (ticket.prod_name?.split(" ").length > 3
+                                    ? "..."
+                                    : "")
+                                : header === "business partner" // Check for "Customer"
+                                ? (ticket.business_partner
+                                    ?.split(" ")
+                                    .slice(0, 3)
+                                    .join(" ") || "N/A") +
+                                  (ticket.business_partner?.split(" ").length >
+                                  3
+                                    ? "..."
+                                    : "")
+                                : header === "customer po num" // Check for "Customer"
+                                ? (ticket.customer_po_num
+                                    ?.split(" ")
+                                    .slice(0, 3)
+                                    .join(" ") || "N/A") +
+                                  (ticket.customer_po_num?.split(" ").length > 3
+                                    ? "..."
+                                    : "")
+                                : ticket[
+                                    header.toLowerCase().replaceAll(" ", "_")
+                                  ]}
                             </TableCell>
                           ))}
                         </TableRow>
