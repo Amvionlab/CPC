@@ -13,7 +13,6 @@ import {
   useNavigate,
 } from "react-router-dom";
 import "./App.css";
-import Header from "./components/Header/Header";
 
 import User from "./components/Admin/User";
 import Location from "./components/Admin/Location"; 
@@ -105,8 +104,8 @@ function App() {
           <>
             <div className="main-content flex overflow-y-hidden">
               <SideMenu />
-              <div className="flex-1 md:overflow-y-auto pt-12 h-screen">
-                <Header />
+              <div className="flex-1 md:overflow-y-auto h-screen">
+
                 <TicketProvider>
                   <Routes>
                     <Route path="/password-change" element={<ChangePass />} />
