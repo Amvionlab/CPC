@@ -63,7 +63,7 @@ function Reports() {
     const fetchTickets = async (value) => {
       try {
         let response;
-        if (user && user.accessId === "2") {
+        if (user && user.accessId === "3") {
           response = await fetch(
             `${baseURL}backend/fetchTickets.php?user=${user.userId}`
           );

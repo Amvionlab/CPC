@@ -27,6 +27,7 @@ import Employee from "./components/Admin/Employee";
 import Vendor from "./components/Admin/Vendor";
 import Smtp from "./components/Admin/Smtp";
 import Login from "./components/Login/Login";
+import Sales from "./components/Sales/Sales";
 import ChangePass from "./components/Login/Change_pass";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -109,17 +110,24 @@ function App() {
                 <TicketProvider>
                   <Routes>
                     <Route path="/password-change" element={<ChangePass />} />
-                    {user && user.dashboard === "1" && (
-                       <Route path="*" element={<Navigate to="/dashboard" />} />
-                    )}
+                      
                     {user && user.setup === "1" && (
-                      <Route
-                        path="*"
-                        element={<Navigate to="/setup/access" />}
-                      />
+                     <>
+                      <Route path="*" element={<Navigate to="/setup" />} />
+                      <Route path="/sales" element={<Sales />} />
+                      <Route path="/target" element={<ChangePass />} />
+                      <Route path="/am" element={<ChangePass />} />
+                      </>
                     )}
                     {user && user.setup === "0" && (
-                      <Route path="*" element={<Navigate to="/dashboard" />} />
+                      <>                   
+                      <Route path="*" element={<Navigate to="/sales" />} />
+                      <Route path="/sales" element={<Sales />} />
+                      <Route path="/target" element={<ChangePass />} />
+                      <Route path="/am" element={<ChangePass />} />
+                      </>
+
+                   
                     )}
 
                     
