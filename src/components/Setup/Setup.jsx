@@ -53,7 +53,7 @@ function Setup() {
 </span>
 
                 <div className="flex flex-col transition-transform transform  group-hover:font-medium">
-                  <span className="font-bold text-prime text-md group-hover:text-flo">{item.title}</span>
+                  <span className="font-bold text-flo text-md group-hover:text-flo">{item.title}</span>
                   <span className="text-gray-500 text-xs">{item.sub}</span>
                 </div>
               </div>
