@@ -28,7 +28,7 @@ function Reports() {
   const [page, setPage] = useState(0);
   const [ticketsPerPage, setTicketsPerPage] = useState(50);
   const [filteredTickets, setFilteredTickets] = useState([]);
-  const [selectedFilter, setSelectedFilter] = useState("type");
+  const [selectedFilter, setSelectedFilter] = useState("date_invoiced");
   const [selectedLabels, setSelectedLabels] = useState([[], [], [], [], []]);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -50,13 +50,42 @@ function Reports() {
   }));
 
   const headers = [
-    "Id",
-    "Type",
-    "Status",
-    "Customer",
-    "Assignees",
-    "Domain",
-    "Post Date",
+    "month",
+    "Date Invoiced",
+    "bpartner group",
+    "business partner",
+    "prod value",
+    "prod name",
+    "invoiced qty",
+    "line amt",
+    "product category",
+    "product group",
+    "state",
+    "zone",
+    "division",
+    "am",
+    "territory",
+    "rm",
+    "buh",
+    "product mapping",
+    "product type",
+    "sap code",
+    "product grouping",
+    "vendor name",
+    "parameter sap",
+    "brand",
+    "product division",
+    "document",
+    "revenue account",
+    "cogs account",
+    "year",
+    "customer po num",
+    "mapping code",
+    "euroimmun top product",
+    "pack size",
+    "aop 2024 mapping",
+    "territory 2023",
+    "buh 2023",
   ];
 
   useEffect(() => {
@@ -121,16 +150,17 @@ function Reports() {
 
     .slice(0, 10)
     .map(([label]) => {
-      return wrapLabel(label.length > 15 ? label.slice(0, 10) + "..." : label);
+      return wrapLabel(label.length > 12 ? label.slice(0, 10) + "..." : label);
     });
 
   const pieChartData = Object.entries(domainData)
-  .map(([label, value], index) => {
-    return {
-      label: labelValue[index],
-      value,
-    };
-  });
+    .slice(0, 500)
+    .map(([label, value], index) => {
+      return {
+        label: labelValue[index],
+        value,
+      };
+    });
 
   const pieChartOptions = {
     legend: { textStyle: { fontSize: 12 } },
@@ -221,7 +251,7 @@ function Reports() {
     <div className="bg-second h-full overflow-hidden">
       <div className="m-1 p-2 bg-box w-full flex justify-center items-center">
         <div className="flex justify-center items-center text-xs w-full gap-3 ">
-          <p className="font-semibold text-sm">Filter :</p>
+          <p className="font-semibold text-sm">Filter:</p>
           {selectedLabels.map((selectedLabel, index) => (
             <FormControl key={index} sx={{ m: 0.5, width: 125, height: 30 }}>
               <Select
@@ -326,22 +356,38 @@ function Reports() {
 
       <div className="main flex h-[85%] gap-1">
         <div className="section1 md:flex-col  w-[40%] bg-box rounded-md h-full">
-          <div className="flex justify-center items-center gap-5 w-full p-2">
-            {["Type", "Status", "Customer", "Assignees", "Domain"].map(
-              (item, index) => (
-                <div
-                  key={index}
-                  onClick={() => setSelectedFilter(item.toLowerCase())}
-                  className={`py-1 px-2 text-xs font-semibold rounded cursor-pointer ${
-                    item.toLowerCase() === selectedFilter
-                      ? "bg-flo text-white"
-                      : "bg-box text-black border border-black"
-                  }`}
-                >
-                  <p>{item}</p>
-                </div>
-              )
-            )}
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 justify-between w-full p-2 break-words">
+            {[
+              "date_invoiced",
+              "bpartner_group",
+              "business_partner",
+              "prod_name",
+              "state",
+              "division",
+              "territory",
+              "rm",
+              "buh",
+              "vendor_name",
+              "zone",
+              "parameter_sap",
+              "document",
+              "customer_po_num",
+              "aop_mapping_2024",
+            ].map((item, index) => (
+              <div
+                key={index}
+                onClick={() => setSelectedFilter(item.toLowerCase())}
+                className={`py-1 px-2 text-xs break-words inline-block font-semibold rounded cursor-pointer ${
+                  item.toLowerCase() === selectedFilter
+                    ? "bg-flo text-white"
+                    : "bg-box text-black border border-black"
+                }`}
+              >
+                <p className="capitalize text-nowrap">
+                  {item.replaceAll("_", " ")}
+                </p>
+              </div>
+            ))}
           </div>
           <div className="w-full flex-col justify-start items-center h-full rounded-md flex mb-2">
             <PieChart
@@ -353,7 +399,7 @@ function Reports() {
                   highlightScope: { faded: "global", highlighted: "item" },
                   faded: {
                     innerRadius: 30,
-                    additionalRadius: -30,
+                    additionalRadius: 0,
                     color: "gray",
                   },
                   plugins: [
@@ -418,6 +464,7 @@ function Reports() {
                   <TableRow>
                     {headers.map((header, index) => (
                       <TableCell
+                        className="capitalize"
                         key={index}
                         align="left"
                         sx={{
@@ -502,25 +549,11 @@ function Reports() {
                                 (header === "Assignees" && "N/A")
                               }
                             >
-                              {header === "Assignees"
-                                ? (ticket.assignees
-                                    ?.split(" ")
-                                    .slice(0, 3)
-                                    .join(" ") || "N/A") +
-                                  (ticket.assignees?.split(" ").length > 3
-                                    ? "..."
-                                    : "")
-                                : header === "Customer" // Check for "Customer"
-                                ? (ticket.customer
-                                    ?.split(" ")
-                                    .slice(0, 3)
-                                    .join(" ") || "N/A") +
-                                  (ticket.customer?.split(" ").length > 3
-                                    ? "..."
-                                    : "")
-                                : ticket[
-                                    header.toLowerCase().replace(" ", "_")
-                                  ]}
+                              {
+                                ticket[
+                                  header.toLowerCase().replaceAll(" ", "_")
+                                ]
+                              }
                             </TableCell>
                           ))}
                         </TableRow>
