@@ -8,6 +8,22 @@ import jsPDF from 'jspdf';
 import ReactPaginate from 'react-paginate';
 import html2canvas from 'html2canvas';
 import { UserContext } from '../UserContext/UserContext';
+import TextField from '@mui/material/TextField';
+import {
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableContainer,
+  Paper,
+  Select,
+  MenuItem,
+  IconButton,
+  Input,
+  TablePagination,
+} from "@mui/material";
+
 
 const Form = () => {
   const [formData, setFormData] = useState({
@@ -20,6 +36,7 @@ const Form = () => {
   const [currentPage, setCurrentPage] = useState(0);
   let i = 1;
 
+  
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [filters, setFilters] = useState({});
@@ -70,7 +87,7 @@ const Form = () => {
         console.error("Error fetching access:", error);
       }
     };
-
+ 
     const fetchUsers = async () => {
       try {
         const response = await fetch(`${baseURL}/backend/fetchUsers.php`);
@@ -97,11 +114,13 @@ const Form = () => {
   };
 
   const handleRowsPerPageChange = (e) => {
-    const value = parseInt(e.target.value, 10);
-    setTicketsPerPage(!isNaN(value) && value >= 1 ? value : 1);
-    setCurrentPage(0);
+    setTicketsPerPage(parseInt(e.target.value, 10));
+    setCurrentPage(0); // Reset to the first page when rows per page changes
   };
 
+  const handleChangePage = (event, newPage) => {
+    setCurrentPage(newPage);
+  };
   const handlePageClick = ({ selected }) => {
     setCurrentPage(selected);
   };
@@ -248,93 +267,93 @@ const Form = () => {
   const currentTickets = filteredUsers.slice(offset, offset + ticketsPerPage);
 
   return (
-    <div className="bg-second max-h-5/6 max-w-4/6 text-xs mx-auto p-1 lg:overflow-y-hidden h-auto ticket-scroll">
+    <div className="bg-second max-h-full max-w-full -mt-1 text-xs p-1  h-full ticket-scroll">
       {showForm && (
-        <div className="max-w-full mt-3 m-2 mb-4 p-2 bg-box rounded-lg font-mont">
+        <div className="max-w-full mb-0.5 p-2 bg-box  font-mont">
           <div className="ticket-table mt-2">
             <form onSubmit={handleSubmit} className="space-y-4 text-label">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 ml-10 pr-10 mb-0">
-                <div className="font-mont font-semibold text-2xl mb-4">
-                  User Details:
+              <div className=" gap-x-10 ml-10 pr-10 mb-0">
+                <div className="font-mont font-semibold text-2xl mb-4 text-center">
+                  User Details
                 </div>
               </div>
 
+                 <div >
+                 <div className="flex justify-center items-center mt-2">
+  <label className="w-32 text-sm font-semibold text-prime text-left mr-2">
+    Employee Name<span className="text-red-600 text-md font-bold">*</span>
+  </label>
+  <select
+    name="employee_id"
+    value={formData.employee_id}
+    onChange={handleChange}
+    className="w-80 text-center text-xs bg-box border border-gray-400 p-3 rounded-md outline-none focus:border-bgGray focus:ring-bgGray focus:shadow-prime focus:shadow-sm"
+  >
+    <option value="" className="custom-option">
+      Select Employee
+    </option>
+    {employee.map((employee) => (
+      <option
+        key={employee.id}
+        value={employee.id}
+        className="custom-option"
+        required
+      >
+        {employee.firstname}
+      </option>
+    ))}
+  </select>
+</div>
+
+<div className="flex justify-center items-center mt-2">
+  <label className="w-32 text-sm font-semibold text-prime text-left mr-2">
+    Username<span className="text-red-600 text-md font-bold">*</span>
+  </label>
+  <input
+    type="text"
+    name="username"
+    placeholder="Enter Username"
+    value={formData.username}
+    onChange={handleChange}
+    required
+    className="w-80 text-center text-xs bg-box border border-gray-400 p-3 rounded-md outline-none focus:border-bgGray focus:ring-bgGray focus:shadow-prime focus:shadow-sm"
+  />
+</div>
+
+<div className="flex justify-center items-center mt-2">
+  <label className="w-32 text-sm font-semibold text-prime text-left mr-2">
+    User Type<span className="text-red-600 text-md font-bold">*</span>
+  </label>
+  <select
+    name="usertype"
+    value={formData.usertype}
+    onChange={handleChange}
+    className="w-80 text-center text-xs bg-box border border-gray-400 p-3 rounded-md outline-none focus:border-bgGray focus:ring-bgGray focus:shadow-prime focus:shadow-sm"
+  >
+    <option value="" className="custom-option">
+      Select User Type
+    </option>
+    {access.map((access) => (
+      <option
+        key={access.id}
+        value={access.id}
+        className="custom-option"
+        required
+      >
+        {access.name}
+      </option>
+    ))}
+  </select>
+</div>
+
+                 </div>
               
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 ml-10 pr-10 mb-0">
-
-              <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                  Employee Name<span className="text-red-600 text-md font-bold">*</span>
-                  </label>
-                  <select
-                    name="employee_id"
-                    value={formData.employee_id}
-                    onChange={handleChange}
-                    className="selectbox flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none focus:border-bgGray focus:ring-bgGray focus:shadow-prime focus:shadow-sm"
-                  >
-                    <option value="" className="custom-option">
-                      Select Employee
-                    </option>
-                    {employee.map((employee) => (
-                      <option
-                        key={employee.id}
-                        value={employee.id}
-                        className="custom-option"
-                        required
-                      >
-                        {employee.firstname}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    Username<span className="text-red-600 text-md font-bold">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="username"
-                    placeholder="Enter Username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    required
-                    className="flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none transition ease-in-out delay-150 focus:shadow-prime focus:shadow-sm"
-                  />
-                </div>
-
-                <div className="flex items-center mb-2 mr-4">
-                  <label className="text-sm font-semibold text-prime mr-2 w-32">
-                    User Type<span className="text-red-600 text-md font-bold">*</span>
-                  </label>
-                  <select
-                    name="usertype"
-                    value={formData.usertype}
-                    onChange={handleChange}
-                    className="selectbox flex-grow text-xs bg-second border p-3 border-none rounded-md outline-none focus:border-bgGray focus:ring-bgGray focus:shadow-prime focus:shadow-sm"
-                  >
-                    <option value="" className="custom-option">
-                      Select User Type
-                    </option>
-                    {access.map((access) => (
-                      <option
-                        key={access.id}
-                        value={access.id}
-                        className="custom-option"
-                        required
-                      >
-                        {access.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
+             
 
               <div className="flex justify-center">
                 <button
                   type="submit"
-                  className="mt-1 bg-prime font-mont font-semibold text-lg text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
+                  className=" mb-2 bg-prime font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
                 >
                   Submit
                 </button>
@@ -344,127 +363,88 @@ const Form = () => {
         </div>
       )}
 
-      <div className="max-w-1/2 m-2 bg-box p-5 rounded-lg font-mont">
+      <div className="max-w-full w-full h-full bg-box p-5  font-mont">
         <div className="ticket-table mt-4">
           <h3 className="text-2xl font-bold text-prime mb-4 flex justify-between items-center">
             <span>
               User Data
               <button
                 onClick={() => setShowForm(!showForm)}
-                className="ml-4 bg-second hover:bg-prime hover:text-box font-mont font-bold text-sm text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
+                className="ml-4 bg-second hover:bg-prime hover:text-box font-mont font-bold text-xs text-black py-2 px-8 rounded-md shadow-md focus:outline-none"
               >
                 {showForm ? "Close" : "+ Add User"}
               </button>
             </span>
-            <span className="text-xs flex items-center gap-2">
-              <label htmlFor="rowsPerPage" className="text-sm font-medium text-gray-700">
-                Rows per page:
-              </label>
-              <input
-                type="number"
-                id="rowsPerPage"
-                placeholder={ticketsPerPage}
-                onChange={handleRowsPerPageChange}
-                className="w-16 px-2 py-2 border-2 rounded text-gray-900 ml-2 mr-2"
-                min="0"
-              />
+            <span className="">
+            
+              <TablePagination
+          component="div"
+          count={filteredUsers.length}
+          page={currentPage}
+          onPageChange={handleChangePage}
+          rowsPerPage={ticketsPerPage}
+          onRowsPerPageChange={handleRowsPerPageChange}
+          labelRowsPerPage="Rows per page"
+          rowsPerPageOptions={[5, 10, 25, 50]}
+        />
+            </span>
+        <span className="flex gap-2">
               <button
                 onClick={exportCSV}
-                className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
+                className="bg-second font-mont font-semibold text-xs py-1 px-4 rounded-md shadow-md focus:outline-none hover:bg-flo hover:text-white transition-all ease-in-out"
               >
                 CSV
               </button>
               <button
                 onClick={exportExcel}
-                className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
+                className="bg-second font-mont font-semibold text-xs py-1 px-4 rounded-md shadow-md focus:outline-none hover:bg-flo hover:text-white transition-all ease-in-out"
               >
                 Excel
               </button>
               <button
                 onClick={exportPDF}
-                className="bg-flo font-mont font-semibold text-sm text-white py-1 px-4 rounded-md shadow-md focus:outline-none"
+                className="bg-second font-mont font-semibold text-xs py-1 px-4 rounded-md shadow-md focus:outline-none hover:bg-flo hover:text-white transition-all ease-in-out"
               >
                 PDF
               </button>
-            </span>
+              </span>
+        
           </h3>
           <div className="overflow-x-auto ">
-          <table className="min-w-full border bg-second rounded-lg overflow-hidden filter-table mt-5">
-            <thead className="bg-second border-2 border-prime text-prime font-semibold font-poppins text-fontadd">
-              <tr>
-                {["Id", "Employee ID", "Employee Name", "Username", "User Type", "Mobile", "Location"].map((header, index) => (
-                  <td key={index} className="w-1/10 py-4 px-4">
-                    <div className="flex items-center justify-left gap-2">
-                      <div className="header flex">
-                        <span className="head">{header}</span>
-                        <span><FaFilter
-                          className="cursor-pointer ml-1 mt-0.5"
-                          onClick={() => setShowFilter(prevState => ({
-                            ...prevState,
-                            [header.toLowerCase().replace(" ", "")]: !prevState[header.toLowerCase().replace(" ", "")]
-                          }))}
-                        /></span>
-                      </div>
-                    </div>
-                    {showFilter[header.toLowerCase().replace(" ", "")] && (
-                      <div className="mt-2 bg-prime p-2 rounded shadow-md filter">
-                        <select
-                          onChange={(e) => handleFilterChange(e, header.toLowerCase().replace(" ", ""), e.target.value)}
-                          className="mb-2 p-1 border text-prime rounded w-full"
-                        >
-                          <option value="contain">Contains</option>
-                          <option value="not contain">Does Not Contain</option>
-                          <option value="equal to">Equal To</option>
-                          <option value="more than">More Than</option>
-                          <option value="less than">Less Than</option>
-                        </select>
-                        <input
-                          type="text"
-                          placeholder="Enter value"
-                          onChange={(e) => handleFilterChange(e, header.toLowerCase().replace(" ", ""), filters[header.toLowerCase().replace(" ", "")]?.type || "contain")}
-                          className="p-1 border rounded text-prime w-full"
-                        />
-                      </div>
-                    )}
-                  </td>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {currentTickets.map((userdet) => (
-                <tr key={userdet.id} className="bg-box text-fontadd text-center font-medium">
-                  <td className="border-t py-4 px-4">{(i++) + (offset)}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'center' }}>{userdet.employee_id}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.employee_name}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.username}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.typename}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.mobile}</td>
-                  <td className="border-t py-4 px-4" style={{ textAlign: 'left' }}>{userdet.location}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+       
+      <Table className="min-w-full">
+        <TableHead className="">
+          <TableRow>
+            {["Id", "Employee ID", "Employee Name", "Username", "User Type", "Mobile", "Location"].map((header, index) => (
+              <TableCell key={index} className="py-4 px-4 text-prime font-semibold font-poppins">
+                <div className="flex items-center gap-2">
+                  <span style={{padding: "4px 4px"}} className="font-semibold">{header}</span>
+               
+                </div>
+               
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {currentTickets.map((userdet, i) => (
+            <TableRow key={userdet.id} className="bg-box text-fontadd">
+              <TableCell className="border-t py-4 px-4" style={{padding: "10px 18px"}}>{i + offset}</TableCell>
+              <TableCell className="border-t py-4 px-4" style={{padding: "10px 18px"}}>{userdet.employee_id}</TableCell>
+              <TableCell className="border-t py-4 px-4" style={{padding: "10px 18px"}}>{userdet.employee_name}</TableCell>
+              <TableCell className="border-t py-4 px-4" style={{padding: "10px 18px"}}>{userdet.username}</TableCell>
+              <TableCell className="border-t py-4 px-4" style={{padding: "10px 18px"}}>{userdet.typename}</TableCell>
+              <TableCell className="border-t py-4 px-4" style={{padding: "10px 18px"}}>{userdet.mobile}</TableCell>
+              <TableCell className="border-t py-4 px-4" style={{padding: "10px 18px"}}>{userdet.location}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+   
+       </div>
         </div>
 
-        <div className="pagination mt-4 flex justify-center">
-          <ReactPaginate
-            previousLabel={"Previous"}
-            nextLabel={"Next"}
-            breakLabel={"..."}
-            pageCount={pageCount}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={5}
-            onPageChange={handlePageClick}
-            containerClassName={"pagination-container"}
-            pageClassName={"pagination-page"}
-            pageLinkClassName={"pagination-link"}
-            previousClassName={"pagination-previous"}
-            nextClassName={"pagination-next"}
-            breakClassName={"pagination-break"}
-            activeClassName={"pagination-active"}
-          />
-        </div>
+     
       </div>
     </div>
   );

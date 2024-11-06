@@ -44,9 +44,9 @@ const SideMenu = () => {
   };
 
   const menuItems = [
-    { title: "Sales", icon: faChartBar, to: "/sales", key: "setup" },
-    { title: "Target", icon: faCrosshairs, to: "/target", key: "setup" },
-    { title: "Area Manager", icon: faMapMarkedAlt, to: "/area-manager", key: "setup" },
+    { title: "Sales Summary", icon: faChartBar, to: "/sales", key: "setup" },
+    { title: "Target Summary", icon: faCrosshairs, to: "/target", key: "setup" },
+    { title: "AM Summary", icon: faMapMarkedAlt, to: "/area-manager", key: "setup" },
     { title: "Setup Wizard", icon: faWrench, to: "/setup", key: "setup" },
     { title: "Change Password", icon: faKey, to: "/password-change", key: "setup" },
   ];
@@ -70,13 +70,13 @@ const SideMenu = () => {
             <li>
               <Link
                 to="/"
-                className="flex items-center transition-none whitespace-nowrap gap-2 p-2 pr-3 hover:text-prime text-white text-lg rounded-lg"
+                className="flex items-center transition-none whitespace-nowrap gap-2 p-2 mb-4 bg-box hover:text-prime text-white text-lg rounded-full"
               >
                 {isExpanded ? (
                   <img
                     src={sampatName}
                     alt="Sampat Name"
-                    style={{ minWidth: "100px", height: "50px", justifyItems: "center"}}
+                    style={{ minWidth: "140px", height: "50px", justifyItems: "center"}}
                   />
                 ) : (
                   <img
@@ -150,7 +150,7 @@ const SideMenu = () => {
                 >
                   <Link
                     to="#"
-                    className="flex items-center gap-2 p-3 m-1 mt-8 text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500"
+                    className="flex items-center gap-2 p-3 m-1 mt-8 whitespace-nowrap text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500"
                     onClick={() => setIsExpanded(prev => !prev)}
                   >
                     <FontAwesomeIcon
@@ -171,7 +171,7 @@ const SideMenu = () => {
               {isExpanded ? (
                 // Render the div without tooltip when expanded
                 <div
-                  className="flex items-center gap-2 p-3 m-1 text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500"
+                  className="flex items-center gap-2 p-3 m-1 whitespace-nowrap text-white rounded-lg transition-all duration-500 ease-in-out hover:bg-white hover:text-purple-500"
                   onClick={handleIconClick}
                 >
                   <FontAwesomeIcon
