@@ -49,11 +49,11 @@ function ChangePass() {
   };
 
   return (
-    <div className="min-h-full flex items-center justify-center bg-second">
-      <form onSubmit={handleSubmit} className="bg-box p-6 text-sm rounded-3xl shadow-lg w-full max-w-sm">
-        <h2 className="text-2xl mb-4">Change Password</h2>
+    <div className="min-h-full flex items-center justify-center bg-box">
+      <form onSubmit={handleSubmit} className=" p-6 text-sm rounded-3xl shadow-lg w-full max-w-sm">
+        <h2 className="text-2xl font-semibold mb-4 text-flo">Change Password</h2>
         <div className="mb-4">
-          <label className="block text-prime">Username</label>
+          <label className="block text-prime font-medium">Username</label>
           <input
             type="text"
             className="w-full px-3 py-2 border rounded"
@@ -63,7 +63,7 @@ function ChangePass() {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-prime">New Password</label>
+          <label className="block text-prime font-medium">New Password</label>
           <input
             type="password"
             className="w-full px-3 py-2 border rounded"
@@ -85,7 +85,7 @@ function ChangePass() {
         {passwordMismatch && (
           <p className="text-red-500 mb-4">Passwords do not match. Please try again.</p>
         )}
-        <button type="submit" className="w-1/2 ml-20 bg-blue-500 hover:shadow-md hover:shadow-flo text-white py-2 rounded">Submit</button>
+        <button type="submit" className="w-1/2 ml-20 bg-flo hover:shadow-md hover:shadow-flo text-white py-2 rounded">Submit</button>
       </form>
     </div>
   );
