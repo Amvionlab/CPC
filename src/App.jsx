@@ -27,6 +27,8 @@ import Vendor from "./components/Admin/Vendor";
 import Smtp from "./components/Admin/Smtp";
 import Login from "./components/Login/Login";
 import Sales from "./components/Sales/Sales";
+import Target from "./components/Target/Target";
+import Am from "./components/Am/Am";
 import ChangePass from "./components/Login/Change_pass";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -113,16 +115,16 @@ function App() {
                       <>
                         <Route path="*" element={<Navigate to="/setup" />} />
                         <Route path="/sales" element={<Sales />} />
-                        <Route path="/target" element={<ChangePass />} />
-                        <Route path="/am" element={<ChangePass />} />
+                        <Route path="/target" element={<Target />} />
+                        <Route path="/area-manager" element={<Am />} />
                       </>
                     )}
                     {user && user.setup === "0" && (
                       <>
                         <Route path="*" element={<Navigate to="/sales" />} />
                         <Route path="/sales" element={<Sales />} />
-                        <Route path="/target" element={<ChangePass />} />
-                        <Route path="/am" element={<ChangePass />} />
+                        <Route path="/target" element={<Target />} />
+                        <Route path="/area-manager" element={<Am />} />
                       </>
                     )}
 
