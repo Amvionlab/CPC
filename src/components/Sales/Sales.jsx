@@ -528,7 +528,7 @@ function Reports() {
                 </CSVLink>
               </div>
             </div>
-            <TableContainer sx={{ maxHeight: "calc(120vh - 200px)" }}>
+            <TableContainer sx={{ maxHeight: "calc(100vh - 200px)" }}>
               <Table stickyHeader>
                 <TableHead>
                   <TableRow>
