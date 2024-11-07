@@ -28,8 +28,24 @@ function Reports() {
   const [page, setPage] = useState(0);
   const [ticketsPerPage, setTicketsPerPage] = useState(50);
   const [filteredTickets, setFilteredTickets] = useState([]);
-  const [selectedFilter, setSelectedFilter] = useState("date_invoiced");
-  const [selectedLabels, setSelectedLabels] = useState([[], [], [], [], []]);
+  const [selectedFilter, setSelectedFilter] = useState("bpartner_group");
+  const [selectedLabels, setSelectedLabels] = useState([
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  ]);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
@@ -154,7 +170,7 @@ function Reports() {
     });
 
   const pieChartData = Object.entries(domainData)
-    .slice(0, 500)
+    // .slice(0, 100)
     .map(([label, value], index) => {
       return {
         label: labelValue[index],
@@ -222,9 +238,23 @@ function Reports() {
     // Filter by selected labels
     const filteredByLabels = tickets.filter((ticket) =>
       selectedLabels.every((labels, index) => {
-        const field = ["type", "status", "customer", "assignees", "domain"][
-          index
-        ];
+        const field = [
+          "date_invoiced",
+          "bpartner_group",
+          "business_partner",
+          "prod_name",
+          "state",
+          "division",
+          "territory",
+          "rm",
+          "buh",
+          "vendor_name",
+          "zone",
+          "parameter_sap",
+          "document",
+          "customer_po_num",
+          "aop_2024_mapping",
+        ][index];
         return labels.length === 0 || labels.includes(ticket[field] || "");
       })
     );
@@ -233,7 +263,7 @@ function Reports() {
 
     if (fromDate || toDate) {
       filteredByDate = filteredByLabels.filter((ticket) => {
-        const ticketDate = ticket.post_date.split(" ")[0];
+        const ticketDate = ticket.date_invoiced;
 
         // Set defaults if fromDate or toDate is missing
         const start = fromDate || "1900-01-01";
@@ -250,7 +280,7 @@ function Reports() {
   return (
     <div className="bg-second h-full overflow-hidden">
       <div className="m-1 p-2 bg-box w-full flex justify-center items-center">
-        <div className="flex justify-center items-center text-xs w-full gap-3 ">
+        <div className="flex flex-wrap items-center gap-1 text-xs w-full ">
           <p className="font-semibold text-sm">Filter:</p>
           {selectedLabels.map((selectedLabel, index) => (
             <FormControl key={index} sx={{ m: 0.5, width: 125, height: 30 }}>
@@ -268,14 +298,24 @@ function Reports() {
                         color: "#aaa",
                       }}
                     >
-                      Select
+                      {/* Select */}
                       {
                         [
-                          " type",
-                          " status",
-                          " customer",
-                          " assignees",
-                          " domain",
+                          "date_invoiced",
+                          "bpartner_group",
+                          "business_partner",
+                          "prod_name",
+                          "state",
+                          "division",
+                          "territory",
+                          "rm",
+                          "buh",
+                          "vendor_name",
+                          "zone",
+                          "parameter_sap",
+                          "document",
+                          "customer_po_num",
+                          "aop_2024_mapping",
                         ][index]
                       }
                     </span>
@@ -292,9 +332,23 @@ function Reports() {
               >
                 {Object.entries(
                   groupDataByField(
-                    ["type", "status", "customer", "assignees", "domain"][
-                      index
-                    ],
+                    [
+                      "date_invoiced",
+                      "bpartner_group",
+                      "business_partner",
+                      "prod_name",
+                      "state",
+                      "division",
+                      "territory",
+                      "rm",
+                      "buh",
+                      "vendor_name",
+                      "zone",
+                      "parameter_sap",
+                      "document",
+                      "customer_po_num",
+                      "aop_2024_mapping",
+                    ][index],
                     tickets
                   )
                 ).map(([label]) => (
@@ -314,7 +368,7 @@ function Reports() {
               </Select>
             </FormControl>
           ))}
-
+          {/* date formate */}
           <div
             className="border-black border rounded-md p-1"
             onClick={() => document.getElementById("fromDate").showPicker()} // Show the date picker on click
@@ -344,7 +398,23 @@ function Reports() {
           <div
             className="font-semibold py-1 px-3 rounded border border-[red] text-red-600 hover:bg-red-600 hover:text-white cursor-pointer transition-all duration-150"
             onClick={() => {
-              setSelectedLabels([[], [], , [], [], []]),
+              setSelectedLabels([
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+                [],
+              ]),
                 setFromDate(""),
                 setToDate("");
             }}
@@ -356,7 +426,7 @@ function Reports() {
 
       <div className="main flex h-[85%] gap-1">
         <div className="section1 md:flex-col  w-[40%] bg-box rounded-md h-full">
-          <div className="flex flex-wrap items-center pt-5 gap-x-2 gap-y-1 justify-between w-full p-2 break-words">
+          {/* <div className="flex flex-wrap items-center pt-5 gap-x-2 gap-y-1 justify-between w-full p-2 break-words">
             {[
               "date_invoiced",
               "bpartner_group",
@@ -388,8 +458,8 @@ function Reports() {
                 </p>
               </div>
             ))}
-          </div>
-          <div className="w-full flex-col justify-start items-center h-full rounded-md flex mb-2 px-5 pb-10">
+          </div> */}
+          <div className="w-full flex-col justify-start items-center h-full rounded-md flex mb-2 p-1 overflow-hidden">
             <PieChart
               series={[
                 {
@@ -458,7 +528,7 @@ function Reports() {
                 </CSVLink>
               </div>
             </div>
-            <TableContainer sx={{ maxHeight: "calc(110vh - 200px)" }}>
+            <TableContainer sx={{ maxHeight: "calc(120vh - 200px)" }}>
               <Table stickyHeader>
                 <TableHead>
                   <TableRow>
