@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext/UserContext';
 import img from '../../../src/image/cpc-logo.png';
 import "react-toastify/dist/ReactToastify.css";
-import userIcon from "../../../src/image/user.svg";
-import passIcon from '../../../src/image/pass.svg';
 import './login.css';
 import AnimatedBackground from '../AnimatedBackground/AnimatedBackground';
 import { sendData } from '../../encrypt';
+
+// Import Font Awesome icons
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faLock } from '@fortawesome/free-solid-svg-icons';
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -41,7 +43,7 @@ const Login = ({ onLogin }) => {
           setup: result.setup,
           inventory: result.inventory,
           assetadd: result.assetadd,
-          area:result.area,
+          area: result.area,
         });
         onLogin();
         navigate("/dashboard");
@@ -55,68 +57,69 @@ const Login = ({ onLogin }) => {
 
   return (
     <>
-        <AnimatedBackground>
-          <div id="app">
-            <div className="container-fluid">
-              <div className="row justify-content-center">
-                <div className="col-lg-12 text-center">
-                  <img src={img} alt="sampat-logo" width="20%" height="20%" className="mx-auto d-block img-fluid mt-2" />
-                   </div>
-                <div className="col-lg-12 whole-login mt-4">
-                  <div className='form-background'>
-                    <label htmlFor="username" className="text-flo text-sm font-medium">Username</label>
-                    <br />
-                    <div className="input-container">
-                      <img src={userIcon} alt="user icon" className="input-icon" />
-                      <input
-                        type="email"
-                        placeholder="Your Email"
-                        id="email"
-                        name="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="input-login mt-2 border-none placeholder:text-prime placeholder:text-xs"
-                        autoComplete="off"
-                      />
-                    </div>
-                    <br />
-                    <label htmlFor="password" className="text-flo text-sm font-medium">Password</label>
-                    <br />
-                    <div className="input-container">
-                      <img src={passIcon} alt="password icon" className="input-icon" />
-                      <input
-                        type="password"
-                        placeholder="Your Password"
-                        id="password"
-                        name="password"
-                        className="input-login mt-2 border-none placeholder:text-prime placeholder:text-xs"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        autoComplete="off"
-                      />
-                    </div>
+      <AnimatedBackground>
+        <div id="app">
+          <div className="container-fluid">
+            <div className="row justify-content-center">
+              <div className="col-lg-12 text-center">
+                <img src={img} alt="sampat-logo" width="20%" height="20%" className="mx-auto d-block img-fluid mt-2" />
+              </div>
+              <div className="col-lg-12 whole-login mt-4">
+                <div className='form-background'>
+                  <label htmlFor="username" className="text-flo text-sm font-medium">Username</label>
+                  <br />
+                  <div className="input-container">
+                    <FontAwesomeIcon icon={faUser} className="input-icon  text-flo"  />
                     <input
-                      type="checkbox"
-                      name="remember"
-                      id="remember"
-                      defaultChecked={true}
-                      className='mt-4 text-second text-sm'
+                      type="email"
+                      placeholder="Your Email"
+                      id="email"
+                      name="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="input-login mt-2 border-none placeholder:text-flo placeholder:text-xs"
+                      autoComplete="off"
                     />
-                    <span className="text-flo text-sm">&nbsp;&nbsp;Remember Me</span>
-                    <br /><br />
-                    <div className='text-center'>
-                      <input type="submit" onClick={handleLogin} className="submit text-sm border-login text-box bg-prime" />
-                    </div> <br />
-                    {message && <p className="text-red-500 mt-4 text-center">{message}</p>}
                   </div>
+                  <br />
+                  <label htmlFor="password" className="text-flo text-sm font-medium">Password</label>
+                  <br />
+                  <div className="input-container">
+                    <FontAwesomeIcon icon={faLock} className="input-icon text-flo" />
+                    <input
+                      type="password"
+                      placeholder="Your Password"
+                      id="password"
+                      name="password"
+                      className="input-login mt-2 border-none placeholder:text-flo placeholder:text-xs"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      autoComplete="off"
+                    />
+                  </div>
+                  <input
+  type="checkbox"
+  name="remember"
+  id="remember"
+  defaultChecked={true}
+  className='mt-4 text-second text-sm'
+/>
+<label htmlFor="remember" className="text-flo text-sm">
+  <span>&nbsp;&nbsp;Remember Me</span>
+</label> <br /><br />
+                  <div className='text-center'>
+                    <input type="submit" onClick={handleLogin} className="submit text-sm border-login text-box bg-flo" />
+                  </div> <br />
+                  {message && <p className="text-red-500 mt-4 text-center">{message}</p>}
                 </div>
               </div>
-              <footer className='footer text-flo text-sm font-normal'>
-                <h6>&#169;2024 Amvion Labs Private Limited . All Rights Reserved</h6>
-              </footer>
             </div>
+            <footer className='footer text-flo text-sm font-normal'>
+              <h6>&#169;2024 Amvion Labs Private Limited . All Rights Reserved</h6>
+            </footer>
           </div>
-        </AnimatedBackground>
+        </div>
+      </AnimatedBackground>
     </>
   );
 };
