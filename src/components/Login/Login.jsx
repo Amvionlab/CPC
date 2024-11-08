@@ -59,7 +59,7 @@ const Login = ({ onLogin }) => {
     <>
       <AnimatedBackground>
         <div id="app">
-          <div className="container-fluid">
+          <div className="container-fluid font-sui">
             <div className="row justify-content-center">
               <div className="col-lg-12 text-center">
                 <img src={img} alt="sampat-logo" width="20%" height="20%" className="mx-auto d-block img-fluid mt-2" />
@@ -77,7 +77,7 @@ const Login = ({ onLogin }) => {
                       name="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="input-login mt-2 border-none placeholder:text-flo placeholder:text-xs"
+                      className="input-login mt-2 border-none placeholder:text-prime text-flo font-medium placeholder:text-xs"
                       autoComplete="off"
                     />
                   </div>
@@ -91,7 +91,7 @@ const Login = ({ onLogin }) => {
                       placeholder="Your Password"
                       id="password"
                       name="password"
-                      className="input-login mt-2 border-none placeholder:text-flo placeholder:text-xs"
+                      className="input-login mt-2 border-none placeholder:text-prime  text-flo font-medium  placeholder:text-xs"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       autoComplete="off"
@@ -102,9 +102,9 @@ const Login = ({ onLogin }) => {
   name="remember"
   id="remember"
   defaultChecked={true}
-  className='mt-4 text-second text-sm'
+  className='mt-4 mb-2 ml-2 text-flo text-sm'
 />
-<label htmlFor="remember" className="text-flo text-sm">
+<label htmlFor="remember" className="text-flo text-xs font-medium">
   <span>&nbsp;&nbsp;Remember Me</span>
 </label> <br /><br />
                   <div className='text-center'>
