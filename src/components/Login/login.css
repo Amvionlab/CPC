@@ -14,12 +14,12 @@
     color: #2066f3 ;
 }
 .form-background{
-  background-color: #0042ff14;
+  background-color: #09b95232;
   padding: 40px 40px 25px 40px;
    width: 36%;
    
     border-radius: 25px;
-    box-shadow: rgba(0, 255, 255, 0.678) 0px 50px 100px -20px, rgba(17, 210, 213, 0.5) 0px 30px 60px -20px;
+    box-shadow: rgba(0, 255, 149, 0.678) 0px 50px 100px -20px, rgba(17, 213, 99, 0.5) 0px 30px 60px -20px;
 }
 .input-login {
     padding: 10px 10px 10px 40px; /* Add padding to the left for the icon */
@@ -30,18 +30,18 @@
     border: 1px solid #424743;
     box-sizing: border-box;
     transition: 1s ease;
-    box-shadow: 0 0 5px rgb(0, 254, 242); 
+    box-shadow: 0 0 5px rgba(5, 225, 89, 0.823); 
 }
 
 .input-login:focus {
     outline: none;  /* Remove the default outline */
-    box-shadow: 0 0 10px rgb(0, 254, 242);  /* Custom box shadow */
+    box-shadow: 0 0 10px rgb(0 254 160);  /* Custom box shadow */
 }
 
 input[type=submit] {
     width: 40%;
     transition: .5s ease;
-    background-color: #0048ff63;
+    background-color: #098e5f7d;
     padding: 8px;
     border-radius: 5px;
     cursor: pointer;

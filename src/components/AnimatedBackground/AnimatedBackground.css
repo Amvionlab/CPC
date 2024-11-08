@@ -1,6 +1,6 @@
 .area {
    
-    background: linear-gradient(to left, #030432, #090e3c);  
+    background: linear-gradient(to left, #8cffb8, #e3ffe9);  
     width: 100%;
     height: 100vh;
     display: flex;
@@ -23,7 +23,7 @@
     list-style: none;
     width: 20px;
     height: 20px;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(8, 159, 51, 0.215);
     animation: animate 25s linear infinite;
     bottom: -150px;
 }

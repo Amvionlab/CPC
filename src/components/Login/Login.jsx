@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../UserContext/UserContext';
-import img from '../../../src/image/sampat-logo.png';
+import img from '../../../src/image/cpc-logo.png';
 import "react-toastify/dist/ReactToastify.css";
 import userIcon from "../../../src/image/user.svg";
 import passIcon from '../../../src/image/pass.svg';
@@ -60,12 +60,11 @@ const Login = ({ onLogin }) => {
             <div className="container-fluid">
               <div className="row justify-content-center">
                 <div className="col-lg-12 text-center">
-                  <img src={img} alt="sampat-logo" width="5%" height="6%" className="mx-auto d-block img-fluid" />
-                  <h1 className="text-center text-login font-medium main-heading mt-2">Login to Sampat</h1>
-                </div>
+                  <img src={img} alt="sampat-logo" width="20%" height="20%" className="mx-auto d-block img-fluid mt-2" />
+                   </div>
                 <div className="col-lg-12 whole-login mt-4">
                   <div className='form-background'>
-                    <label htmlFor="username" className="text-login text-sm font-medium">Username</label>
+                    <label htmlFor="username" className="text-flo text-sm font-medium">Username</label>
                     <br />
                     <div className="input-container">
                       <img src={userIcon} alt="user icon" className="input-icon" />
@@ -76,12 +75,12 @@ const Login = ({ onLogin }) => {
                         name="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="input-login mt-2 border-none placeholder:text-second placeholder:text-xs"
+                        className="input-login mt-2 border-none placeholder:text-prime placeholder:text-xs"
                         autoComplete="off"
                       />
                     </div>
                     <br />
-                    <label htmlFor="password" className="text-login text-sm font-medium">Password</label>
+                    <label htmlFor="password" className="text-flo text-sm font-medium">Password</label>
                     <br />
                     <div className="input-container">
                       <img src={passIcon} alt="password icon" className="input-icon" />
@@ -90,7 +89,7 @@ const Login = ({ onLogin }) => {
                         placeholder="Your Password"
                         id="password"
                         name="password"
-                        className="input-login mt-2 border-none placeholder:text-second placeholder:text-xs"
+                        className="input-login mt-2 border-none placeholder:text-prime placeholder:text-xs"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         autoComplete="off"
@@ -103,16 +102,16 @@ const Login = ({ onLogin }) => {
                       defaultChecked={true}
                       className='mt-4 text-second text-sm'
                     />
-                    <span className="text-login text-sm">&nbsp;&nbsp;Remember Me</span>
+                    <span className="text-flo text-sm">&nbsp;&nbsp;Remember Me</span>
                     <br /><br />
                     <div className='text-center'>
-                      <input type="submit" onClick={handleLogin} className="submit text-sm border-login text-login" />
+                      <input type="submit" onClick={handleLogin} className="submit text-sm border-login text-box bg-prime" />
                     </div> <br />
                     {message && <p className="text-red-500 mt-4 text-center">{message}</p>}
                   </div>
                 </div>
               </div>
-              <footer className='footer text-login text-sm font-normal'>
+              <footer className='footer text-flo text-sm font-normal'>
                 <h6>&#169;2024 Amvion Labs Private Limited . All Rights Reserved</h6>
               </footer>
             </div>
