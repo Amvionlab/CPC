@@ -278,222 +278,194 @@ function Reports() {
   }, [selectedLabels, tickets, fromDate, toDate]);
 
   return (
-    <div className="bg-second h-full overflow-hidden">
-      <div className="m-1 p-2 bg-box w-full flex justify-center items-center">
-        <div className="flex flex-wrap items-center gap-1 text-xs w-full ">
-          <p className="font-semibold text-sm">Filter:</p>
-          {selectedLabels.map((selectedLabel, index) => (
-            <FormControl key={index} sx={{ m: 0.5, width: 125, height: 30 }}>
-              <Select
-                multiple
-                className="border"
-                displayEmpty
-                value={selectedLabel}
-                onChange={handleFilterChange(index)}
-                input={<OutlinedInput />}
-                renderValue={(selected) =>
-                  selected.length === 0 ? (
-                    <span
-                      style={{
-                        color: "#aaa",
-                      }}
-                    >
-                      {/* Select */}
-                      {
-                        [
-                          "date_invoiced",
-                          "bpartner_group",
-                          "business_partner",
-                          "prod_name",
-                          "state",
-                          "division",
-                          "territory",
-                          "rm",
-                          "buh",
-                          "vendor_name",
-                          "zone",
-                          "parameter_sap",
-                          "document",
-                          "customer_po_num",
-                          "aop_2024_mapping",
-                        ][index]
-                      }
-                    </span>
-                  ) : (
-                    selected.join(", ")
-                  )
-                }
-                MenuProps={{
-                  PaperProps: {
-                    style: { maxHeight: 30 * 4.5 + 2, width: 180 },
-                  },
-                }}
-                sx={{ fontSize: "0.75rem", padding: "2px", height: 30 }}
-              >
-                {Object.entries(
-                  groupDataByField(
-                    [
-                      "date_invoiced",
-                      "bpartner_group",
-                      "business_partner",
-                      "prod_name",
-                      "state",
-                      "division",
-                      "territory",
-                      "rm",
-                      "buh",
-                      "vendor_name",
-                      "zone",
-                      "parameter_sap",
-                      "document",
-                      "customer_po_num",
-                      "aop_2024_mapping",
-                    ][index],
-                    tickets
-                  )
-                ).map(([label]) => (
-                  <MenuItem
-                    key={label}
-                    value={label}
-                    sx={{ padding: "2px 4px", fontSize: "0.4rem" }}
-                  >
-                    <Checkbox
-                      checked={selectedLabel.includes(label)}
-                      size="small"
-                      sx={{ fontSize: "0.4rem" }} // Adjust the size directly here if necessary
-                    />
-                    <ListItemText primary={label} sx={{ fontSize: "0.4rem" }} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          ))}
-          {/* date formate */}
-          <div
-            className="border-black border rounded-md p-1"
-            onClick={() => document.getElementById("fromDate").showPicker()} // Show the date picker on click
-          >
-            <p>From</p>
-            <input
-              type="date"
-              id="fromDate"
-              value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
-              className="outline-none border-none" // Ensure no default borders when focused
-            />
+    <div className="flex h-full bg-second p-0.5 gap-0.5 font-serif">
+      {/* Sidebar (20%) */}
+      <div className="w-2/12 sticky top-0 h-full rounded bg-box p-2 overflow-y-auto">
+  {selectedLabels.map((selectedLabel, index) => (
+    <FormControl key={index} sx={{ my: 0.5, width: '100%' }} size="small"> {/* Add size="small" for consistency */}
+      <Select
+        multiple
+        value={selectedLabel}
+        onChange={handleFilterChange(index)}
+        displayEmpty
+        input={<OutlinedInput />}
+        renderValue={(selected) =>
+          selected.length === 0 ? (
+            <span style={{ color: '#aaa' }}>
+              {
+                [
+                  "date_invoiced",
+                  "bpartner_group",
+                  "business_partner",
+                  "prod_name",
+                  "state",
+                  "division",
+                  "territory",
+                  "rm",
+                  "buh",
+                  "vendor_name",
+                  "zone",
+                  "parameter_sap",
+                  "document",
+                  "customer_po_num",
+                  "aop_2024_mapping",
+                ][index]
+              }
+            </span>
+          ) : (
+            selected.join(', ')
+          )
+        }
+        sx={{
+          fontSize: '0.75rem', // Adjust the font size
+          padding: '16px', // Adjust padding for smaller appearance
+          height: '30px', // Specific height for small size
+          '& .MuiSelect-select': { // Target the inner select styles
+            minHeight: '1.25rem', // Adjust minimum height for a smaller look
+            padding: '5px', // Internal padding
+          },
+        }}
+        MenuProps={{
+          PaperProps: {
+            style: { maxHeight: 30 * 4.5 + 2, width: 100 },
+          },
+        }}
+      >
+        {Object.entries(groupDataByField([
+          "date_invoiced",
+          "bpartner_group",
+          "business_partner",
+          "prod_name",
+          "state",
+          "division",
+          "territory",
+          "rm",
+          "buh",
+          "vendor_name",
+          "zone",
+          "parameter_sap",
+          "document",
+          "customer_po_num",
+          "aop_2024_mapping",
+        ][index], tickets)).map(([label]) => (
+          <MenuItem key={label} value={label}>
+            <Checkbox checked={selectedLabel.includes(label)} size="small" />
+            <ListItemText primary={label} sx={{ fontSize: '0.8rem' }} /> {/* Adjust font size */}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  ))}
+</div>
+
+      {/* Main Content Area (80%) */}
+      <div className="w-11/12 overflow-auto">
+        {/* First Row */}
+        <div className="flex h-1/2 gap-0.5 mb-0.5">
+          <div className="w-2/12 bg-box p-1 rounded gap-1">
+          {[
+             
+             "bpartner_group",
+             "business_partner",
+             "prod_name",
+             "state",
+             "division",
+             "territory",
+             "rm",
+             "buh",
+             "vendor_name",
+             "zone",
+           ].map((item, index) => (
+             <div
+               key={index}
+               onClick={() => setSelectedFilter(item.toLowerCase())}
+               className={`py-1 px-2 text-xs break-words inline-block font-medium rounded cursor-pointer m-1 ${
+                 item.toLowerCase() === selectedFilter
+                   ? "bg-prime text-white"
+                   : "bg-box text-black border border-black"
+               }`}
+             >
+               <p className="capitalize text-nowrap">
+                 {item.replaceAll("_", " ")}
+               </p>
+             </div>
+           ))}
+         </div>
+         
+          <div className="w-5/12 bg-box p-2 rounded">
+          <div className="w-full flex-col justify-start items-center h-full rounded flex mb-2 p-1 overflow-hidden">
+           <PieChart
+             series={[
+               {
+                 data: pieChartData, // Pass the correctly formatted data
+                 innerRadius: 50,
+                 outerRadius: 150,
+                 highlightScope: { faded: "global", highlighted: "item" },
+                 faded: {
+                   innerRadius: 40,
+                   additionalRadius: 0,
+                   color: "gray",
+                 },
+                 plugins: [
+                   {
+                     name: "legend",
+                     options: {
+                       labels: {
+                         font: {
+                           size: 10, // Set the desired font size for the legend here
+                         },
+                       },
+                     },
+                   },
+                 ],
+               },
+             ]}
+             height={450}
+             width={500}
+           />
+            
+          </div>
+          </div>
+          <div className="w-5/12 bg-box p-2 rounded">
+          <div className="w-full flex-col justify-start items-center h-full rounded flex mb-2 p-1 overflow-hidden">
+           <PieChart
+             series={[
+               {
+                 data: pieChartData, // Pass the correctly formatted data
+                 innerRadius: 50,
+                 outerRadius: 150,
+                 highlightScope: { faded: "global", highlighted: "item" },
+                 faded: {
+                   innerRadius: 40,
+                   additionalRadius: 0,
+                   color: "gray",
+                 },
+                 plugins: [
+                   {
+                     name: "legend",
+                     options: {
+                       labels: {
+                         font: {
+                           size: 10, // Set the desired font size for the legend here
+                         },
+                       },
+                     },
+                   },
+                 ],
+               },
+             ]}
+             height={450}
+             width={500}
+           />
+            
+          </div>
           </div>
 
-          <div className="border-black border rounded-md p-1">
-            <p onClick={() => document.getElementById("toDate").showPicker()}>
-              To
-            </p>
-            <input
-              type="date"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
-              name=""
-              id="toDate"
-            />
-          </div>
-          <div
-            className="font-semibold py-1 px-3 rounded border border-[red] text-red-600 hover:bg-red-600 hover:text-white cursor-pointer transition-all duration-150"
-            onClick={() => {
-              setSelectedLabels([
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-              ]),
-                setFromDate(""),
-                setToDate("");
-            }}
-          >
-            <p className="text-xs ">Clear All</p>
-          </div>
         </div>
-      </div>
-
-      <div className="main flex h-[85%] gap-1">
-        <div className="section1 md:flex-col  w-[40%] bg-box rounded-md h-full">
-          {/* <div className="flex flex-wrap items-center pt-5 gap-x-2 gap-y-1 justify-between w-full p-2 break-words">
-            {[
-              "date_invoiced",
-              "bpartner_group",
-              "business_partner",
-              "prod_name",
-              "state",
-              "division",
-              "territory",
-              "rm",
-              "buh",
-              "vendor_name",
-              "zone",
-              "parameter_sap",
-              "document",
-              "customer_po_num",
-              "aop_2024_mapping",
-            ].map((item, index) => (
-              <div
-                key={index}
-                onClick={() => setSelectedFilter(item.toLowerCase())}
-                className={`py-1 px-2 text-xs break-words inline-block font-semibold rounded cursor-pointer ${
-                  item.toLowerCase() === selectedFilter
-                    ? "bg-flo text-white"
-                    : "bg-box text-black border border-black"
-                }`}
-              >
-                <p className="capitalize text-nowrap">
-                  {item.replaceAll("_", " ")}
-                </p>
-              </div>
-            ))}
-          </div> */}
-          <div className="w-full flex-col justify-start items-center h-full rounded-md flex mb-2 p-1 overflow-hidden">
-            <PieChart
-              series={[
-                {
-                  data: pieChartData, // Pass the correctly formatted data
-                  innerRadius: 50,
-                  outerRadius: 150,
-                  highlightScope: { faded: "global", highlighted: "item" },
-                  faded: {
-                    innerRadius: 30,
-                    additionalRadius: 0,
-                    color: "gray",
-                  },
-                  plugins: [
-                    {
-                      name: "legend",
-                      options: {
-                        labels: {
-                          font: {
-                            size: 10, // Set the desired font size for the legend here
-                          },
-                        },
-                      },
-                    },
-                  ],
-                },
-              ]}
-              height={500}
-              width={550}
-            />
-          </div>
-        </div>
-        <div className="section2 w-full overflow-y-hidden h-full">
-          <Paper className="bg-box p-1 rounded-xl border h-full">
-            <div className="w-full border-b h-10 flex text-sm justify-between items-center font-medium mb-2">
+        
+        {/* Second Row: Table */}
+        <div className="bg-box p-2 rounded h-1/2 ">
+        <div className="w-full border-b h-10 flex text-sm justify-between items-center font-medium mb-2">
               <div className="flex capitalize ml-1 mt-3 text-base">
                 <p className="font-bold text-prime">Analytics</p>
               </div>
@@ -528,134 +500,66 @@ function Reports() {
                 </CSVLink>
               </div>
             </div>
-            <TableContainer sx={{ maxHeight: "calc(100vh - 200px)" }}>
-              <Table stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    {headers.map((header, index) => (
-                      <TableCell
-                        className="capitalize"
-                        key={index}
-                        align="left"
-                        sx={{
-                          whiteSpace: "nowrap",
-                          fontWeight: "300",
-                          fontSize: "14px",
-                          padding: "1px 3px",
-                          backgroundColor: "#004080",
-                          color: "white",
-                        }}
-                      >
-                        <TableSortLabel
-                          active={
-                            orderBy === header.toLowerCase().replace(" ", "_")
-                          }
-                          direction={
-                            orderBy === header.toLowerCase().replace(" ", "_")
-                              ? order
-                              : "asc"
-                          }
-                          onClick={() =>
-                            handleRequestSort(
-                              header.toLowerCase().replace(" ", "_")
-                            )
-                          }
-                          sx={{
-                            "&.Mui-active": { color: "white" },
-                            "&:hover": { color: "white" },
-                            "& .MuiTableSortLabel-icon": {
-                              color: "white !important",
-                            },
-                          }}
-                        >
-                          {header}
-                        </TableSortLabel>
-                      </TableCell>
-                    ))}
+          <TableContainer sx={{ maxHeight: 'calc(100vh - 200px)' }}>
+            <Table stickyHeader>
+              <TableHead>
+              <TableRow sx={{ backgroundColor: '#01AB86' }} className="capitalize text-base">
+  {headers.map((header, index) => (
+    <TableCell
+      key={index}
+      align="left"
+      sx={{
+        whiteSpace: 'nowrap',
+        fontWeight: '300',
+        fontSize: '14px',
+        padding: '1px 3px',
+        backgroundColor: '#01AB86', // Match the row color
+        color: 'white',
+      }}
+    >
+      <TableSortLabel
+        active={orderBy === header.toLowerCase().replace(" ", "_")}
+        direction={
+          orderBy === header.toLowerCase().replace(" ", "_") ? order : "asc"
+        }
+        onClick={() => handleRequestSort(header.toLowerCase().replace(" ", "_"))}
+        sx={{
+          "&.Mui-active": { color: 'white' },
+          "&:hover": { color: 'white' },
+          "& .MuiTableSortLabel-icon": { color: 'white !important' },
+        }}
+      >
+        {header}
+      </TableSortLabel>
+    </TableCell>
+  ))}
+</TableRow>
+              </TableHead>
+              <TableBody className="py-10">
+                {sortedTickets.length === 0 ? (
+                  <TableRow hover>
+                    <TableCell colSpan={5} sx={{ padding: "2px 4px", fontSize: "10px", textAlign: "center" }}>No tickets available</TableCell>
                   </TableRow>
-                </TableHead>
-                <TableBody className="py-10">
-                  {sortedTickets.length === 0 ? (
-                    <TableRow hover>
-                      <TableCell
-                        colSpan={5}
-                        sx={{
-                          padding: "1px 3px",
-                          fontSize: "10px",
-                          textAlign: "center",
-                        }}
-                      >
-                        No tickets available
-                      </TableCell>
+                ) : (
+                  sortedTickets.slice(page * ticketsPerPage, page * ticketsPerPage + ticketsPerPage).map((ticket) => (
+                    <TableRow key={ticket.id} hover>
+                      {headers.map((header, idx) => (
+                        <TableCell key={idx} align="left" sx={{ padding: '2px 4px', fontSize: '11px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', cursor: 'pointer', "&:hover": { whiteSpace: 'normal', backgroundColor: '#f5f5f5' } }}>
+                          {header === "prod name"
+                            ? (ticket.prod_name?.split(" ").slice(0, 3).join(" ") || "N/A") + (ticket.prod_name?.split(" ").length > 3 ? "..." : "")
+                            : header === "business partner"
+                            ? (ticket.business_partner?.split(" ").slice(0, 3).join(" ") || "N/A") + (ticket.business_partner?.split(" ").length > 3 ? "..." : "")
+                            : header === "customer po num"
+                            ? (ticket.customer_po_num?.split(" ").slice(0, 3).join(" ") || "N/A") + (ticket.customer_po_num?.split(" ").length > 3 ? "..." : "")
+                            : ticket[header.toLowerCase().replaceAll(" ", "_")]}
+                        </TableCell>
+                      ))}
                     </TableRow>
-                  ) : (
-                    sortedTickets
-                      .slice(
-                        page * ticketsPerPage,
-                        page * ticketsPerPage + ticketsPerPage
-                      )
-                      .map((ticket) => (
-                        <TableRow key={ticket.id} hover>
-                          {headers.map((header, idx) => (
-                            <TableCell
-                              key={idx}
-                              align="left"
-                              sx={{
-                                padding: "1px 3px",
-                                fontSize: "11px",
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                cursor: "pointer",
-                                "&:hover": {
-                                  whiteSpace: "normal",
-                                  backgroundColor: "#f5f5f5",
-                                },
-                              }}
-                              title={
-                                ticket[
-                                  header.toLowerCase().replace(" ", "_")
-                                ] ||
-                                (header === "Assignees" && "N/A")
-                              }
-                            >
-                              {header === "prod name"
-                                ? (ticket.prod_name
-                                    ?.split(" ")
-                                    .slice(0, 3)
-                                    .join(" ") || "N/A") +
-                                  (ticket.prod_name?.split(" ").length > 3
-                                    ? "..."
-                                    : "")
-                                : header === "business partner" // Check for "Customer"
-                                ? (ticket.business_partner
-                                    ?.split(" ")
-                                    .slice(0, 3)
-                                    .join(" ") || "N/A") +
-                                  (ticket.business_partner?.split(" ").length >
-                                  3
-                                    ? "..."
-                                    : "")
-                                : header === "customer po num" // Check for "Customer"
-                                ? (ticket.customer_po_num
-                                    ?.split(" ")
-                                    .slice(0, 3)
-                                    .join(" ") || "N/A") +
-                                  (ticket.customer_po_num?.split(" ").length > 3
-                                    ? "..."
-                                    : "")
-                                : ticket[
-                                    header.toLowerCase().replaceAll(" ", "_")
-                                  ]}
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      ))
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </div>
       </div>
     </div>
