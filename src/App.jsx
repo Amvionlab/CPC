@@ -15,8 +15,8 @@ import {
 import "./App.css";
 
 import User from "./components/Admin/User";
-import Location from "./components/Admin/Location"; 
-import Branch from "./components/Admin/Branch"; 
+import Location from "./components/Admin/Location";
+import Branch from "./components/Admin/Branch";
 import Access from "./components/Admin/Access";
 import Template from "./components/Admin/Template";
 import Type from "./components/Admin/Type";
@@ -107,52 +107,51 @@ function App() {
             <div className="main-content flex overflow-y-hidden">
               <SideMenu />
               <div className="flex-1 md:overflow-y-auto h-screen">
-
                 <TicketProvider>
                   <Routes>
                     <Route path="/password-change" element={<ChangePass />} />
-                      
+
                     {user && user.setup === "1" && (
-                     <>
-                      <Route path="*" element={<Navigate to="/setup" />} />
-                      <Route path="/sales" element={<Sales />} />
-                      <Route path="/target" element={<Target />} />
-                      <Route path="/area-manager" element={<Am />} />
+                      <>
+                        <Route path="*" element={<Navigate to="/setup" />} />
+                        <Route path="/sales" element={<Sales />} />
+                        <Route path="/target" element={<Target />} />
+                        <Route path="/area-manager" element={<Am />} />
                       </>
                     )}
                     {user && user.setup === "0" && (
-                      <>                   
-                      <Route path="*" element={<Navigate to="/sales" />} />
-                      <Route path="/sales" element={<Sales />} />
-                      <Route path="/target" element={<Target />} />
-                      <Route path="/area-manager" element={<Am />} />
+                      <>
+                        <Route path="*" element={<Navigate to="/sales" />} />
+                        <Route path="/sales" element={<Sales />} />
+                        <Route path="/target" element={<Target />} />
+                        <Route path="/area-manager" element={<Am />} />
                       </>
-
-                   
                     )}
 
-                    
-                 
-
-{user && user.setup === "1" && ( 
-
-                    <>
-                      <Route path="/setup/user" element={<User />} />
-                      <Route path="/setup/status" element={<Status />} />
-                      <Route path="/setup/substatus" element={<SubStatus />} />
-                     <Route path="/setup/access" element={<Access />} />  
-                      <Route path="/setup" element={<Setup />} /> 
-                      <Route path="/Setup/location" element={<Location />} />
-                      <Route path="/Setup/branch" element={<Branch />} />
-                      <Route path="/Setup/group" element={<Group />} />
-                      <Route path="/Setup/type" element={<Type />} />
-                      <Route path="/Setup/ip_address" element={<IP_Address />} />
-                      <Route path="/Setup/employee" element={<Employee />} />
-                      <Route path="/Setup/vendor" element={<Vendor />} />
-                      <Route path="/Setup/smtp" element={<Smtp />} />
-                      <Route path="/Setup/template" element={<Template />} />
-                        </>
-)}
+                    {user && user.setup === "1" && (
+                      <>
+                        <Route path="/setup/user" element={<User />} />
+                        <Route path="/setup/status" element={<Status />} />
+                        <Route
+                          path="/setup/substatus"
+                          element={<SubStatus />}
+                        />
+                        <Route path="/setup/access" element={<Access />} />
+                        <Route path="/setup" element={<Setup />} />
+                        <Route path="/Setup/location" element={<Location />} />
+                        <Route path="/Setup/branch" element={<Branch />} />
+                        <Route path="/Setup/group" element={<Group />} />
+                        <Route path="/Setup/type" element={<Type />} />
+                        <Route
+                          path="/Setup/ip_address"
+                          element={<IP_Address />}
+                        />
+                        <Route path="/Setup/employee" element={<Employee />} />
+                        <Route path="/Setup/vendor" element={<Vendor />} />
+                        <Route path="/Setup/smtp" element={<Smtp />} />
+                        <Route path="/Setup/template" element={<Template />} />
+                      </>
+                    )}
                   </Routes>
                 </TicketProvider>
               </div>
